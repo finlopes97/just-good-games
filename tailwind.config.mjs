@@ -4,11 +4,11 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				'body': '#eeeeee',
-				'background': '#170e12',
-				'primary': '#de9bb8',
-				'secondary': '#891447',
-				'accent': '#fe2785',
+				'foreground': '#F8F8F2',
+				'background': '#282A36',
+				'primary': '#BD93F9',
+				'secondary': '#6272A4',
+				'accent': '#FF79C6',
 			},
       fontSize: {
         sm: '0.750rem',

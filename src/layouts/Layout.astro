@@ -1,19 +1,18 @@
 ---
 import Head from "../components/Head.astro";
 import Navigation from "../components/Navigation.astro";
-import Sidebar from "../components/Sidebar.astro";
 import Footer from "../components/Footer.astro";
+
 const { title } = Astro.props;
 ---
 
 <html lang="en">
 	<Head title={title} />
   <body class="flex flex-col min-h-screen bg-background">
-		<Navigation class="w-full fixed top-0 left-0 right-0" />
+		<Navigation id="nav-menu" class="w-full fixed top-0 left-0 right-0" />
     <div class="flex flex-1 pt-12">
-      <Sidebar class="fixed left-0 top-12 bottom-0 w-48" />
       <div class="flex-1">
-        <article class="p-4">
+        <article class="p-4 mx-auto">
           <slot />
         </article>
       </div>

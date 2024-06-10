@@ -1,13 +1,22 @@
 ---
-import Prose from '../components/Prose.astro';
-import Layout from '../layouts/Layout.astro';
-import { getEntry } from 'astro:content';
+import Navigation from '../components/Navigation.astro';
+import Head from '../components/Head.astro';
+import Footer from '../components/Footer.astro';
 
-const entry = await getEntry('posts', 'entry');
-const { Content } = await entry.render();
+const title = "Blog";
 ---
-<Layout>
-  <Prose>
-    <Content />
-  </Prose>
-</Layout>
+
+<html lang="en">
+	<Head title={title} />
+	<body class="bg-background text-foreground min-h-screen px-4">
+		<Navigation />
+		<div class="flex justify-center items-center w-full" style="height: calc(100vh - 4rem);">
+			<div class="max-w-lg w-full">
+				<h1 class="text-2xl text-center md:text-3xl lg:text-4xl font-heading">Blog.</h1>
+				<hr class="bg-accent h-1 border-0 my-4" />
+				<p class="text-center font-body">This site is currently under construction.</p>
+			</div>
+		</div>
+		<Footer />
+	</body>
+</html>

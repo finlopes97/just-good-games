@@ -1,0 +1,32 @@
+---
+const postsPromise = Astro.glob("../content/posts/*.mdx");
+const posts = await postsPromise;
+---
+
+<aside
+  class="
+	text-secondary 
+	border-solid 
+	border-2
+	border-primary 
+	p-2
+	ml-2
+	min-w-32
+	rounded"
+>
+	<h2 class="text-xl font-heading">Posts</h1>
+  <ul class="list-none">
+    {
+      posts.map((post) => (
+        <li class="my-2">
+          <a
+            href={post.url}
+            class="text-accent hover:text-accent-hover font-bold"
+          >
+            {post.frontmatter.title}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</aside>

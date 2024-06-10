@@ -1,0 +1,13 @@
+---
+import Prose from '../components/Prose.astro';
+import Layout from '../layouts/Layout.astro';
+import { getEntry } from 'astro:content';
+
+const entry = await getEntry('posts', 'entry');
+const { Content } = await entry.render();
+---
+<Layout>
+  <Prose>
+    <Content />
+  </Prose>
+</Layout>

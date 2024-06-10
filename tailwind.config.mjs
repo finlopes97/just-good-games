@@ -4,7 +4,7 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				'text': '#eeeeee',
+				'body': '#eeeeee',
 				'background': '#170e12',
 				'primary': '#de9bb8',
 				'secondary': '#891447',
@@ -29,5 +29,7 @@ export default {
       },
 		},
 	},
-	plugins: [],
+	plugins: [
+    require('@tailwindcss/typography')
+  ],
 }

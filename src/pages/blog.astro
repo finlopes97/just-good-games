@@ -1,5 +1,5 @@
 ---
-import Navigation from '../components/Navigation.astro';
+import Header from '../components/Header.astro';
 import Head from '../components/Head.astro';
 import Footer from '../components/Footer.astro';
 
@@ -9,7 +9,7 @@ const title = "Blog";
 <html lang="en">
 	<Head title={title} />
 	<body class="bg-background text-foreground min-h-screen px-4">
-		<Navigation />
+		<Header />
 		<div class="flex justify-center items-center w-full" style="height: calc(100vh - 4rem);">
 			<div class="max-w-lg w-full">
 				<h1 class="text-2xl text-center md:text-3xl lg:text-4xl font-heading">Blog.</h1>

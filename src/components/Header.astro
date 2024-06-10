@@ -1,0 +1,19 @@
+---
+import { Astronav, MenuItems, MenuIcon,  Dropdown, DropdownItems } from "astro-navbar";
+---
+<header class="md:flex p-5  gap-5">
+  <Astronav>
+    <div class="flex w-full justify-between">
+      <a href="/" class="hover:text-accent hover:italic">Home</a>
+      <div class="block md:hidden">
+        <MenuIcon class="w-4 h-4 text-foreground-800" />
+      </div>
+    </div>
+    <MenuItems class="hidden md:flex">
+      <ul class="flex flex-col md:flex-row md:gap-5">
+        <li><a href="/about" class="hover:text-accent hover:italic">About</a></li>
+        <li><a href="/blog" class="hover:text-accent hover:italic">Archive</a></li>
+      </ul>
+    </MenuItems>
+  </Astronav>
+</header>

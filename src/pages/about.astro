@@ -4,6 +4,10 @@ import Head from '../components/Head.astro';
 import Footer from '../components/Footer.astro';
 
 const title = "About";
+
+import { getCollection, getEntry } from 'astro:content';
+
+const post1 = await getEntry('posts', 'post-1');
 ---
 
 <html lang="en">
@@ -15,6 +19,7 @@ const title = "About";
 				<h1 class="text-2xl text-center md:text-3xl lg:text-4xl font-heading">About.</h1>
 				<hr class="bg-accent h-1 border-0 my-4" />
 				<p class="text-center font-body">This site is currently under construction.</p>
+				<a href={post1.url}>{post1.title}</a>
 			</div>
 		</div>
 		<Footer />

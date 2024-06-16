@@ -1,7 +1,8 @@
 ---
 import { Astronav, MenuItems, MenuIcon,  Dropdown, DropdownItems } from "astro-navbar";
+import NavLink from "./NavLink.astro";
 ---
-<header class="md:flex p-5  gap-5">
+<header class="md:flex p-5 gap-5 border-b-accent border-b-2 rounded-lg">
   <Astronav>
     <div class="flex w-full justify-between">
       <a href="/" class="hover:text-accent hover:italic">Home</a>
@@ -11,8 +12,8 @@ import { Astronav, MenuItems, MenuIcon,  Dropdown, DropdownItems } from "astro-n
     </div>
     <MenuItems class="hidden md:flex">
       <ul class="flex flex-col md:flex-row md:gap-5">
-        <li><a href="/about" class="hover:text-accent hover:italic">About</a></li>
-        <li><a href="/archive" class="hover:text-accent hover:italic">Archive</a></li>
+        <NavLink page="about" title="About" />
+        <NavLink page="archive" title="Archive" />
       </ul>
     </MenuItems>
   </Astronav>

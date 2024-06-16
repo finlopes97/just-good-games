@@ -1,13 +1,42 @@
 ---
+import Head from "../components/Head.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
 const { frontmatter } = Astro.props;
 ---
-<h1>{frontmatter.title}</h1>
-<p>Published on: {frontmatter.pubDate.toString().slice(0,10)}</p>
-<p><em>{frontmatter.description}</em></p>
-<p>Written by: {frontmatter.author}</p>
-<ul>
-	{frontmatter.tags.map((tag) => (
-		<li><a href={`/tags/${tag}`}>{tag}</a></li>
-	))}
-</ul>
-<slot />
+
+<html lang="en">
+  <Head title={frontmatter.title} />
+  <body class="bg-background text-foreground min-h-screen px-4">
+    <Header />
+    <div class="flex justify-center items-center w-full">
+      <div class="flex-1">
+        <h1 class="text-2xl font-heading text-primary">{frontmatter.title}</h1>
+        <p class="text-sm font-body">
+          <strong>Published on</strong>: {
+            frontmatter.pubDate.toString().slice(0, 10)
+          }
+        </p>
+        <p class="text-sm font-body"><em>{frontmatter.description}</em></p>
+        <p class="text-sm font-body">
+          <strong>Written by</strong>: {frontmatter.author}
+        </p>
+        <ul class="text-sm flex flex-row gap-1 font-normal">
+          {
+            frontmatter.tags.map((tag: unknown) => (
+              <li>
+                <a href={`/tags/${tag}`} class="hover:text-accent hover:italic">
+                  {tag};
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <article class="p-4 mx-auto">
+          <slot />
+        </article>
+      </div>
+    </div>
+    <Footer />
+  </body>
+</html>

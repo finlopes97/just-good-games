@@ -1,0 +1,16 @@
+---
+const { score } = Astro.props;
+const scoreClass = score >= 8 ? 'text-green-500' : score >= 5 ? 'text-yellow-500' : 'text-red-500';
+---
+
+<div class={`score ${scoreClass}`}>
+  <span class="text-lg font-bold">{score}</span>
+	<span class="text-lg font-bold">/</span>
+	<span class="text-sm font-bold">10</span>
+</div>
+
+<style>
+  .score {
+    @apply text-lg font-bold;
+  }
+</style>

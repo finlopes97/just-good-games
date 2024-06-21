@@ -7,12 +7,14 @@ const { frontmatter } = Astro.props;
 
 <html lang="en">
   <Head title={frontmatter.title} />
-  <body class="bg-background text-foreground min-h-screen px-4">
+  <body class="bg-white text-foreground min-h-screen">
     <Header />
     <main class="min-h-screen flex flex-col justify-between">
       <div class="flex grow justify-center items-center w-full">
         <div class="flex-1 mx-2 md:mx-40">
-          <h1 class="text-xl md:text-2xl font-heading text-primary text-center">
+          <h1
+            class="text-xl md:text-2xl mt-4 font-heading text-foreground text-center"
+          >
             {frontmatter.title}
           </h1>
           <div class="flex flex-row gap-2">

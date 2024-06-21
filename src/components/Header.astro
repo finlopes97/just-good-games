@@ -1,19 +1,19 @@
 ---
-import { Astronav, MenuItems, MenuIcon,  Dropdown, DropdownItems } from "astro-navbar";
+import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 import NavLink from "./NavLink.astro";
 ---
-<header class="md:flex p-5 gap-5">
+<header class="md:flex p-5 gap-5 bg-white border-b-2 border-b-black">
   <Astronav>
     <div class="flex w-full justify-between">
-      <a href="/" class="hover:text-accent hover:italic">Home</a>
+      <NavLink target="/" title="Home" />
       <div class="block md:hidden">
         <MenuIcon class="w-4 h-4 text-foreground-800" />
       </div>
     </div>
     <MenuItems class="hidden md:flex">
       <ul class="flex flex-col md:flex-row md:gap-5">
-        <NavLink page="about" title="About" />
-        <NavLink page="archive" title="Archive" />
+        <NavLink target="/about" title="About" />
+        <NavLink target="/archive" title="Archive" />
       </ul>
     </MenuItems>
   </Astronav>

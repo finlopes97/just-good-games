@@ -1,5 +1,6 @@
 ---
 import BlogPost from "../components/BlogPost.astro";
+import BlogPostCard from "../components/BlogPostCard.astro";
 import Layout from "../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 
@@ -11,18 +12,18 @@ function groupPosts(posts) {
   return posts.reduce((groups, post) => {
     const date = new Date(post.data.pubDate);
     const year = date.getFullYear();
-    const month = date.toLocaleString('default', { month: 'long' });
-    
+    const month = date.toLocaleString("default", { month: "long" });
+
     if (!groups[year]) {
       groups[year] = {};
     }
-    
+
     if (!groups[year][month]) {
       groups[year][month] = [];
     }
-    
+
     groups[year][month].push(post);
-    
+
     return groups;
   }, {});
 }
@@ -36,27 +37,33 @@ const groupedPosts = groupPosts(allPosts);
       Archive.
     </h1>
     <hr class="bg-accent h-1 border-0 my-4" />
-    <p class="text-center font-body">
-      This site is currently under construction.
-    </p>
     <div>
-      {Object.keys(groupedPosts).sort((a, b) => b - a).map((year) => (
-        <div>
-          <h2 class="text-xl font-semibold">{year}</h2>
-          {Object.keys(groupedPosts[year]).map((month) => (
-            <div class="pl-4">
-              <h3 class="text-lg font-medium">{month}</h3>
-              <ul class="pl-6 list-disc">
-                {groupedPosts[year][month].map((post) => (
-                  <li>
-                    <BlogPost url={`/posts/${post.slug}/`} title={post.data.title} pubDate={post.data.pubDate.toISOString().slice(0, 10)} />
-                  </li>
-                ))}
-              </ul>
+      {
+        Object.keys(groupedPosts)
+          .sort((a, b) => b - a)
+          .map((year) => (
+            <div>
+              <h2 class="text-xl font-semibold">{year}</h2>
+              {Object.keys(groupedPosts[year]).map((month) => (
+                <div class="pl-4">
+                  <h3 class="text-lg font-medium">{month}</h3>
+                  <ul class="pl-6 flex flex-col md:flex-row md:flex-wrap gap-4">
+                    {groupedPosts[year][month].map((post) => (
+                      <li class="list-none">
+                        <BlogPostCard
+                          url={`/posts/${post.slug}/`}
+                          title={post.data.title}
+                          pubDate={post.data.pubDate.toISOString().slice(0, 10)}
+                          description={post.data.description}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      ))}
+          ))
+      }
     </div>
   </div>
 </Layout>

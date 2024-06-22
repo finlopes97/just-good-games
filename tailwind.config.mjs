@@ -4,12 +4,72 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				'foreground': '#000000',
-				'background': '#F4D738',
-				'primary': '#BD93F9',
-				'secondary': '#6272A4',
-				'accent': '#9723C9',
-        'footer': '#69D2E7'
+        foreground: {
+          100: "#cccccc",
+          200: "#999999",
+          300: "#666666",
+          400: "#333333",
+          500: "#000000",
+          600: "#000000",
+          700: "#000000",
+          800: "#000000",
+          900: "#000000"
+        },
+        background: {
+          100: "#ffffff",
+          200: "#ffffff",
+          300: "#ffffff",
+          400: "#ffffff",
+          500: "#ffffff",
+          600: "#cccccc",
+          700: "#999999",
+          800: "#666666",
+          900: "#333333"
+        },
+        accent: {
+          100: "#ffe3fc",
+          200: "#ffc6f9",
+          300: "#ff98f3",
+          400: "#ff58e7",
+          500: "#ff27d7",
+          600: "#ff00bb",
+          700: "#df0097",
+          800: "#b8007d",
+          900: "#98036a",
+        },  
+        primary: {
+          100: "#ffdddd",
+          200: "#ffc0c0",
+          300: "#ff9494",
+          400: "#ff5757",
+          500: "#ff2323",
+          600: "#ff0000",
+          700: "#d70000",
+          800: "#b10303",
+          900: "#920a0a",
+        },
+        secondary: {
+          100: "#f4e7ff",
+          200: "#ebd3ff",
+          300: "#dcb0ff",
+          400: "#c77eff",
+          500: "#af47ff",
+          600: "#9e2af3",
+          700: "#891ad6",
+          800: "#741aaf",
+          900: "#5f178c",
+        },  
+        body: {
+          100: "#ffffcc",
+          200: "#ffff99",
+          300: "#ffff66",
+          400: "#ffff33",
+          500: "#ffff00",
+          600: "#cccc00",
+          700: "#999900",
+          800: "#666600",
+          900: "#333300"
+},
 			},
       fontSize: {
         sm: '0.750rem',
@@ -21,7 +81,9 @@ export default {
         '5xl': '4.210rem',
       },
       fontFamily: {
-        heading: 'Montserrat',
+        // heading: 'Montserrat',
+        heading: 'Bebas Neue',
+        subheading: 'Lexend Mega',
         body: 'Nanum Gothic',
       },
       fontWeight: {

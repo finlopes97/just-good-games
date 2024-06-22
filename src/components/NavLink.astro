@@ -1,4 +1,19 @@
 ---
 const { target, title } = Astro.props;
 ---
-<li class="list-none border-2 border-black p-2 shadow-[2px_2px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_rgba(0,0,0,1)] md:hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] transition ease-in-out duration-500"><a href=`${target}` class="">{title}</a></li>
+
+<li class="list-none">
+  <a href=`${target}` class="font-heading 
+  text-lg 
+  tracking-wider
+  border-2 
+  p-2 
+  border-black 
+  bg-accent-500 
+  hover:bg-accent-400 
+  shadow-[2px_2px_0px_rgba(0,0,0,1)] 
+  md:shadow-[4px_4px_0px_rgba(0,0,0,1)] 
+  md:hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] 
+  transition ease-in-out duration-300
+  ">{title}</a>
+</li>

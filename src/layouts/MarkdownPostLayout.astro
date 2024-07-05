@@ -3,38 +3,51 @@ import Head from "../components/Head.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 const { frontmatter } = Astro.props;
+
+const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+const date = new Date(frontmatter.pubDate).toLocaleDateString("en-AU", options);
 ---
 
+<style>
+  h1 {
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: black;
+  }
+</style>
 <html lang="en">
   <Head title={frontmatter.title} />
-  <body class="bg-white text-foreground min-h-screen">
+  <body class="bg-background-100 text-foreground-500 min-h-screen font-body">
     <Header />
-    <main class="min-h-screen flex flex-col justify-between">
+    <main class="min-h-screen flex flex-col justify-betwen">
       <div class="flex grow justify-center items-center w-full">
-        <div class="flex-1 mx-2 md:mx-40">
+        <div class="flex-1 bg-background-100 p-6 max-w-post-100">
           <h1
-            class="text-xl md:text-2xl mt-4 font-heading text-foreground text-center"
+            class="text-4xl md:text-5xl mt-4 font-heading text-primary-600 text-left outline-2 pb-2 mb-6"
           >
             {frontmatter.title}
           </h1>
-          <div class="flex flex-row gap-2">
-            <p class="text-sm font-body">
-              <strong>Published on</strong>: {
-                frontmatter.pubDate.toString().slice(0, 10)
-              }
+          <p class="font-subheading mb-4">
+            <em>{frontmatter.description}</em>
+          </p>
+          <div class="flex flex-col md:flex-row gap-4 mb-6">
+            <p
+              class="text-sm font-bold bg-body-300 p-2 transform rotate-1 inline-block"
+            >
+              <strong>Published on</strong>: {date}
             </p>
-            <p class="text-sm font-body">
+            <p
+              class="text-sm font-bold bg-secondary-200 p-2 transform -rotate-1 inline-block"
+            >
               <strong>Written by</strong>: {frontmatter.author}
             </p>
           </div>
-          <p class="text-sm font-body"><em>{frontmatter.description}</em></p>
-          <ul class="text-sm flex flex-row gap-1 font-normal">
+          <ul class="flex flex-wrap gap-2 mb-6">
             {
               frontmatter.tags.map((tag: unknown) => (
-                <li>
+                <li class="bg-accent-200 px-2 py-1 transform -rotate-1">
                   <a
                     href={`/tags/${tag}`}
-                    class="hover:text-accent hover:italic"
+                    class="hover:text-primary-600 hover:underline"
                   >
                     {tag};
                   </a>
@@ -42,7 +55,7 @@ const { frontmatter } = Astro.props;
               ))
             }
           </ul>
-          <article class="p-4 mx-auto">
+          <article class="mx-auto max-w-post-85">
             <slot />
           </article>
         </div>

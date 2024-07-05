@@ -1,9 +1,19 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-	content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
-	theme: {
-		extend: {
-			colors: {
+  content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
+  theme: {
+    extend: {
+      maxWidth: {
+        'post-65': '65ch',
+        'post-70': '70ch',
+        'post-75': '75ch',
+        'post-80': '80ch',
+        'post-85': '85ch',
+        'post-90': '90ch',
+        'post-95': '95ch',
+        'post-100': '100ch'
+      },
+      colors: {
         foreground: {
           100: "#cccccc",
           200: "#999999",
@@ -13,7 +23,7 @@ export default {
           600: "#000000",
           700: "#000000",
           800: "#000000",
-          900: "#000000"
+          900: "#000000",
         },
         background: {
           100: "#ffffff",
@@ -24,7 +34,7 @@ export default {
           600: "#cccccc",
           700: "#999999",
           800: "#666666",
-          900: "#333333"
+          900: "#333333",
         },
         accent: {
           100: "#ffe3fc",
@@ -36,7 +46,7 @@ export default {
           700: "#df0097",
           800: "#b8007d",
           900: "#98036a",
-        },  
+        },
         primary: {
           100: "#ffdddd",
           200: "#ffc0c0",
@@ -58,7 +68,7 @@ export default {
           700: "#891ad6",
           800: "#741aaf",
           900: "#5f178c",
-        },  
+        },
         body: {
           100: "#ffffcc",
           200: "#ffff99",
@@ -68,31 +78,29 @@ export default {
           600: "#cccc00",
           700: "#999900",
           800: "#666600",
-          900: "#333300"
-},
-			},
+          900: "#333300",
+        },
+      },
       fontSize: {
-        sm: '0.750rem',
-        base: '1rem',
-        xl: '1.333rem',
-        '2xl': '1.777rem',
-        '3xl': '2.369rem',
-        '4xl': '3.158rem',
-        '5xl': '4.210rem',
+        sm: "0.750rem",
+        base: "1rem",
+        xl: "1.333rem",
+        "2xl": "1.777rem",
+        "3xl": "2.369rem",
+        "4xl": "3.158rem",
+        "5xl": "4.210rem",
       },
       fontFamily: {
         // heading: 'Montserrat',
-        heading: 'Bebas Neue',
-        subheading: 'Lexend Mega',
-        body: 'Nanum Gothic',
+        heading: "Bebas Neue",
+        subheading: "Lexend Mega",
+        body: "Nanum Gothic",
       },
       fontWeight: {
-        normal: '400',
-        bold: '700',
+        normal: "400",
+        bold: "700",
       },
-		},
-	},
-	plugins: [
-    require('@tailwindcss/typography')
-  ],
-}
+    },
+  },
+  plugins: [require("@tailwindcss/typography")],
+};

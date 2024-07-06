@@ -2,10 +2,8 @@
 import Head from "../components/Head.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import { formatDate } from "../utils/dateFormatter";
 const { frontmatter } = Astro.props;
-
-const options = { day: "2-digit", month: "2-digit", year: "numeric" };
-const date = new Date(frontmatter.pubDate).toLocaleDateString("en-AU", options);
 ---
 
 <style>
@@ -14,6 +12,7 @@ const date = new Date(frontmatter.pubDate).toLocaleDateString("en-AU", options);
     -webkit-text-stroke-color: black;
   }
 </style>
+
 <html lang="en">
   <Head title={frontmatter.title} />
   <body class="bg-background-100 text-foreground-500 min-h-screen font-body">
@@ -22,7 +21,7 @@ const date = new Date(frontmatter.pubDate).toLocaleDateString("en-AU", options);
       <div class="flex grow justify-center items-center w-full">
         <div class="flex-1 bg-background-100 p-6 max-w-post-100">
           <h1
-            class="text-4xl md:text-5xl mt-4 font-heading text-primary-600 text-left outline-2 pb-2 mb-6"
+            class="text-4xl md:text-5xl mt-4 font-heading text-primary-600 text-left pb-2 mb-6"
           >
             {frontmatter.title}
           </h1>
@@ -33,7 +32,7 @@ const date = new Date(frontmatter.pubDate).toLocaleDateString("en-AU", options);
             <p
               class="text-sm font-bold bg-body-300 p-2 transform rotate-1 inline-block"
             >
-              <strong>Published on</strong>: {date}
+              <strong>Published on</strong>: {formatDate(frontmatter.pubDate)}
             </p>
             <p
               class="text-sm font-bold bg-secondary-200 p-2 transform -rotate-1 inline-block"

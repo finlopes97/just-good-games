@@ -1,5 +1,5 @@
 ---
-const { title, url, pubDate, description } = Astro.props;
+const { title, url, pubDate, description, image } = Astro.props;
 ---
 <div class="w-80
 					h-full
@@ -14,7 +14,14 @@ const { title, url, pubDate, description } = Astro.props;
 			  ">
 	<a href={url} class="block cursor-pointer">
 		 <article class="w-full h-full">
-				<figure class="w-full h-1/2 border-black border-b-2">
+				<figure class="w-full h-40 border-black border-b-2 overflow-hidden">
+					{image ? (
+						<img src={image.url} alt={image.alt} class="w-full h-full object-cover" />
+					) : (
+						<div class="w-full h-full bg-gray-200 flex items-center justify-center">
+              <span class="text-gray-400">No image</span>
+            </div>
+					)}
 					<h1 class="text-xl font-heading mb-2">{title}</h1>
 				</figure>
 				<div class="px-2 py-2 text-left h-full">

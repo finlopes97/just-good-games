@@ -54,6 +54,7 @@ const groupedPosts = groupPosts(allPosts);
                           title={post.data.title}
                           pubDate={post.data.pubDate.toISOString().slice(0, 10)}
                           description={post.data.description}
+                          image={post.data.image}
                         />
                       </li>
                     ))}

@@ -1,36 +1,44 @@
 ---
 const { title, url, pubDate, description, image } = Astro.props;
+// Function to truncate text
+const truncateText = (text, maxLength) => {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength) + "...";
+};
 ---
-<div class="w-80
-					h-full
-					p-2
-				border-black
-					border-2
-					bg-white
-					shadow-[2px_2px_0px_rgba(0,0,0,1)]
-					md:shadow-[4px_4px_0px_rgba(0,0,0,1)]
-					md:hover:shadow-[2px_2px_0px_rgba(0,0,0,1)]
-					transition ease-in-out duration-300
-			  ">
-	<a href={url} class="block cursor-pointer">
-		 <article class="w-full h-full">
-				<figure class="w-full h-40 border-black border-b-2 overflow-hidden">
-					{image ? (
-						<img src={image.url} alt={image.alt} class="w-full h-full object-cover" />
-					) : (
-						<div class="w-full h-full bg-gray-200 flex items-center justify-center">
-              <span class="text-gray-400">No image</span>
+
+<div
+  class="w-80 h-96
+  p-4
+  border-black border-4
+  bg-white
+  shadow-[8px_8px_0px_rgba(0,0,0,1)]
+  hover:shadow-[4px_4px_0px_rgba(0,0,0,1)]
+  transition-shadow duration-300 ease-in-out
+  relative"
+>
+  <a href={url} class="block h-full">
+    <article class="flex flex-col h-full">
+      <figure class="w-full h-40 border-black border-b-2 overflow-hidden mb-4">
+        {
+          image ? (
+            <img
+              src={image.url}
+              alt={image.alt}
+              class="w-full h-full object-cover"
+            />
+          ) : (
+            <div class="w-full h-full bg-accent-300 flex items-center justify-center">
+              <span class="text-black font-bold text-xl">No image</span>
             </div>
-					)}
-					<h1 class="text-xl font-heading mb-2">{title}</h1>
-				</figure>
-				<div class="px-2 py-2 text-left h-full">
-					 <p class="text-base mb-4">{pubDate}</p>
-					 <p class="text-xs mb-4 line-clamp-4">
-						{description}
-					 </p>
-					 <strong class="hover:underline decoration-2 bottom-0 mt-auto">Read More</strong>
-				</div>
-		 </article>
-	</a>
+          )
+        }
+      </figure>
+      <h1 class="text-2xl font-heading mb-2 overflow-hidden text-ellipsis whitespace-nowrap">{truncateText(title, 50)}</h1>
+      <p class="text-base bg-red-400 w-fit p-1 mb-2">{pubDate}</p>
+      <p class="text-sm mb-4 overflow-hidden" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
+        {truncateText(description, 150)}
+      </p>
+    </article>
+  </a>
 </div>

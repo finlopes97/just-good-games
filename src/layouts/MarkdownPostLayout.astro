@@ -14,7 +14,9 @@ const { frontmatter } = Astro.props;
 </style>
 
 <html lang="en">
-  <Head title={frontmatter.title} />
+  <head>
+    <Head title={frontmatter.title} />
+  </head>
   <body class="bg-background-100 text-foreground-500 min-h-screen font-body">
     <Header />
     <main class="min-h-screen flex flex-col justify-betwen">

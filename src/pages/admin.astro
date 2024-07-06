@@ -6,20 +6,26 @@
     <meta name="robots" content="noindex" />
     <link href="/admin/config.yml" type="text/yaml" rel="cms-config-url" />
     <title>Content Manager</title>
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const script = document.createElement("script");
+        script.src = "https://identity.netlify.com/v1/netlify-identity-widget.js";
+        script.onload = () => {
+          if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+              if (!user) {
+                window.netlifyIdentity.on("login", () => {
+                  document.location.href = "/admin/";
+                });
+              }
+            });
+          }
+        };
+        document.head.appendChild(script);
+      });
+    </script>
   </head>
   <body>
     <script src="https://unpkg.com/decap-cms@^3.1.2/dist/decap-cms.js"></script>
-    <script>
-      if (window.netlifyIdentity) {
-        window.netlifyIdentity.on("init", user => {
-          if (!user) {
-            window.netlifyIdentity.on("login", () => {
-              document.location.href = "/admin/";
-            });
-          }
-        });
-      }
-    </script>
   </body>
 </html>

@@ -7,7 +7,31 @@ const { title } = Astro.props;
 <html lang="en">
   <head>
     <Head title={title} />
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const script = document.createElement("script");
+        script.src = "https://identity.netlify.com/v1/netlify-identity-widget.js";
+        script.onload = () => {
+          if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+              if (!user) {
+                window.netlifyIdentity.on("login", () => {
+                  document.location.href = "/admin/";
+                });
+              }
+            });
+            if (window.location.hash && window.location.hash.includes('invite_token')) {
+              const token = window.location.hash.split('=')[1];
+              window.netlifyIdentity.open('signup');
+              window.netlifyIdentity.gotrue.acceptInvite(token, true)
+                .then(user => console.log('Invite accepted'))
+                .catch(err => console.error('Error accepting invite', err));
+            }
+          }
+        };
+        document.head.appendChild(script);
+      });
+    </script>
   </head>
   <body class="bg-body-300 text-foreground min-h-screen">
     <Header />
@@ -21,23 +45,5 @@ const { title } = Astro.props;
       </div>
       <Footer />
     </main>
-    <script>
-      if (window.netlifyIdentity) {
-        window.netlifyIdentity.on("init", user => {
-          if (!user) {
-            window.netlifyIdentity.on("login", () => {
-              document.location.href = "/admin/";
-            });
-          }
-        });
-      }
-      if (window.location.hash && window.location.hash.includes('invite_token')) {
-        const token = window.location.hash.split('=')[1];
-        window.netlifyIdentity.open('signup');
-        window.netlifyIdentity.gotrue.acceptInvite(token, true)
-          .then(user => console.log('Invite accepted'))
-          .catch(err => console.error('Error accepting invite', err));
-      }
-    </script>
   </body>
 </html>

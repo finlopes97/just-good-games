@@ -2,21 +2,24 @@ backend:
   name: git-gateway
   branch: main  # change this to your main branch name if different
 
-media_folder: "public/images"  # Media files will be stored in the repo under public/images
-public_folder: "/images"  # The src attribute for uploaded media will begin with /images
+media_folder: "public/images/posts"  # Media files will be stored in the repo under public/images
+public_folder: "/images/posts"  # The src attribute for uploaded media will begin with /images
 
 collections:
   - name: "posts"
     label: "Blog Posts"
     folder: "src/content/posts"
     create: true
+    format: "frontmatter"
     slug: "{{slug}}"
+    extension: "mdx"
     fields:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Publish Date", name: "pubDate", widget: "datetime" }
       - { label: "Description", name: "description", widget: "text" }
       - { label: "Author", name: "author", widget: "string" }
       - { label: "Tags", name: "tags", widget: "list" }
+      - { label: "Rating", name: "rating", widget: "number", value_type: "int" }
       - label: "Featured Image"
         name: "image"
         widget: "object"
@@ -24,4 +27,5 @@ collections:
         fields:
           - { label: "Image", name: "url", widget: "image" }
           - { label: "Alt Text", name: "alt", widget: "string" }
+          - { label: "Filename", name: "filename", widget: "string", pattern: ['^[^\\s]*$', 'Filename should not contain spaces'] }
       - { label: "Body", name: "body", widget: "markdown" }

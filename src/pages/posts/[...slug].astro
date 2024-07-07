@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import MarkdownPostLayout from '../../layouts/MarkdownPostLayout.astro';
 import Prose from '../../components/Prose.astro';
+import Score from '../../components/Score.astro';
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('posts');
@@ -17,5 +18,6 @@ const { Content } = await entry.render();
 <MarkdownPostLayout frontmatter={entry.data}>
   <Prose>
     <Content />
+    {entry.data.score && <Score score={entry.data.score} />}
   </Prose>
 </MarkdownPostLayout>

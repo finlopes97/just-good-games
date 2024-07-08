@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import BlogPostCard from "../components/BlogPostCard.astro";
+import NavLink from "../components/NavLink.astro";
 import { getCollection } from "astro:content";
 import { formatDate } from "../utils/dateFormatter";
 
@@ -13,7 +14,7 @@ const sortedPosts = allPosts.sort(
 );
 
 // Get the 3 most recent posts
-const recentPosts = sortedPosts.slice(0, 4);
+const recentPosts = sortedPosts.slice(0, 6);
 ---
 
 <style>
@@ -25,14 +26,12 @@ const recentPosts = sortedPosts.slice(0, 4);
 
 <Layout title={title}>
   <div>
-    <h1
-      class="text-4xl text-center md:text-5xl font-heading text-primary-600"
-    >
+    <h1 class="text-4xl text-center md:text-5xl font-heading text-primary-600">
       Just Good Games.
     </h1>
-    <div class="my-6">
+    <div class="my-6 flex flex-col items-center mx-24">
       <h2 class="text-3xl font-heading text-center mb-8">Latest Posts</h2>
-      <div class="flex flex-wrap justify-center gap-8">
+      <div class="w-full max-w-6xl flex flex-wrap justify-start gap-8">
         {
           recentPosts.map((post) => (
             <BlogPostCard
@@ -45,6 +44,9 @@ const recentPosts = sortedPosts.slice(0, 4);
           ))
         }
       </div>
+      <span class="mt-8">
+        <NavLink target="/archive" title="See more." />
+      </span>
     </div>
   </div>
 </Layout>

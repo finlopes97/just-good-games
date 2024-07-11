@@ -19,8 +19,7 @@ collections:
       - { label: "Description", name: "description", widget: "text" }
       - { label: "Author", name: "author", widget: "string" }
       - { label: "Tags", name: "tags", widget: "list" }
-      - { label: "Rating", name: "rating", widget: "number", value_type: "int" }
-      - label: "Featured Image"
+      - { label: "Featured", name: "featured", widget: "boolean", default: false }
         name: "image"
         widget: "object"
         required: false

@@ -1,0 +1,69 @@
+---
+import BlogPostCard from "../components/BlogPostCard.astro";
+import Layout from "../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const allPosts = await getCollection("posts");
+const featuredPosts = allPosts.filter(post => post.data.featured);
+const title = "Featured Games";
+
+// Function to group posts by year and month
+function groupPosts(posts) {
+  return posts.reduce((groups, post) => {
+    const date = new Date(post.data.pubDate);
+    const year = date.getFullYear();
+    const month = date.toLocaleString("default", { month: "long" });
+
+    if (!groups[year]) {
+      groups[year] = {};
+    }
+
+    if (!groups[year][month]) {
+      groups[year][month] = [];
+    }
+
+    groups[year][month].push(post);
+
+    return groups;
+  }, {});
+}
+
+const groupedPosts = groupPosts(featuredPosts);
+---
+
+<Layout title={title}>
+  <div>
+    <h1 class="text-2xl text-center md:text-3xl lg:text-4xl font-heading">
+      Featured Games
+    </h1>
+    <div>
+      {
+        Object.keys(groupedPosts)
+          .sort((a, b) => b - a)
+          .map((year) => (
+            <div>
+              <h2 class="text-xl font-subheading mb-4">{year}</h2>
+              {Object.keys(groupedPosts[year]).map((month) => (
+                <div class="pl-4 mb-2">
+                  <h3 class="text-lg font-subheading">{month}</h3>
+                  <ul class="pl-6 flex flex-col md:flex-row md:flex-wrap gap-4">
+                    {groupedPosts[year][month].map((post) => (
+                      <li class="list-none">
+                        <BlogPostCard
+                          url={`/posts/${post.slug}/`}
+                          title={post.data.title}
+                          pubDate={post.data.pubDate.toISOString().slice(0, 10)}
+                          description={post.data.description}
+                          image={post.data.image}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          ))
+      }
+    </div>
+  </div>
+</Layout>

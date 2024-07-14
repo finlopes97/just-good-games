@@ -45,8 +45,8 @@ const groupedPosts = groupPosts(allPosts);
               <h2 class="text-xl font-subheading mb-4">{year}</h2>
               {Object.keys(groupedPosts[year]).map((month) => (
                 <div class="pl-4 mb-2">
-                  <h3 class="text-lg font-subheading">{month}</h3>
-                  <ul class="pl-6 flex flex-col md:flex-row md:flex-wrap gap-4">
+                  <h3 class="text-lg font-subheading bg-accent-400 rotate-1 max-w-fit p-1 m-4">{month}</h3>
+                  <ul class="pl-6 flex flex-col md:flex-row md:flex-wrap w-full md:max-w-6xl justify-start gap-8">
                     {groupedPosts[year][month].map((post) => (
                       <li class="list-none">
                         <BlogPostCard

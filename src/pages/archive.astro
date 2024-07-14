@@ -3,6 +3,7 @@ import BlogPost from "../components/BlogPost.astro";
 import BlogPostCard from "../components/BlogPostCard.astro";
 import Layout from "../layouts/Layout.astro";
 import { getCollection } from "astro:content";
+import { formatDate } from "../utils/dateFormatter";
 
 const allPosts = await getCollection("posts");
 const title = "Archive";
@@ -33,9 +34,7 @@ const groupedPosts = groupPosts(allPosts);
 
 <Layout title={title}>
   <div>
-    <h1 class="text-2xl text-center md:text-3xl font-heading">
-      Archive.
-    </h1>
+    <h1 class="text-2xl text-center md:text-3xl font-heading">Archive.</h1>
     <div>
       {
         Object.keys(groupedPosts)
@@ -45,14 +44,16 @@ const groupedPosts = groupPosts(allPosts);
               <h2 class="text-xl font-subheading mb-4">{year}</h2>
               {Object.keys(groupedPosts[year]).map((month) => (
                 <div class="pl-4 mb-2">
-                  <h3 class="text-lg font-subheading bg-accent-400 rotate-1 max-w-fit p-1 m-4">{month}</h3>
+                  <h3 class="text-lg font-subheading bg-accent-400 rotate-1 max-w-fit p-1 m-4">
+                    {month}
+                  </h3>
                   <ul class="pl-6 flex flex-col md:flex-row md:flex-wrap w-full md:max-w-6xl justify-start gap-8">
                     {groupedPosts[year][month].map((post) => (
                       <li class="list-none">
                         <BlogPostCard
                           url={`/posts/${post.slug}/`}
                           title={post.data.title}
-                          pubDate={post.data.pubDate.toISOString().slice(0, 10)}
+                          pubDate={formatDate(post.data.pubDate)}
                           description={post.data.description}
                           image={post.data.image}
                         />

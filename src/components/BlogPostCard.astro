@@ -37,8 +37,9 @@ const truncateText = (text, maxLength) => {
       <h1 class="text-2xl font-heading mb-2 overflow-hidden text-ellipsis whitespace-nowrap">{truncateText(title, 50)}</h1>
       <p class="text-base bg-red-400 w-fit p-1 mb-2">{pubDate}</p>
       <p class="text-sm mb-4 overflow-hidden" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
-        {truncateText(description, 150)}
+        {truncateText(description, 90)}
       </p>
+      <p class="bg-accent-400 font-body font-bold w-fit p-1">Read more...</p>
     </article>
   </a>
 </div>

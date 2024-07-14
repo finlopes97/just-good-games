@@ -2,9 +2,10 @@
 import BlogPostCard from "../components/BlogPostCard.astro";
 import Layout from "../layouts/Layout.astro";
 import { getCollection } from "astro:content";
+import { formatDate } from "../utils/dateFormatter";
 
 const allPosts = await getCollection("posts");
-const featuredPosts = allPosts.filter(post => post.data.featured);
+const featuredPosts = allPosts.filter((post) => post.data.featured);
 const title = "Featured Games";
 
 // Function to group posts by year and month
@@ -52,7 +53,7 @@ const groupedPosts = groupPosts(featuredPosts);
                         <BlogPostCard
                           url={`/posts/${post.slug}/`}
                           title={post.data.title}
-                          pubDate={post.data.pubDate.toISOString().slice(0, 10)}
+                          pubDate={formatDate(post.data.pubDate)}
                           description={post.data.description}
                           image={post.data.image}
                         />

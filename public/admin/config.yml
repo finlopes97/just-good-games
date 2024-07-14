@@ -22,7 +22,7 @@ collections:
         widget: "object"
         required: false
         fields:
-          - { label: "Image", name: "url", widget: "image", required: "false" }
-          - { label: "Alt Text", name: "alt", widget: "string", required: "false" }
-          - { label: "Filename", name: "filename", widget: "string", required: "false", pattern: ['^[^\\s]*$', 'Filename should not contain spaces'] }
+          - { label: "Image", name: "url", widget: "image", required: false }
+          - { label: "Alt Text", name: "alt", widget: "string", required: false }
+          - { label: "Filename", name: "filename", widget: "string", required: false, pattern: ['^[^\\s]*$', 'Filename should not contain spaces'] }
       - { label: "Body", name: "body", widget: "markdown" }

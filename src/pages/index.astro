@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import BlogPostCard from "../components/BlogPostCard.astro";
 import NavLink from "../components/NavLink.astro";
+import FeaturedBanner from "../components/FeaturedBanner.astro";
 import { getCollection } from "astro:content";
 import { formatDate } from "../utils/dateFormatter";
 
@@ -15,6 +16,10 @@ const sortedPosts = allPosts.sort(
 
 // Get the 3 most recent posts
 const recentPosts = sortedPosts.slice(0, 6);
+
+// Get the latest featured game
+const featuredPosts = sortedPosts.filter((post) => post.data.featured);
+const latestFeaturedGame = featuredPosts[0]; // This will be the most recent featured game
 ---
 
 <style>
@@ -29,6 +34,15 @@ const recentPosts = sortedPosts.slice(0, 6);
     <h1 class="text-4xl text-center md:text-5xl font-heading text-primary-600">
       Just Good Games.
     </h1>
+    {latestFeaturedGame && (
+      <FeaturedBanner
+        title={latestFeaturedGame.data.title}
+        url={`/posts/${latestFeaturedGame.slug}/`}
+        pubDate={formatDate(latestFeaturedGame.data.pubDate)}
+        description={latestFeaturedGame.data.description}
+        image={latestFeaturedGame.data.image}
+      />
+    )}
     <div class="my-6 flex flex-col">
       <h2 class="text-3xl font-heading text-center mb-8">Latest Posts</h2>
       <div class="w-full md:max-w-6xl flex flex-wrap justify-center gap-8">

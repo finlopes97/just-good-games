@@ -1,30 +1,72 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import BlogPost from "../../components/BlogPost.astro";
+import BlogPostCard from "../../components/BlogPostCard.astro";
+import Tag from "../../components/Tag.astro";
+import { formatDate } from "../../utils/dateFormatter";
 
 export async function getStaticPaths() {
   const allPosts = await getCollection("posts");
-  const uniqueTags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
-
+  const uniqueTags = [
+    ...new Set(allPosts.map((post) => post.data.tags).flat()),
+  ];
   return uniqueTags.map((tag) => {
     const filteredPosts = allPosts.filter((post) =>
       post.data.tags.includes(tag)
     );
     return {
       params: { tag },
-      props: { posts: filteredPosts },
+      props: { posts: filteredPosts, allTags: uniqueTags, allPosts: allPosts },
     };
   });
 }
 
 const { tag } = Astro.params;
-const { posts } = Astro.props;
+const { posts, allTags, allPosts } = Astro.props;
 ---
 
 <Layout pageTitle={tag}>
-  <p>Posts tagged with {tag}</p>
-  <ul>
-    { posts.map((post) => <BlogPost url={`/posts/${post.slug}/`} title={post.data.title} />) }
-  </ul>
+  <div class="max-w-4xl mx-auto px-4">
+    <h1
+      class="text-5xl font-bold mb-8 transform -rotate-2 inline-block bg-black text-white p-4"
+    >
+      Posts tagged with <span class="text-yellow-400">{tag}</span>
+    </h1>
+
+    <div class="mb-12 p-6 bg-gray-100 border-4 border-black">
+      <h2
+        class="text-2xl font-bold mb-4 transform rotate-1 inline-block bg-white p-2"
+      >
+        All Tags:
+      </h2>
+      <div>
+        {
+          allTags.map((t) => (
+            <Tag
+              name={t}
+              count={
+                allPosts.filter((post) => post.data.tags.includes(t)).length
+              }
+            />
+          ))
+        }
+      </div>
+    </div>
+
+    <ul class="space-y-8 bg-white p-6 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+      {
+        posts.map((post) => (
+          <li>
+            <BlogPostCard
+              url={`/posts/${post.slug}/`}
+              title={post.data.title}
+              pubDate={formatDate(post.data.pubDate)}
+              description={post.data.description}
+              image={post.data.image}
+            />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
 </Layout>

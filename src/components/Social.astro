@@ -3,6 +3,6 @@ import { Icon } from 'astro-icon/components'
 const { platform, userName, iconName } = Astro.props;
 ---
 
-<a href={`https://${platform}/${userName}`}>
+<a href={`https://${platform}/${userName}`} target="_blank">
     <Icon name={`mdi:${iconName}`} class="transform duration-300 hover:text-accent hover:-translate-y-1" />
 </a>

@@ -1,0 +1,60 @@
+---
+import { getGameId, getBestDeal } from "../utils/gameDeals";
+import NavLink from "./NavLink.astro";
+
+interface Props {
+  gameTitle: string;
+}
+
+const { gameTitle } = Astro.props;
+
+let error = null;
+let bestDeal = null;
+
+try {
+  const gameId = await getGameId(gameTitle);
+  if (gameId) {
+    bestDeal = await getBestDeal(gameId);
+  } else {
+    error = `Game "${gameTitle}" not found`;
+  }
+} catch (e) {
+  error = e instanceof Error ? e.message : "An unexpected error occurred";
+}
+---
+
+{
+  error && (
+    <div class="bg-red-100 border-4 border-red-500 shadow-[2px_2px_0px_rgba(0,0,0,1)] p-4 my-4">
+      <h3 class="text-xl font-bold mb-2">
+        Error fetching deal for {gameTitle}
+      </h3>
+      <p class="font-body">{error}</p>
+    </div>
+  )
+}
+
+{
+  bestDeal && (
+    <div class="bg-yellow-300 border-4 border-black shadow-[2px_2px_0px_rgba(0,0,0,1)] p-4 my-4">
+      <h3 class="text-2xl font-heading">Best Deal for {gameTitle}</h3>
+      <div class="flex flex-col gap-1 mb-4">
+        <p class="font-body">Store: {bestDeal.shop.name}</p>
+        <p class="font-body">
+          Price: AU${bestDeal.price.amount} (was ${bestDeal.regular.amount})
+        </p>
+        <p class="font-body">Discount: {bestDeal.cut}% off</p>
+      </div>
+      <NavLink target={bestDeal.url} title="Get Deal" />
+    </div>
+  )
+}
+
+{
+  !error && !bestDeal && (
+    <div class="bg-white border-4 border-black shadow-[2px_2px_0px_rgba(0,0,0,1)] p-4 my-4">
+      <h3 class="text-xl font-bold mb-2">No deals found for {gameTitle}</h3>
+      <p class="font-body">Try checking back later for deals on this game.</p>
+    </div>
+  )
+}

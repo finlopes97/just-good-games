@@ -9,6 +9,7 @@ const postsCollection = defineCollection({
     author: z.string(),
     tags: z.array(z.string()),
     featured: z.boolean().default(false),
+    gameTitle: z.string().optional(),
     image: z.object({
       url: z.string(),
       alt: z.string()

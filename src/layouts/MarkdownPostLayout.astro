@@ -2,6 +2,7 @@
 import Head from "../components/Head.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import GameDeal from "../components/GameDeal.astro";
 import { formatDate } from "../utils/dateFormatter";
 const { frontmatter } = Astro.props;
 ---
@@ -58,6 +59,7 @@ const { frontmatter } = Astro.props;
           </ul>
           <article class="mx-auto max-w-post-85">
             <slot />
+            <GameDeal gameTitle={frontmatter.gameTitle} />
           </article>
         </div>
       </div>

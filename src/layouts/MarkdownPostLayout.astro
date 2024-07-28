@@ -60,8 +60,10 @@ const { frontmatter } = Astro.props;
           </ul>
           <article class="mx-auto max-w-post-85">
             <slot />
-            <GameDeal gameTitle={frontmatter.gameTitle} />
-            <Specifications />
+            <div class="flex flex-col justify-center gap-2 md:flex-row">
+              <GameDeal gameTitle={frontmatter.gameTitle} />
+              <Specifications />
+            </div>
           </article>
         </div>
       </div>

@@ -1,5 +1,6 @@
 ---
 const { title, url, pubDate, description, image } = Astro.props;
+
 // Function to truncate text
 const truncateText = (text, maxLength) => {
   if (text.length <= maxLength) return text;
@@ -7,53 +8,51 @@ const truncateText = (text, maxLength) => {
 };
 ---
 
-<div class="flex flex-col mx-auto w-full md:w-1/2 h-auto">
-  <h2
-    class="text-2xl text-center md:text-3xl font-heading justify-center mx-auto mb-4"
-  >
-    Latest Featured Game
-  </h2>
-  <div
-    class="flex flex-col md:flex-row gap-6 p-4 md:p-8 bg-white border-4 border-black shadow-[4px_4px_0px_rgb(0,0,0,1)]"
-  >
-    <figure class="w-full md:w-1/2 h-auto border-black overflow-hidden">
-      {
-        image ? (
-          <img
-            src={image.url}
-            alt={image.alt}
-            class="w-full h-full object-cover"
-          />
-        ) : (
-          <div class="w-full h-full bg-accent-300 flex items-center justify-center">
-            <span class="text-black font-bold text-xl">No image</span>
-          </div>
-        )
-      }
-    </figure>
-    <div class="flex flex-col">
-      <h1
-        class="text-3xl font-heading mb-2 overflow-hidden text-ellipsis whitespace-nowrap"
+<div
+  class="w-full max-w-4xl mx-auto my-8 p-6 bg-accent-200 border-black border-4 shadow-[8px_8px_0px_rgba(0,0,0,1)] md:shadow-[12px_12px_0px_rgba(0,0,0,1)] md:hover:shadow-[8px_8px_0px_rgba(0,0,0,1)] transition-shadow duration-300 ease-in-out"
+>
+  <a href={url} class="block">
+    <article class="flex flex-col md:flex-row">
+      <figure
+        class="w-full md:w-1/2 h-64 md:h-auto border-black border-4 overflow-hidden mb-4 md:mb-0 md:mr-6"
       >
-        {truncateText(title, 50)}
-      </h1>
-      <div class="flex flex-row md:flex-col justify-center align-middle gap-4 md:gap-2">
+        {
+          image ? (
+            <img
+              src={image.url}
+              alt={image.alt}
+              class="w-full h-full object-cover"
+            />
+          ) : (
+            <div class="w-full h-full bg-accent-400 flex items-center justify-center">
+              <span class="text-black font-bold text-2xl">Featured Game</span>
+            </div>
+          )
+        }
+      </figure>
+      <div class="flex flex-col justify-between md:w-1/2">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-heading mb-4 leading-tight">
+            {truncateText(title, 70)}
+          </h2>
+          <p
+            class="text-lg bg-accent-400 w-fit p-2 mb-4 shadow-[4px_4px_0px_rgba(0,0,0,1)]"
+          >
+            {pubDate}
+          </p>
+          <p
+            class="text-base mb-6 overflow-hidden"
+            style="display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;"
+          >
+            {truncateText(description, 150)}
+          </p>
+        </div>
         <p
-          class="text-base bg-red-400 w-fit p-1 mb-2 shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+          class="bg-primary-500 text-white font-body font-bold text-lg w-fit p-2 shadow-[4px_4px_0px_rgba(0,0,0,1)] transition-colors duration-200 ease-in-out hover:bg-primary-600"
         >
-          {pubDate}
-        </p>
-        <p
-          class="font-body font-bold w-fit p-1 bg-accent-500
-    hover:bg-accent-400
-    shadow-[2px_2px_0px_rgba(0,0,0,1)]
-    md:shadow-[4px_4px_0px_rgba(0,0,0,1)]
-    md:hover:shadow-[2px_2px_0px_rgba(0,0,0,1)]
-    transition ease-in-out duration-300"
-        >
-          <a href={url}>Read more...</a>
+          Read Featured Game Review
         </p>
       </div>
-    </div>
-  </div>
+    </article>
+  </a>
 </div>

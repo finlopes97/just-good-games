@@ -39,11 +39,14 @@ try {
     <div class="bg-body-300 border-4 border-black shadow-[2px_2px_0px_rgba(0,0,0,1)] p-4 my-4">
       <h3 class="text-2xl font-heading">Best Deal for {gameTitle}</h3>
       <div class="flex flex-col gap-1 mb-4">
-        <p class="font-body">Store: {bestDeal.shop.name}</p>
+        <p class="font-body"><span class="font-bold font-mono uppercase tracking-wide">Store:</span> {bestDeal.shop.name}</p>
         <p class="font-body">
-          Price: AU${bestDeal.price.amount} (was ${bestDeal.regular.amount})
+          <span class="font-bold font-mono uppercase tracking-wide">Price:</span> AU${bestDeal.price.amount} (was ${bestDeal.regular.amount})
         </p>
-        <p class="font-body">Discount: {bestDeal.cut}% off</p>
+        <p class="font-body"><span class="font-bold font-mono uppercase tracking-wide">Discount:</span> {bestDeal.cut}% off</p>
+        <a href="https://isthereanydeal.com/" target="_blank" class="font-bold ">
+          Deals provided by <span class="underline text-purple-800">IsThereAnyDeal.com</span>
+        </a>
       </div>
       <NavLink target={bestDeal.url} title="Get Deal" />
     </div>

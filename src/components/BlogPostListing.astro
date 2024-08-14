@@ -1,0 +1,19 @@
+---
+const { title, url, pubDate } = Astro.props;
+---
+
+<li>
+  <a
+    class="font-heading
+      text-lg
+      tracking-wider
+      p-2
+    bg-accent-400
+    hover:bg-accent-500
+      shadow-[2px_2px_0px_rgba(0,0,0,1)]
+      md:shadow-[4px_4px_0px_rgba(0,0,0,1)]
+      md:hover:shadow-[2px_2px_0px_rgba(0,0,0,1)]
+      transition ease-in-out duration-300"
+    href={url}><strong>{pubDate}</strong> - <em>{title}</em></a
+  >
+</li>

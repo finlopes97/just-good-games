@@ -29,7 +29,7 @@ const { frontmatter } = Astro.props;
           <p class="font-subheading mb-4">
             <em>{frontmatter.description}</em>
           </p>
-          <div class="flex flex-col md:flex-row gap-4 mb-6">
+          <div class="flex flex-col md:flex-row gap-4 mb-2">
             <p
               class="text-sm font-bold bg-body-300 p-2 transform rotate-1 inline-block"
             >
@@ -41,6 +41,7 @@ const { frontmatter } = Astro.props;
               <strong>Written by</strong>: {frontmatter.author}
             </p>
           </div>
+          <h4 class="text-xl font-subheading mb-2">Tags:</h4>
           <ul class="flex flex-wrap gap-2 mb-6">
             {
               frontmatter.tags.map((tag) => (

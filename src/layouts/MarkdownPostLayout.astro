@@ -6,16 +6,15 @@ import { formatDate } from "../utils/dateFormatter";
 const { frontmatter } = Astro.props;
 ---
 
-<style>
-  h1 {
-    -webkit-text-stroke-width: 2px;
-    -webkit-text-stroke-color: black;
-  }
-</style>
-
 <html lang="en">
   <head>
-    <Head title={frontmatter.title} />
+    <Head 
+      title={frontmatter.title} 
+      description={frontmatter.description}
+      pubDate={frontmatter.pubDate}
+      author={frontmatter.author}
+      image={frontmatter.image}
+    />
   </head>
   <body class="bg-background-100 text-foreground-500 min-h-screen font-body">
     <Header />
@@ -44,13 +43,13 @@ const { frontmatter } = Astro.props;
           </div>
           <ul class="flex flex-wrap gap-2 mb-6">
             {
-              frontmatter.tags.map((tag: unknown) => (
+              frontmatter.tags.map((tag) => (
                 <li class="bg-accent-200 px-2 py-1 transform -rotate-1">
                   <a
                     href={`/tags/${tag}`}
                     class="hover:text-primary-600 hover:underline"
                   >
-                    {tag};
+                    {tag}
                   </a>
                 </li>
               ))

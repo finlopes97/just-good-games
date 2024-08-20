@@ -7,17 +7,18 @@
   method="post"
   target="popupwindow"
   onsubmit="window.open('https://buttondown.com/kyle.finlayson1997', 'popupwindow')"
-  class="bg-secondary-300 p-6 border-4 border-black shadow-[8px_8px_0_0_#000]"
+  class="bg-secondary-300 p-4 md:p-6 border-4 border-black shadow-[8px_8px_0_0_#000]"
 >
-  <label for="bd-email" class="block font-bold text-black mb-2"
+  <label for="bd-email" class="block font-bold text-black mb-2 md:mb-4"
     >Enter your email</label
   >
-  <input
+  <div class="flex flex-col gap-4 w-full mx-auto justify-center align-middle md:flex-row">
+      <input
     type="email"
     name="email"
     id="bd-email"
     required
-    class="bg-white text-black p-2 border-2 border-black mb-4"
+    class="bg-white text-black p-2 border-2 border-black md:w-1/2"
   />
   <input
     type="submit"
@@ -27,13 +28,12 @@
   border-black
   bg-accent-500
   hover:bg-accent-400
+  hover:-translate-y-1
   transition ease-in-out duration-300"
   />
+  </div>
+
   <p class="mt-4 text-black bg-red-400 w-fit mx-auto p-2 rotate-1">
-    <a
-      href="https://buttondown.com/refer/kyle.finlayson1997"
-      target="_blank"
-      class="underline hover:no-underline">Powered by Buttondown.</a
-    >
+    Powered by Buttondown.
   </p>
 </form>

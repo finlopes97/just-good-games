@@ -3,7 +3,6 @@ import BlogPostListing from "../components/BlogPostListing.astro";
 import Layout from "../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 import { formatDate } from "../utils/dateFormatter";
-import { paginate } from "../utils/paginate"; // Utility function for pagination
 
 const allPosts = await getCollection("posts");
 const title = "Archive";
@@ -30,23 +29,11 @@ function groupPosts(posts) {
 }
 
 const groupedPosts = groupPosts(allPosts);
-
-// Pagination settings
-const postsPerPage = 10;
-const totalPosts = allPosts.length;
-const totalPages = Math.ceil(totalPosts / postsPerPage);
-
-// Get the current page from the query parameter
-const currentPage = parseInt(
-  new URLSearchParams(Astro.request.url).get("page") || "1",
-  10
-);
-const paginatedPosts = paginate(allPosts, currentPage, postsPerPage);
 ---
 
 <Layout title={title}>
   <div>
-    <h1 class="text-2xl text-center md:text-5xl font-heading">Archive.</h1>
+    <h1 class="text-2xl text-center md:text-5xl font-heading">Archive</h1>
     <div>
       {
         Object.keys(groupedPosts)
@@ -60,7 +47,7 @@ const paginatedPosts = paginate(allPosts, currentPage, postsPerPage);
                     {month}
                   </h3>
                   <ul class="flex flex-col ml-8 mr-12 gap-6">
-                    {paginatedPosts.map((post) => (
+                    {groupedPosts[year][month].map((post) => (
                       <BlogPostListing
                         url={`/posts/${post.slug}/`}
                         title={post.data.title}
@@ -72,23 +59,6 @@ const paginatedPosts = paginate(allPosts, currentPage, postsPerPage);
               ))}
             </div>
           ))
-      }
-    </div>
-
-    <div class="pagination mt-4">
-      {
-        currentPage > 1 && (
-          <a href={`?page=${currentPage - 1}`} class="pagination-prev">
-            Previous
-          </a>
-        )
-      }
-      {
-        currentPage < totalPages && (
-          <a href={`?page=${currentPage + 1}`} class="pagination-next">
-            Next
-          </a>
-        )
       }
     </div>
   </div>

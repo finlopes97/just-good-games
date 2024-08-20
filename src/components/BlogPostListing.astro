@@ -1,11 +1,19 @@
 ---
 const { title, url, pubDate } = Astro.props;
+// Function to truncate text
+const truncateText = (text, maxLength) => {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength) + "...";
+};
 ---
 
-<li>
+<li class="list-none w-full">
   <a
     class="font-heading
-      text-lg
+      text-md md:text-lg
+      flex flex-col md:flex-row justify-between flex-nowrap
+      w-full
+      text-ellipsis whitespace-wrap
       tracking-wider
       p-2
     bg-accent-400
@@ -14,6 +22,6 @@ const { title, url, pubDate } = Astro.props;
       md:shadow-[4px_4px_0px_rgba(0,0,0,1)]
       md:hover:shadow-[2px_2px_0px_rgba(0,0,0,1)]
       transition ease-in-out duration-300"
-    href={url}><strong>{pubDate}</strong> - <em>{title}</em></a
+    href={url}><em>{truncateText(title, 50)}</em> <strong>{pubDate}</strong></a
   >
 </li>

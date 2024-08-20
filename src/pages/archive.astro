@@ -3,6 +3,7 @@ import BlogPostListing from "../components/BlogPostListing.astro";
 import Layout from "../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 import { formatDate } from "../utils/dateFormatter";
+import { paginate } from "../utils/paginate"; // Utility function for pagination
 
 const allPosts = await getCollection("posts");
 const title = "Archive";
@@ -29,6 +30,18 @@ function groupPosts(posts) {
 }
 
 const groupedPosts = groupPosts(allPosts);
+
+// Pagination settings
+const postsPerPage = 10;
+const totalPosts = allPosts.length;
+const totalPages = Math.ceil(totalPosts / postsPerPage);
+
+// Get the current page from the query parameter
+const currentPage = parseInt(
+  new URLSearchParams(Astro.request.url).get("page") || "1",
+  10
+);
+const paginatedPosts = paginate(allPosts, currentPage, postsPerPage);
 ---
 
 <Layout title={title}>
@@ -39,28 +52,43 @@ const groupedPosts = groupPosts(allPosts);
         Object.keys(groupedPosts)
           .sort((a, b) => b - a)
           .map((year) => (
-            <div>
+            <div class="ml-8">
               <h2 class="text-xl font-subheading mb-4">{year}</h2>
               {Object.keys(groupedPosts[year]).map((month) => (
-                <div class="md:pl-4 mb-2">
+                <div class="mb-2">
                   <h3 class="text-lg font-subheading bg-accent-400 rotate-1 max-w-fit p-1 m-4">
                     {month}
                   </h3>
-                  <ul class="flex flex-col md:pl-6 md:flex-row md:flex-wrap w-full md:max-w-6xl justify-start gap-8">
-                    {groupedPosts[year][month].map((post) => (
-                      <li class="list-none">
-                        <BlogPostListing
-                          url={`/posts/${post.slug}/`}
-                          title={post.data.title}
-                          pubDate={formatDate(post.data.pubDate)}
-                        />
-                      </li>
+                  <ul class="flex flex-col ml-8 mr-12 gap-6">
+                    {paginatedPosts.map((post) => (
+                      <BlogPostListing
+                        url={`/posts/${post.slug}/`}
+                        title={post.data.title}
+                        pubDate={formatDate(post.data.pubDate)}
+                      />
                     ))}
                   </ul>
                 </div>
               ))}
             </div>
           ))
+      }
+    </div>
+
+    <div class="pagination mt-4">
+      {
+        currentPage > 1 && (
+          <a href={`?page=${currentPage - 1}`} class="pagination-prev">
+            Previous
+          </a>
+        )
+      }
+      {
+        currentPage < totalPages && (
+          <a href={`?page=${currentPage + 1}`} class="pagination-next">
+            Next
+          </a>
+        )
       }
     </div>
   </div>

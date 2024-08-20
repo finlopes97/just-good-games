@@ -1,8 +1,8 @@
 backend:
   name: git-gateway
-  branch: main # change this to your main branch name if different
-media_folder: "public/images/posts" # Media files will be stored in the repo under public/images
-public_folder: "/images/posts" # The src attribute for uploaded media will begin with /images
+  branch: main
+media_folder: "public/images/posts"
+public_folder: "/images/posts"
 collections:
   - name: "posts"
     label: "Blog Posts"

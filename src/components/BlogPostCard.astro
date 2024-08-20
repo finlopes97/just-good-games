@@ -1,9 +1,14 @@
 ---
-const { title, url, pubDate, description, image } = Astro.props;
+const { title, url, pubDate, description, image, tags } = Astro.props;
 // Function to truncate text
 const truncateText = (text, maxLength) => {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength) + "...";
+};
+// Function to return just the first three tags
+const getTags = (tags) => {
+  if (tags.length <= 3) return tags;
+  return tags.slice(0, 3);
 };
 ---
 
@@ -20,7 +25,7 @@ const truncateText = (text, maxLength) => {
 >
   <a href={url} class="block h-full">
     <article class="flex flex-col h-full">
-      <figure class="w-full h-40 border-black border-b-2 overflow-hidden mb-4">
+      <figure class="w-full h-50 border-black border-b-2 overflow-hidden mb-4">
         {
           image ? (
             <img
@@ -35,16 +40,24 @@ const truncateText = (text, maxLength) => {
           )
         }
       </figure>
-      <h1
-        class="text-2xl font-heading mb-2 overflow-hidden text-ellipsis whitespace-nowrap"
-      >
+      <h1 class="text-2xl font-heading mb-2 text-ellipsis whitespace-wrap">
         {truncateText(title, 50)}
       </h1>
-      <p
-        class="text-base bg-red-400 w-fit p-1 mb-2 shadow-[2px_2px_0px_rgba(0,0,0,1)]"
-      >
-        {pubDate}
-      </p>
+      <div class="flex flex-row mb-2">
+        <p
+          class="text-base bg-red-400 w-fit p-1 shadow-[2px_2px_0px_rgba(0,0,0,1)] mr-4"
+        >
+          {pubDate}
+        </p>
+        {
+          getTags(tags).map((tag) => (
+            <p class="bg-accent-400 w-fit p-1 shadow-[2px_2px_0px_rgba(0,0,0,1)] mr-2">
+              {tag}
+            </p>
+          ))
+        }
+      </div>
+
       <p
         class="text-sm mb-4 overflow-hidden"
         style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;"
@@ -52,7 +65,7 @@ const truncateText = (text, maxLength) => {
         {truncateText(description, 90)}
       </p>
       <p
-        class="bg-accent-400 font-body font-bold w-fit p-1 shadow-[2px_2px_0px_rgba(0,0,0,1)] transition-colors duration-200 ease-in-out hover:bg-accent-500"
+        class="bg-accent-400 font-body w-fit p-1 shadow-[2px_2px_0px_rgba(0,0,0,1)] transition-colors duration-200 ease-in-out hover:bg-accent-500"
       >
         Read more...
       </p>

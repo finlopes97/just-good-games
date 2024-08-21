@@ -9,10 +9,10 @@ export async function GET(context) {
     description: 'Find reviews and articles about new release games',
     site: context.site,
     items: allPosts.map((post) => ({
-      title: post.data.ttitle,
+      title: post.data.title,
       pubDate: post.data.pubDate,
       description: post.data.description,
-      url: `posts/${post.slug}`,
+      url: `${context.site}/posts/${post.slug}`,
     customData: `<language>en-us</language>`,
     })),
   });

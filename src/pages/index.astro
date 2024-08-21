@@ -37,6 +37,9 @@ const latestFeaturedGame = featuredPosts[0]; // This will be the most recent fea
     <h1 class="text-4xl text-center md:text-5xl font-heading text-primary-600">
       Just Good Games.
     </h1>
+    <h2 class="text-3xl font-heading text-center mb-8">
+      Featured Game
+    </h2>
     {
       latestFeaturedGame && (
         <FeaturedBanner
@@ -46,6 +49,10 @@ const latestFeaturedGame = featuredPosts[0]; // This will be the most recent fea
           description={latestFeaturedGame.data.description}
           image={latestFeaturedGame.data.image}
         />
+      ) || (
+        <p class="text-center text-xl font-base">
+          It appears there isn't a featured game at the moment...
+        </p>
       )
     }
     <div class="my-12 p-6 bg-white border-black border-4 rounded-lg text-center">
@@ -57,7 +64,7 @@ const latestFeaturedGame = featuredPosts[0]; // This will be the most recent fea
       <h4 class="mt-4 text-2xl font-bold font-heading">
         Or use your favourite RSS reader.
       </h4>
-      <div class="mt-2 flex flex-col md:flex-row justify-center mx-auto gap-4">
+      <div class="mt-2 flex flex-col gap-2 items-center md:flex-row md:justify-center md:gap-4 w-full">
         <RSSReaderLink 
           target="https://www.inoreader.com/?add_feed="
           target_img="https://www.inoreader.com/images/landing/v2/brand-portal/subscribe-btn-x2.png"

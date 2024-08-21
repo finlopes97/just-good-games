@@ -4,8 +4,10 @@ import BlogPostCard from "../components/BlogPostCard.astro";
 import NavLink from "../components/NavLink.astro";
 import FeaturedBanner from "../components/FeaturedBanner.astro";
 import Subscribe from "../components/Subscribe.astro";
+import RSSReaderLink from "@components/RSSReaderLink.astro";
 import { getCollection } from "astro:content";
 import { formatDate } from "../utils/dateFormatter";
+import RSS from "@components/RSS.astro";
 
 const title = "Home";
 
@@ -47,11 +49,27 @@ const latestFeaturedGame = featuredPosts[0]; // This will be the most recent fea
       )
     }
     <div class="my-12 p-6 bg-white border-black border-4 rounded-lg text-center">
-      <h2 class="text-2xl font-bold mb-4">Stay Updated!</h2>
+      <h2 class="text-3xl font-bold mb-4 font-heading">Stay Updated!</h2>
       <p class="mb-4">
         Subscribe to our newsletter for the latest updates and blog posts.
       </p>
       <Subscribe />
+      <h4 class="mt-4 text-2xl font-bold font-heading">
+        Or use your favourite RSS reader.
+      </h4>
+      <div class="mt-2 flex flex-col md:flex-row justify-center mx-auto gap-4">
+        <RSSReaderLink 
+          target="https://www.inoreader.com/?add_feed="
+          target_img="https://www.inoreader.com/images/landing/v2/brand-portal/subscribe-btn-x2.png"
+          target_name="Inoreader"
+        />
+        <RSSReaderLink
+          target="https://feedly.com/i/subscription/feed/"
+          target_img="https://s1.feedly.com/legacy/feedly-follow-rectangle-flat-medium_2x.png"
+          target_name="Feedly"
+        />
+        <RSS />
+      </div>
     </div>
     <div class="my-6 flex flex-col">
       <h2 class="text-3xl font-heading text-center mb-8">Latest Posts</h2>

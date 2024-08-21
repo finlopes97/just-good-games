@@ -1,0 +1,17 @@
+---
+const { target, target_img, target_name } = Astro.props;
+---
+
+<a
+  href=`${target}https://justgood.games/rss.xml`
+  target="_blank"
+  rel="noopener noreferrer"
+  class="my-auto transition-all
+  transform duration-300 hover:-translate-y-1"
+>
+  <img
+    src={target_img}
+    alt=`Follow on ${target_name}`
+    style="max-width:150px; max-height:100px;"
+  />
+</a>

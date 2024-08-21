@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import { remarkReadingTime } from './remark-reading-time.mjs';
 import tailwind from "@astrojs/tailwind";
 import mdx from "@astrojs/mdx";
 import icon from "astro-icon";
@@ -12,5 +13,8 @@ export default defineConfig({
   // Enable TypeScript
   typescript: {
     strict: true
-  }
+  },
+  markdown: {
+    remarkPlugins: [remarkReadingTime],
+  },
 });

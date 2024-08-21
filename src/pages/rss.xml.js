@@ -10,24 +10,21 @@ export async function GET(context) {
     stylesheet: '/rss/styles.xsl',
     title: 'Just Good Games',
     description: 'Find reviews and articles about new release games',
-    site: context.site,
+    site: 'https://justgood.games/',
     items: allPosts.map((post) => ({
       title: post.data.title,
       pubDate: post.data.pubDate,
       description: post.data.description,
-      link: `${context.site}/posts/${post.slug}`,
+      link: `https://justgood.games/posts/${post.slug}`,
       content: sanitizeHtml(parser.render(post.body), {
         allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img'])
       }),
-      ...post.data,
-    customData: `<language>en-us</language>`,
+      author: post.data.author,
+      guid: `https://justgood.games/posts/${post.slug}`,
+      custom_elements: [
+        { 'content:encoded': '' },
+        { 'language': 'en-us' },
+      ],
     })),
   });
 }
-
-// url={`/posts/${post.slug}/`}
-// title={post.data.title}
-// pubDate={formatDate(post.data.pubDate)}
-// description={post.data.description}
-// image={post.data.image}
-// tags={post.data.tags}

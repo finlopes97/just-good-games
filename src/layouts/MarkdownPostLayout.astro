@@ -20,13 +20,13 @@ const { frontmatter } = Astro.props;
     <Header />
     <main class="min-h-screen flex flex-col justify-betwen">
       <div class="flex grow justify-center items-center w-full">
-        <div class="flex-1 bg-background-100 p-6 max-w-post-100">
+        <div class="flex-1 bg-background-100 p-4 md:p-6 max-w-post-100">
           <h1
-            class="text-4xl md:text-5xl mt-4 font-heading text-primary-600 text-left pb-2 mb-6"
+            class="text-3xl md:text-5xl mt-4 font-heading text-primary-600 text-left pb-2 mb-2"
           >
             {frontmatter.title}
           </h1>
-          <p class="font-subheading mb-4">
+          <p class="font-subheading text-sm md:text-base mb-4">
             <em>{frontmatter.description}</em>
           </p>
           <div class="flex flex-col md:flex-row gap-4 mb-2">

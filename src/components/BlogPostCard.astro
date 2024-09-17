@@ -25,7 +25,7 @@ const getTags = (tags) => {
 >
   <a href={url} class="block h-full">
     <article class="flex flex-col h-full">
-      <figure class="w-full h-50 border-black border-b-2 overflow-hidden mb-4">
+      <figure class="w-full h-24 border-black border-b-2 overflow-hidden mb-4">
         {
           image ? (
             <img
@@ -45,14 +45,14 @@ const getTags = (tags) => {
       </h1>
       <div class="flex justify-between mb-2">
         <p
-          class="text-base bg-red-400 w-fit p-1 shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+          class="text-base bg-red-400 w-fit h-fit p-1 shadow-[2px_2px_0px_rgba(0,0,0,1)]"
         >
           {pubDate}
         </p>
-        <div class="flex flex-wrap ml-2">
+        <div class="flex flex-nowrap ml-2 gap-2">
           {
             getTags(tags).map((tag) => (
-              <p class="bg-accent-400 w-fit p-1 shadow-[2px_2px_0px_rgba(0,0,0,1)] mr-2">
+              <p class="bg-accent-400 w-fit p-1 shadow-[2px_2px_0px_rgba(0,0,0,1)]">
                 {tag}
               </p>
             ))
@@ -64,7 +64,7 @@ const getTags = (tags) => {
         class="text-sm mb-4 overflow-hidden"
         style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;"
       >
-        {truncateText(description, 90)}
+        {truncateText(description, 100)}
       </p>
       <p
         class="bg-accent-400 font-body w-fit p-1 shadow-[2px_2px_0px_rgba(0,0,0,1)] transition-colors duration-200 ease-in-out hover:bg-accent-500"

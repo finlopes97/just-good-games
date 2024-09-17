@@ -42,24 +42,23 @@ const groupedPosts = groupPosts(allPosts);
             <div class="ml-8">
               <h2 class="text-xl font-subheading mb-4">{year}</h2>
               {Object.keys(groupedPosts[year]).map((month) => (
-                <div class="mb-2">
-                  <h3 class="text-lg font-subheading bg-accent-400 rotate-1 max-w-fit p-1 m-4">
-                    {month}
-                  </h3>
-                  <ul class="flex flex-col ml-8 mr-12 gap-6">
-                    {groupedPosts[year][month].map((post) => (
-                      <BlogPostListing
-                        url={`/posts/${post.slug}/`}
-                        title={post.data.title}
-                        pubDate={formatDate(post.data.pubDate)}
-                      />
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          ))
-      }
+  <div class="mb-2">
+    <h3 class="text-lg font-subheading bg-accent-400 rotate-1 max-w-fit p-1 m-4">
+      {month}
+    </h3>
+    <ul class="flex flex-col ml-8 mr-12 gap-6">
+      {groupedPosts[year][month]
+        .sort((a, b) => new Date(b.data.pubDate) - new Date(a.data.pubDate)) // Sort by pubDate descending
+        .map((post) => (
+          <BlogPostListing
+            url={`/posts/${post.slug}/`}
+            title={post.data.title}
+            pubDate={formatDate(post.data.pubDate)}
+          />
+        ))}
+    </ul>
+  </div>
+))}
     </div>
   </div>
 </Layout>

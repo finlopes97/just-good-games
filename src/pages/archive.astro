@@ -47,9 +47,7 @@ const groupedPosts = groupPosts(allPosts);
       {month}
     </h3>
     <ul class="flex flex-col ml-8 mr-12 gap-6">
-      {groupedPosts[year][month]
-        .sort((a, b) => new Date(b.data.pubDate) - new Date(a.data.pubDate)) // Sort by pubDate descending
-        .map((post) => (
+      {groupedPosts[year][month].map((post) => (
           <BlogPostListing
             url={`/posts/${post.slug}/`}
             title={post.data.title}

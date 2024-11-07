@@ -102,5 +102,5 @@ export default {
       },
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [import("@tailwindcss/typography")],
 };

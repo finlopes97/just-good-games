@@ -94,7 +94,7 @@ export default {
         // heading: 'Montserrat',
         heading: "Bebas Neue",
         subheading: "Lexend Mega",
-        body: "Nanum Gothic",
+        body: "Montserrat",
       },
       fontWeight: {
         normal: "400",

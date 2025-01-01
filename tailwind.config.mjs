@@ -93,8 +93,8 @@ export default {
       fontFamily: {
         // heading: 'Montserrat',
         heading: "Bebas Neue",
-        subheading: "Lexend Mega",
-        body: "Montserrat",
+        subheading: "Piazzolla",
+        body: "Ysabeau",
       },
       fontWeight: {
         normal: "400",

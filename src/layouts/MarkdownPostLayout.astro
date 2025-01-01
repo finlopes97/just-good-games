@@ -22,23 +22,23 @@ const { frontmatter } = Astro.props;
       <div class="flex grow justify-center items-center w-full">
         <div class="flex-1 bg-background-100 p-4 md:p-6 max-w-post-100">
           <h1
-            class="text-3xl md:text-5xl mt-4 font-heading text-primary-600 text-left pb-2 mb-2"
+            class="text-3xl md:text-5xl mt-4 font-heading text-primary-600 text-left"
           >
             {frontmatter.title}
           </h1>
-          <p class="font-subheading text-sm md:text-base mb-4">
+          <p class="font-subheading text-base md:text-lg mb-4">
             <em>{frontmatter.description}</em>
           </p>
-          <div class="flex flex-col md:flex-row gap-4 mb-2">
+          <div class="flex flex-col md:flex-row mb-2">
             <p
-              class="text-sm font-bold bg-body-300 p-2 transform rotate-1 inline-block"
+              class="text-base font-bold bg-body-300 p-2 transform rotate-1 inline-block m-2"
             >
-              <strong>Published on</strong>: {formatDate(frontmatter.pubDate)}
+              Published on: <em>{formatDate(frontmatter.pubDate)}</em>
             </p>
             <p
-              class="text-sm font-bold bg-secondary-200 p-2 transform -rotate-1 inline-block"
+              class="text-base font-bold bg-secondary-200 p-2 transform -rotate-1 inline-block m-2"
             >
-              <strong>Written by</strong>: {frontmatter.author}
+              Written by: <em>{frontmatter.author}</em>
             </p>
           </div>
           <h4 class="text-xl font-subheading mb-2">Tags:</h4>

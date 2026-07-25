@@ -1,14 +1,12 @@
 ---
-title: "Biweekly, Bipartisan, Bisexual Roundup #1"
+title: "August 2024 - Clickolding is a Fever Dream"
 pubDate: 2024-08-20T20:33:00.000Z
-description: "Haneko's Late Homework, Aether Diving, Clickolding and Dungeons of
-  Hinterberg are the subjects of this biweekly roundup. Three short games versus
-  one big sweeping Zelda-like RPG, who comes out on top? Nobody, we don't play
-  favourites here until the end of year lists. "
+description: "I don't feel so good Mr. Clickolding."
 author: Kyle Lopez-Finlayson
 tags:
   - indie
   - itch
+  - steam
   - horror
   - experimental
   - retro
@@ -23,7 +21,8 @@ image:
     to a lamp while the player clicks a clicker.
   filename: clickolding001
 ---
-Every two or so weeks I like to share some new-ish release games that I’ve been playing. Many are from the world’s premier platform for weird little indie games, Itch.io, but I also find games on Steam and Good Old Games. I do try to pick newer games since I want to shine a spotlight on the games people are making *right now*, however, I will occasionally throw in games that might be between a few weeks to a few months old too depending on how long it takes me to get around to a game that piques my childlike wonder.
+
+> Welcome to the first roundup I posted to this blog. I've made some edits here as part of a cleanup/revitalisation project in *July 2026* but left most of the content untouched. I am very passionate about indie games and want to shine a spotlight on games which don't get as much attention as they deserve. A lot has changed since I wrote this first post, and reading it again now is a good opportunity to reflect. 
 
 ## Haneko's Late Homework
 
@@ -33,7 +32,7 @@ Detritus is scattered across every surface, voices softly whisper to you from da
 
 The most interesting part is the map which has several doors that will take you from one side of the map to the other. I thought I was travelling between floors and rooms, but when it clicked I was able to outmanoeuvre the Anomaly using Haneko’s innate ability to fold time and space. If the Anomaly does catch Haneko, you’ll witness the unfortunate end for someone’s (presumably) beloved Furaffinity OC.  Haneko’s Late Homework is completely free, though let the record show that I did pay around $5 Australian smackaroos as an optional “pay what you want” price.
 
-[Find Haneko's Late Homework here!](https://sodaraptor.itch.io/late-homework)
+[Find Haneko's Late Homework here](https://sodaraptor.itch.io/late-homework)
 
 ## Aether Diving
 
@@ -43,7 +42,7 @@ Loading into Aether Diving you’re greeted by an old friend, an MS-DOS command 
 
 The gameplay here is kind of reminiscent of an old Flash game more than a DOS game, I was able to beat it pretty easily and there’s never much danger of failing as it’s not very challenging gameplay. The art is surreal, the same can be said for pretty much everything else about  Aether Diving too. It’s short, it’s free, and it reinvigorated my Chakras.
 
-[Find Aether Diving here!](https://raphss.itch.io/aetherdiving)
+[Find Aether Diving here](https://raphss.itch.io/aetherdiving)
 
 ## Clickolding
 
@@ -53,11 +52,11 @@ A bit over a month old, but I still think about this game a lot.  It doesn’t s
 
 The parallels to sex work are obvious and Strange Scaffold has delivered something that is in equal parts absurd and thought-provoking. Also, click goes clicky haha. Sorry, I almost got a bit too pretentious there talking about a game where you click a guy off in a hotel room.
 
-[Find Clickolding here!](https://store.steampowered.com/app/3011440/CLICKOLDING/)
+[Find Clickolding here](https://store.steampowered.com/app/3011440/CLICKOLDING/)
 
 ## Dungeons of Hinterberg
 
-A full review of this game is in progress, and will ideally be released in the days following this article. Dungeons of Hinterberg has finally realised my dream of… going on a fucking holiday. You may not know this, but I haven’t been on a holiday since I left high school almost ten years ago. That’s a long time to not be on a holiday. It’s also a trend that may not change for some time, since I’ve added this website and part-time game development to my workload too. What?  You want to hear about the game? Fine. Dungeons of Hinterberg nails that *holiday* feeling, something I haven’t felt since I was very young.  There’s a very laid-back vibe blanketing the entire world, even when you’re exploring dungeons and fighting baddies. Exploring a town as a tourist, finding landmarks, visiting attractions, and meeting new people. It does all this in a surprisingly grounded fantasy backdrop. The world is magical and mysterious but feels simultaneously real. Dungeons are all excellently designed with puzzles that make you feel smart when you solve them but aren’t so hard to make you pull up a walkthrough. Groups of dungeons will sometimes have a central theme or “gimmick” like minecarts which are always a welcome addition to any game I play.
+Dungeons of Hinterberg nails that holiday feeling. There is this laid-back vibe infecting the entire world, even when you’re exploring dungeons and fighting baddies. Exploring a town as a tourist, finding landmarks, visiting attractions, and meeting new people. It does all this in a grounded fantasy backdrop. The world is magical and mysterious but feels believable. Dungeons are all excellently designed with puzzles that make you feel smart when you solve them but aren’t so hard to make you pull up a walkthrough. Groups of dungeons will sometimes have a central theme or “gimmick” like minecarts which are always a welcome addition to any game I play.
 
 ![Minecart travelling down a spiral track in a cave dungeon](/images/posts/screenshots/2024_08/DOH_6_Wide-Carts.jpg "The Downward Spiral")
 
@@ -71,8 +70,5 @@ The synth-heavy music can vary between really beautiful to just okay. In general
 
 That’s probably just me though, since I don’t really get into the social elements of games like Persona either. All of that aside, games like this are the inspiration for Just Good Games, and I can’t think of a better game to christen this blog with. Microbird Games is a small team who have accomplished something massive, a thousand kudos to everyone over there in Vienna.
 
-[Find Dungeons of Hinterberg here!](https://store.steampowered.com/app/1983260/Dungeons_of_Hinterberg/)[](https://store.steampowered.com/app/1983260/Dungeons_of_Hinterberg/)
-
+[Find Dungeons of Hinterberg here](https://store.steampowered.com/app/1983260/Dungeons_of_Hinterberg/)
 - - -
-
-That about wraps up the first-ever post on this blog. I still have a  few things to clean up, I doubt anyone is reading this yet because  I’m not planning on promoting the blog until I’m happy with its presentation, so never. If you do stumble onto this maybe in the future, I hope you have a wonderful rest of your day and that the future isn’t too harsh on us. I hope I’m writing things that you enjoy reading and above all I hope that I’m still as in love with video games as I  was when I started this.

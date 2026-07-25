@@ -5,6 +5,13 @@
 # any previously-published or indexed URLs alive — never break a published URL (CLAUDE.md §1).
 # This is the project's first netlify.toml (previously flagged missing in ISSUES.md §3i).
 
+[build.environment]
+  # Netlify defaulted to Node 18 (EOL Apr 2025), which fails the build with the current
+  # dependency set — while local (Node 24) builds fine. Pin a modern version to kill that
+  # divergence. Node 22 is current LTS and satisfies modern tooling, including the coming
+  # Astro 7 / Vite 8 requirement (Node 20.19+ / 22.12+). Bump to "24" to mirror local exactly.
+  NODE_VERSION = "22"
+
 [[redirects]]
   from = "/tags/RPG"
   to = "/tags/rpg/"

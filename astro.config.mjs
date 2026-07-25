@@ -1,7 +1,6 @@
 import { defineConfig } from 'astro/config';
 import { remarkReadingTime } from './remark-reading-time.mjs';
 import tailwind from "@astrojs/tailwind";
-import mdx from "@astrojs/mdx";
 import icon from "astro-icon";
 
 import sitemap from "@astrojs/sitemap";
@@ -9,7 +8,7 @@ import sitemap from "@astrojs/sitemap";
 // https://astro.build/config
 export default defineConfig({
   site: 'https://justgood.games',
-  integrations: [tailwind(), mdx(), icon(), sitemap()],
+  integrations: [tailwind(), icon(), sitemap()],
   markdown: {
     remarkPlugins: [remarkReadingTime],
   },

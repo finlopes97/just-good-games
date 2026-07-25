@@ -244,12 +244,13 @@ called `mdx()` — fine locally (stale `node_modules`) but a fresh Netlify insta
 with "Cannot find package @astrojs/mdx". **Fix:** removed the `mdx()` integration + import
 and re-synced the lockfile.
 
-### 3j. `Subscribe.astro` embeds a Buttondown form — vs §9
-`src/components/Subscribe.astro` posts to `buttondown.com` and is rendered on the homepage.
-`CLAUDE.md §9` lists "newsletter signup embeds" as out of scope / third-party requests to
-avoid. Also, the homepage RSS section (`index.astro:72-81`) hotlinks button images from
-`inoreader.com` and `feedly.com` — more third-party requests. Flagging the tension; not
-removing without a call from the owner.
+### 3j. Buttondown newsletter form — ✅ REMOVED (2026-07-26)
+`Subscribe.astro` posted to `buttondown.com` and was embedded on the homepage (a newsletter
+embed + third-party request, out of scope per `CLAUDE.md §9`). **Removed:** deleted
+`Subscribe.astro`, dropped the import + form from `index.astro`, and reworked the "Stay
+Updated!" block to be RSS-focused. No `buttondown` references remain.
+*Still present (separate concern):* the homepage RSS section hotlinks button images from
+`inoreader.com` and `feedly.com` — third-party requests. Left in place; flag for the owner.
 
 ---
 

@@ -1,0 +1,16 @@
+# Netlify configuration.
+#
+# Redirects for consolidated tag pages (tag casing/synonym normalisation, ISSUES.md §5).
+# These tag routes are no longer generated, so 301 them to their canonical form to keep
+# any previously-published or indexed URLs alive — never break a published URL (CLAUDE.md §1).
+# This is the project's first netlify.toml (previously flagged missing in ISSUES.md §3i).
+
+[[redirects]]
+  from = "/tags/RPG"
+  to = "/tags/rpg/"
+  status = 301
+
+[[redirects]]
+  from = "/tags/itch.io"
+  to = "/tags/itch/"
+  status = 301

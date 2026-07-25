@@ -100,9 +100,8 @@ Everything currently pinned with `^` is behind. Notable:
 - ~~`@types/axios@0.14.0`~~ — **✅ removed** (stub for a package nothing imports).
 - `trim@0.0.1`, `redux-devtools-extension` — were pulled in via the `decap-cms-app` tree,
   now **gone** since that package was removed.
-- `astro-seo` (in `dependencies`) appears **unused** — the site uses a hand-rolled
-  `Head.astro`, not `astro-seo`. Candidate for removal in a future cleanup (not done here to
-  keep this change scoped to the vuln/dependency pass).
+- ~~`astro-seo` (in `dependencies`) appears **unused**~~ — **✅ removed** (2026-07-25); the
+  site uses a hand-rolled `Head.astro`. Pruned 74 packages.
 
 ---
 
@@ -119,18 +118,14 @@ to `title={tag}`. All pages now pass `title`.
 Tailwind class and silently did nothing on article pages. **Fix:** corrected to
 `justify-between`.
 
-### 2c. `SearchBar.astro` is broken and unused
-`src/components/SearchBar.astro:9` uses `onInput={e => onSearch(e.target.value)}` with an
-`onSearch` **function passed as a prop**. Astro renders components to static HTML — you
-cannot pass a function into an inline handler this way; it will not wire up. The component
-is also **imported nowhere** (grep finds no usage). Dead + non-functional. Either delete
-it or reimplement as a client script. `CLAUDE.md §9` lists search-as-a-service as out of
-scope, so deletion is the likely call.
+### 2c. `SearchBar.astro` broken and unused — ✅ FIXED (2026-07-25)
+`SearchBar.astro` passed an `onSearch` **function as a prop** into an inline `onInput`
+handler — which can't work in Astro's static output — and was **imported nowhere**. Dead +
+non-functional (`CLAUDE.md §9` lists search as out of scope). **Fix:** deleted the file.
 
-### 2d. `src/utils/paginate.js` is unused
-`paginate()` is defined but imported nowhere. `archive.astro` and `featured.astro` render
-all posts ungrouped-by-page. Dead code (fine for now — the post count is small — but note
-it if archive length ever matters).
+### 2d. `src/utils/paginate.js` unused — ✅ FIXED (2026-07-25)
+`paginate()` was defined but imported nowhere. **Fix:** deleted the file. (If archive length
+ever matters, reintroduce pagination deliberately.)
 
 ---
 
@@ -208,10 +203,10 @@ pages (empty `pubDate`). **Fix:** the tag now renders only when a date exists an
 `pubDate.toISOString()`. Verified: article pages show `content="2024-11-07T08:13:00.000Z"`;
 the homepage omits the tag.
 
-### 3f. Invalid `typescript` option in `astro.config.mjs` — confirmed, still present (§7.1)
-`astro.config.mjs:12-14` still sets `typescript: { strict: true }`, which is **not a valid
-Astro config key** and is silently ignored. TS strictness already lives correctly in
-`tsconfig.json` (`"strict": true`). The config block should be deleted (it's a no-op).
+### 3f. Invalid `typescript` option in `astro.config.mjs` — ✅ FIXED (2026-07-25)
+`astro.config.mjs` set `typescript: { strict: true }`, which is **not a valid Astro config
+key** and was silently ignored (TS strictness already lives correctly in `tsconfig.json`).
+**Fix:** deleted the no-op block. Build unaffected.
 
 ### 3g. `require()` in an ESM config file — confirmed (§7.3)
 `tailwind.config.mjs:105` uses `require("@tailwindcss/typography")` inside an `.mjs` ESM
@@ -224,11 +219,12 @@ a Tailwind v4 migration. Noted, not urgent.
 `games[]`, `steamAppId`, description length rule). This is an expected gap — flagging so
 it's tracked, not so it's rewritten unilaterally.
 
-### 3i. No `netlify.toml`
-There is no `netlify.toml` in the repo. `CLAUDE.md §4` relies on it for the URL-redirect
-policy ("if a slug must change, add a redirect in `netlify.toml`"). Redirects currently
-have nowhere to live. The sitemap *is* configured and reaches `dist/`
-(`sitemap-index.xml` built) — that part of §5 checks out.
+### 3i. No `netlify.toml` — ✅ CREATED (2026-07-25)
+There was no `netlify.toml`, so the `CLAUDE.md §4` URL-redirect policy had nowhere to live.
+**Fix:** created a minimal `netlify.toml` with the first two 301 redirects (the consolidated
+tag pages — see §5). Future slug/redirect needs now have a home. *Post-deploy check:* verify
+Netlify honours the two tag redirects (path matching is case-sensitive, so `/tags/RPG` won't
+collide with `/tags/rpg`). The sitemap *is* configured and reaches `dist/`.
 
 ### 3j. `Subscribe.astro` embeds a Buttondown form — vs §9
 `src/components/Subscribe.astro` posts to `buttondown.com` and is rendered on the homepage.
@@ -264,11 +260,14 @@ command fails. Categories:
 
 ## 5. Content quirks
 
-- **Case-duplicated tags create near-duplicate pages.** The build emits both
-  `/tags/rpg/` and `/tags/RPG/`, and both `/tags/itch/` and `/tags/itch.io/`. Tag routing
-  is case/format-sensitive, so inconsistent frontmatter tags fragment into separate pages —
-  bad for the SEO goal and confusing for readers. Recommend normalizing tags (lowercase,
-  canonical form) at the schema level or in `getStaticPaths`.
+- **Case-duplicated tags created near-duplicate pages — ✅ FIXED (2026-07-25).** The build
+  used to emit both `/tags/rpg/` + `/tags/RPG/` and `/tags/itch/` + `/tags/itch.io/`,
+  fragmenting the tag archives (bad for SEO). **Fix, three parts:** (1) schema-level
+  normalization in `config.ts` — each tag is `trim()` + `toLowerCase()`, so casing can't
+  spawn duplicates via the CMS; (2) content cleaned in roundup-3 (`RPG`→`rpg`,
+  `itch.io`→`itch`, canonicalising the synonym to match the short `steam`-style tag); (3)
+  `netlify.toml` 301s for the two removed routes (§3i). Verified: build 44→42 pages, only
+  lowercase `rpg`/`itch` routes generate, and `/tags/rpg/` now includes roundup-3.
 - Frontmatter carries an extra `image.filename` field not in the Zod schema. Zod strips
   unknown keys by default, so it's harmless — but the schema and the Decap CMS config
   (`public/admin/config.yml`) both know about `filename` while `config.ts` does not. Minor
@@ -300,10 +299,13 @@ command fails. Categories:
 | ~~5~~ | ~~Netlify Identity widget on every page (§3b)~~ ✅ Fixed | Medium (perf/privacy) | Trivial |
 | 6 | npm vulnerabilities / stale deps (§1) — ✅ 55→5 (rest need Astro 7) | Medium | Done (in-range) / Large (majors) |
 | ~~7~~ | ~~`justify-betwen` typo (§2b)~~ ✅ Fixed | Low | Trivial |
-| 8 | Case-duplicate tag pages (§5) | Low–Med (SEO) | Small |
-| 9 | Dead code: `SearchBar`, `paginate` (§2c/§2d) | Low | Trivial |
-| 10 | Invalid `typescript` config key (§3f) | Low | Trivial |
+| ~~8~~ | ~~Case-duplicate tag pages (§5)~~ ✅ Fixed | Low–Med (SEO) | Small |
+| ~~9~~ | ~~Dead code: `SearchBar`, `paginate` (§2c/§2d)~~ ✅ Fixed | Low | Trivial |
+| ~~10~~ | ~~Invalid `typescript` config key (§3f)~~ ✅ Fixed | Low | Trivial |
 
-**Remaining open:** #8 (case-duplicate tags), #9 (dead code), #10 (invalid config key), the
-5 Astro-major-gated vulns from #6, plus §3h–§3j and §6 housekeeping. The JSON-LD page-type
-refinement (`WebSite`/`Review`/`VideoGame`) noted in §3c is also still open.
+All numbered TL;DR items are now resolved except the 5 Astro-major-gated vulnerabilities in
+#6 (deferred to the Astro 7 migration). Remaining smaller/known items: §3g (Tailwind v4
+`require()`), §3h (schema vs §4 target), §3j (Buttondown/Feedly third-party embeds), §4
+type-check errors, §3c JSON-LD page-type refinement, and §6 housekeeping (stock README,
+favicon MIME type, caniuse-lite). `astro check` now needs `@astrojs/check` installed on
+first run (its transitive copy was pruned with `astro-seo`).

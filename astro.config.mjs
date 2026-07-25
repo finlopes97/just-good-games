@@ -10,10 +10,6 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
   site: 'https://justgood.games',
   integrations: [tailwind(), mdx(), icon(), sitemap()],
-  // Enable TypeScript
-  typescript: {
-    strict: true
-  },
   markdown: {
     remarkPlugins: [remarkReadingTime],
   },

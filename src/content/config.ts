@@ -7,7 +7,9 @@ const postsCollection = defineCollection({
     pubDate: z.date(),
     description: z.string(),
     author: z.string(),
-    tags: z.array(z.string()),
+    // Normalise each tag to a canonical form (trim + lowercase) so casing
+    // differences from the CMS can't spawn duplicate tag pages, e.g. RPG vs rpg.
+    tags: z.array(z.string().transform((tag) => tag.trim().toLowerCase())),
     featured: z.boolean().default(false),
     gameTitle: z.string().optional(),
     image: z.object({

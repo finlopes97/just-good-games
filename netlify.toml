@@ -43,3 +43,9 @@
   from = "/posts/biweekly-bipartisan-bisexual-roundup-3"
   to = "/posts/october-2024-you-should-play-arco/"
   status = 301
+
+# Typo fix: "dunegons" -> "dungeons".
+[[redirects]]
+  from = "/posts/dunegons-of-hinterberg-review"
+  to = "/posts/dungeons-of-hinterberg-review/"
+  status = 301

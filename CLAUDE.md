@@ -2,21 +2,20 @@
 
 Project instructions for Claude Code. Read this before touching anything.
 
+> **Status (2026-07-26):** the codebase is current and healthy — Astro 7, Tailwind 4,
+> `npm audit` clean, builds green. The big migration and first-audit cleanup are done; see
+> `ISSUES.md` for the short list of *remaining* open items. This document describes the
+> **actual current state**, not an aspirational target.
+
 ---
 
 ## 1. What this is
 
 **Just Good Games** (https://justgood.games) is a one-person blog covering lesser-known
-indie games — the kind with forty Steam reviews and one great idea. Titles like
-*Mayor May Knott*, *Automaton Heart*, *Abyss Veil*.
+indie games — the kind with forty Steam reviews and one great idea.
 
 It is a hobby project. There is no monetisation, no ad tech, no analytics vendor, no
 paywall, and no CMS subscription. It must stay free to run.
-
-The site was originally hand-coded in Astro, abandoned in favour of Ghost, and is now
-being revived. Expect the codebase to be stale, partially finished, and inconsistent
-with this document. **Where the code and this document disagree, this document is the
-target state** — but flag the gap rather than silently rewriting large surfaces.
 
 ### Who it's for
 
@@ -30,7 +29,7 @@ Two goals drive almost every decision below:
 
 1. **Search is the primary discovery channel.** Nobody is competing for these queries.
    Clean semantic HTML, fast static pages, structured data, and stable URLs are the
-   whole strategy. Never break a published URL.
+   whole strategy. **Never break a published URL** — add a redirect in `netlify.toml`.
 2. **Link previews are the second channel.** Posts get shared as embeds in Discord,
    Bluesky, Reddit and Slack. The Open Graph card is often the *only* thing most people
    ever see of this site. It deserves as much care as the page itself.
@@ -63,7 +62,8 @@ like every other blog, it is wrong, even if it looks "cleaner" in isolation.
 
 ### 2.2 Colour tokens
 
-Defined in `tailwind.config.mjs`. Values as they currently stand:
+Defined in **`src/styles/global.css`** as a Tailwind v4 `@theme` block (`--color-<name>-<shade>`).
+Values:
 
 | Token | Role | Key values |
 |---|---|---|
@@ -74,44 +74,39 @@ Defined in `tailwind.config.mjs`. Values as they currently stand:
 | `foreground` | Text and borders | `500–900 #000000`, `100 #cccccc` |
 | `background` | Surfaces | `100–500 #ffffff` |
 
-**Naming footgun:** `body` is a *colour scale* (yellow) and also a *font family*. This
-has almost certainly caused confusion already. See §7 for the proposed rename — do not
-rename unilaterally.
+**Naming footgun:** `body` is both a *colour scale* (yellow) and a *font family*. Live with
+it or rename deliberately — a rename touches every template, so needs sign-off.
 
 **Usage rules:**
 
 - Yellow is the canvas. Pink is the content surface. Red is for display type only.
 - **Black is the workhorse for all reading text.** Saturated colour on saturated colour
   is reserved for large display type where the contrast maths still holds.
-- Purple (`secondary`) is currently underused. It's the natural choice for tags, meta,
-  or a second card variant — but pick one job and keep it there.
-- The `background` scale being white at `100–500` is not a bug, it's a flat ramp. Don't
-  "fix" it without checking usage first.
+- Purple (`secondary`) is underused. It's the natural choice for tags, meta, or a second
+  card variant — but pick one job and keep it there.
+- The `background` scale being white at `100–500` is not a bug, it's a flat ramp.
 
 ### 2.3 Typography
 
-Three faces, three jobs:
+Three faces, three jobs — all **self-hosted via `@fontsource`** (imported in
+`src/components/Head.astro`), no Google CDN:
 
 - **Bebas Neue** (`font-heading`) — display and UI. All caps. Site title, article
   titles, nav, buttons. Tight tracking. This face carries the whole personality.
 - **Piazzolla** (`font-subheading`) — serif, for section headers and pull quotes. The
-  deliberate note of contrast against Bebas's bluntness.
-- **Ysabeau** (`font-body`) — body copy. Sentence case, always.
+  deliberate note of contrast against Bebas's bluntness. (Variable font — registers as
+  the family name **`Piazzolla Variable`**.)
+- **Ysabeau** (`font-body`) — body copy. Sentence case, always. (Variable font —
+  **`Ysabeau Variable`**.)
 
 Type scale is a 1.333 (perfect fourth) modular scale, `sm` through `5xl`. Stick to it;
 don't introduce arbitrary sizes.
 
-**Measure:** article body uses the `max-w-post-*` utilities (`65ch`–`100ch`). Default to
-`post-70` for body copy. Wider than `post-80` is unreadable regardless of how much room
-the layout has.
-
-Self-host the fonts (`@fontsource/*` or local `woff2`) with `font-display: swap`. Do not
-load them from Google's CDN — it's a render-blocking third party on a site whose entire
-value proposition is loading instantly.
+**Measure:** article body uses the `max-w-post-*` utilities (`65ch`–`100ch`, mapped via
+the `--container-post-*` theme namespace). Default to `post-70`. Wider than `post-80` is
+unreadable regardless of layout room.
 
 ### 2.4 Signature elements
-
-The things that make it *this* site rather than generic brutalism:
 
 - **The wordmark**: red fill with a hard black offset text-shadow. This treatment is the
   logo. Don't apply it to arbitrary headings — its scarcity is what makes it read as a
@@ -142,12 +137,12 @@ Brutalism is a visual style, not an excuse. These are non-negotiable:
 
 - **Responsive to 320px.** The 8px shadows and 5px borders need to scale down on mobile
   or they eat the viewport.
-- **Visible keyboard focus.** Given the aesthetic, use a thick black or purple outline
-  with an offset — never `outline: none`.
+- **Visible keyboard focus.** Use a thick black or purple outline with an offset — never
+  `outline: none`.
 - **`prefers-reduced-motion`** disables the press transform.
 - **Contrast:** black on yellow and black on pink both pass comfortably. Red `#ff0000`
-  on yellow `#ffff00` is roughly 3.7:1 — that passes AA for *large text only*. Never use
-  a saturated colour on a saturated colour below `text-3xl`.
+  on yellow `#ffff00` is roughly 3.7:1 — passes AA for *large text only*. Never use a
+  saturated colour on a saturated colour below `text-3xl`.
 - Semantic HTML: real `<article>`, `<nav>`, `<time>`, one `<h1>` per page, heading levels
   in order.
 
@@ -155,166 +150,149 @@ Brutalism is a visual style, not an excuse. These are non-negotiable:
 
 ## 3. Stack
 
-**Confirmed from `astro.config.mjs`:**
-
-- Astro, static output, `site: 'https://justgood.games'`
-- `@astrojs/tailwind`, `@astrojs/mdx`, `astro-icon`, `@astrojs/sitemap`
-- Custom remark plugin: `./remark-reading-time.mjs`
-- `@tailwindcss/typography` plugin
-- Hosted free on **Netlify**
+- **Astro 7** (`astro@7.x`), static output, `site: 'https://justgood.games'`.
+- **Markdown engine: Sätteri** (Astro 7's default Rust processor). It does **not** run
+  remark/rehype plugins — don't add any expecting them to run. CommonMark + GFM + YAML
+  frontmatter are native.
+- **Tailwind v4, CSS-first.** `@tailwindcss/vite` (registered in `astro.config.mjs`
+  under `vite.plugins`), theme in `src/styles/global.css` (`@import "tailwindcss"` +
+  `@theme` + `@plugin "@tailwindcss/typography"`). **There is no `tailwind.config.mjs`.**
+  If you use `@apply` inside a component `<style>`, add `@reference "../styles/global.css";`
+  at the top of that block or the theme utilities won't resolve.
+- **Integrations:** `astro-icon`, `@astrojs/sitemap`, `@astrojs/rss`, `astro-navbar`.
+  No `@astrojs/mdx` (content is `.md`, no MDX features used).
+- **Fonts:** self-hosted `@fontsource` / `@fontsource-variable` (see §2.3).
+- **Hosting:** free tier on **Netlify**. `netlify.toml` pins `NODE_VERSION = "22"` and
+  holds all URL redirects.
+- `npm audit` is **clean (0 vulnerabilities)**. Keep it that way.
 
 **Ship no client-side JavaScript by default.** Astro islands only where genuinely
-required (there is currently no such requirement). No React, no Svelte, no Vue — the
-Tailwind `content` glob lists them but nothing should actually need them.
+required (there is currently no such requirement). No React/Svelte/Vue.
+
+### Environment quirk
+
+Node is installed at `C:\Program Files\nodejs` but is **not on PATH in Claude Code's tool
+shells** — prefix PowerShell commands with `$env:Path = "C:\Program Files\nodejs;$env:Path"`
+(it doesn't persist across calls). The user's own terminal has Node on PATH.
 
 ### Constraints
 
 - Must remain free to host. No paid services, no serverless functions requiring a plan.
-- No third-party analytics, no tracking scripts, no external font CDN, no comment
-  embeds. Zero third-party requests is the target.
+- No third-party analytics, no tracking scripts, no external font CDN, no comment embeds.
+  **Zero third-party requests is the target** (a couple remain — see `ISSUES.md`).
 - Build must stay fast enough to deploy on Netlify's free tier without thought.
 
 ---
 
 ## 4. Content model
 
-Articles are MDX. Use **Astro Content Collections** with a Zod schema — if the project
-predates collections and uses a glob, migrating is a worthwhile early task.
+Articles are **Markdown (`.md`)** in `src/content/posts/`, read via **Astro Content
+Collections (Content Layer API)**. The collection is defined in `src/content.config.ts`
+with a `glob()` loader and a Zod schema.
 
-Target frontmatter schema:
+**Actual frontmatter schema** (`src/content.config.ts`):
 
 ```ts
 {
   title: string,
-  description: string,        // also the OG + meta description; 140–160 chars
   pubDate: date,
-  updatedDate: date | undefined,
-  featured: boolean,          // drives the homepage hero slot
-  draft: boolean,
-  heroImage: image | undefined,
-  heroAlt: string | undefined,
-  games: string[],            // canonical game titles covered
-  tags: string[],
-  steamAppId: number | undefined,  // enables store links + structured data
+  description: string,          // also the OG + meta description
+  author: string,
+  tags: string[],               // normalised to lowercase + trimmed by the schema
+  featured: boolean,            // drives the homepage hero slot; default false
+  gameTitle?: string,
+  image?: { url: string, alt: string },
 }
 ```
 
-**URL policy:** `/articles/[slug]/` — flat, lowercase, hyphenated, no dates in the path.
-URLs are permanent. If a slug must change, add a redirect in `netlify.toml`; never leave
-a 404.
+*Richer fields that would help SEO but aren't implemented yet* (nice-to-have, not present):
+`updatedDate`, `draft`, `games[]`, `steamAppId`. Add deliberately if needed.
 
-Reading time comes from the existing remark plugin and should surface in a chip on the
-article header.
+**URL policy:** `/posts/[slug]/` — flat, lowercase, hyphenated. **The filename IS the slug**
+(the `glob()` loader derives `entry.id` from it), so renaming a file changes its URL. Posts
+currently follow a **`Month Year - Title`** naming scheme (dates in the slug are allowed —
+a deliberate owner choice). URLs are permanent: if a slug changes, add a 301 in
+`netlify.toml`; never leave a 404. Access entries by `entry.id`; render with
+`render(entry)` from `astro:content`.
+
+**Reading time** is computed page-side in `src/pages/posts/[...slug].astro`
+(`getReadingTime(entry.body ?? "")` via the `reading-time` package — *not* a remark plugin,
+since Sätteri won't run one) and shown in a chip on the article header.
+
+**Authoring:** a Decap CMS admin lives at `/admin` (`public/admin/config.yml`, loaded from
+the unpkg CDN, git-gateway backend). It writes `.md` — keep `extension: "md"` there.
 
 ---
 
 ## 5. SEO and sharing requirements
 
-These are load-bearing for the project's actual goal. Treat them as features, not polish.
+Load-bearing for the project's actual goal. Treat as features, not polish. Current state:
 
-- **Per-page meta**: unique `<title>` and description on every route. Titles should read
-  as the query someone actually types — "Is *Automaton Heart* worth playing?" beats
-  "Automaton Heart: A Review".
-- **JSON-LD**: `Review` and `VideoGame` structured data on article pages where a specific
-  game is the subject. This is how obscure-title queries get won.
-- **Open Graph images**: generate them at build time in the site's own visual language —
-  yellow field, black border, Bebas Neue title, hard shadow. A shared link should be
-  instantly recognisable as Just Good Games. This is one of the highest-leverage things
-  in the whole repo.
-- **RSS**: `@astrojs/rss` **is installed and working** — `src/pages/rss.xml.js` builds a
-  full-content feed at `/rss.xml` (sanitised HTML via `sanitize-html` + `markdown-it`),
-  with an XSL stylesheet at `public/rss/styles.xsl`. **Remaining gap:** the feed is not yet
-  linked from `<head>` with `<link rel="alternate" type="application/rss+xml">` — add that
-  in `src/components/Head.astro`. This audience still uses readers.
-- Sitemap is already configured — verify it's actually reaching Netlify's output.
-- Canonical URLs on every page.
+- **Per-page meta** ✅ — unique `<title>` + description on every route (`Head.astro`).
+  Titles should read as the query someone types.
+- **Canonical URLs** ✅ on every page.
+- **Open Graph / Twitter** ✅ — absolute `og:image`/`twitter:image`, ISO `published_time`.
+  *Open item:* images currently reuse the post thumbnail; the aspiration is **build-time
+  branded OG cards** in the site's visual language (yellow field, black border, Bebas
+  title, hard shadow) — high leverage, not yet built.
+- **JSON-LD** ✅ valid — but every page currently emits `BlogPosting`. *Open items:* the
+  homepage should be `WebSite`/`WebPage`, and article pages that review a specific game
+  should use `Review` / `VideoGame` (how obscure-title queries get won). Publisher logo
+  points at `/images/favicon.png`.
+- **RSS** ✅ installed and working — `src/pages/rss.xml.js` builds a full-content feed at
+  `/rss.xml` (sanitised via `sanitize-html` + `markdown-it`), XSL at `public/rss/styles.xsl`.
+  *Open item:* still not linked from `<head>` with `<link rel="alternate" type="application/rss+xml">`.
+- **Sitemap** ✅ — `@astrojs/sitemap` builds `sitemap-index.xml` into `dist/`.
 
 ---
 
 ## 6. Working agreements
 
-- **Audit before building.** This is a revived codebase. Read what's there and report
-  before proposing changes.
+- **Audit before building.** Read what's there and report before proposing changes.
 - **Ask before restructuring.** Small fixes and single-component work: go ahead. Anything
-  touching routing, the content schema, the build pipeline, or a dependency major
-  version: propose first, with the trade-off stated plainly.
-- **One concern per change.** Don't bundle a Tailwind v4 migration into a card
-  restyle.
+  touching routing, the content schema, the build pipeline, or a dependency major version:
+  propose first, with the trade-off stated plainly.
+- **One concern per change.** Don't bundle unrelated work into one commit.
+- **Verify against the URL baseline.** After any change that could affect routing, diff the
+  generated `/posts/` and `/tags/` URLs so nothing silently breaks.
 - **Never invent games, developers, review scores, release dates, or Steam App IDs.**
   Placeholder content must be obviously fake (`LOREM GAME TITLE`) so it can't ship by
   accident.
 - **Say when something is uncertain** rather than filling the gap with a confident guess.
-- Prefer deleting dead code from the Ghost era over leaving it commented out.
-- Match the existing code style. If there isn't one, establish it and note it here.
+- Prefer deleting dead code over leaving it commented out.
+- Match the existing code style.
 
 ---
 
-## 7. Known issues and first-session audit
+## 7. Current state & open items
 
-Work through this before any feature work. Report findings; don't fix silently.
+The original first-session audit and the Astro 4→7 migration are **complete**. What's
+verified now: Astro 7.1.3, Tailwind 4, Content Layer, Sätteri; `npm run build` green
+(40 pages); `npm audit` 0 vulnerabilities; all published URLs preserved via `netlify.toml`
+redirects; `npx astro check` reports ~47 pre-existing type errors (implicit-`any`, React-ism
+`key` props, a `Tag` import-name collision) that **do not block the build**.
 
-**Confirmed issues:**
+**Remaining open items live in `ISSUES.md`.** The short version: RSS `<head>` link,
+JSON-LD page-type refinement, branded OG cards, two third-party image hotlinks on the
+homepage RSS block, images not using `astro:assets`, the type-check errors, and minor
+housekeeping (stock `README.md`, favicon MIME type). None are urgent.
 
-1. `astro.config.mjs` sets `typescript: { strict: true }` — **this is not a valid Astro
-   config option** and is being ignored. TS strictness belongs in `tsconfig.json` via
-   `"extends": "astro/tsconfigs/strict"`. Fix in the right place.
-2. `@astrojs/tailwind` is the **Tailwind v3** integration. Tailwind v4 uses
-   `@tailwindcss/vite` and a CSS-first config. Decide deliberately: staying on v3 is a
-   legitimate choice for a stable hobby site; migrating means rewriting
-   `tailwind.config.mjs` as `@theme` CSS. Do not start this without agreement.
-3. `tailwind.config.mjs` uses `require()` inside an ESM file. It works today because
-   Tailwind's config loader transpiles it — but it will break under a v4 migration.
-4. ~~No RSS feed.~~ **Resolved** — RSS is installed and the feed builds; only the `<head>`
-   `<link>` is still missing (see §5).
-5. Token naming collision: `body` is both a colour scale and a font family.
-   **Proposal** (needs sign-off): rename the yellow scale to `canvas`, and consider
-   `paper` for the pink surface scale. Purely mechanical, but touches every template.
-
-**Determined (first-session audit, 2026-07-25):**
-
-- **Versions:** Node 24.18.0, npm 11.16.0, Astro **4.10.0** (3 majors behind 7.x).
-  Dependencies **install cleanly** (`npm install`, exit 0), but `npm audit` reports 55
-  vulnerabilities — mostly from the `decap-cms-app` tree. See `ISSUES.md §1` for the full
-  outdated table and upgrade recommendations (do the in-range bumps freely; Astro 4→7 and
-  Tailwind 3→4 need their own sign-off).
-- **Scripts:** `dev` / `start` (`astro dev`), `build` (`astro build`), `preview`
-  (`astro preview`), `astro`. There is **no** dedicated `check`/lint script — run
-  `npx astro check` directly (currently 54 strict-mode type errors; they do **not** block
-  the build). Real commands recorded in §8.
-- **Content collections are in use** — `src/content/config.ts` defines a Zod-typed `posts`
-  collection; all pages read via `getCollection("posts")`. Note the *actual* schema differs
-  from the target in §4 (see §4 and `ISSUES.md §3h`).
-- **`netlify.toml` does not exist.** The URL-redirect policy in §4 has nowhere to live yet;
-  add one when the first redirect is needed. Sitemap output *does* reach `dist/`.
-- **Images use raw `<img src={image.url}>` tags**, not `astro:assets`. The frontmatter
-  `image` is `{ url, alt }` strings, so there's no build-time optimisation/responsive
-  sizing. Migrating to `astro:assets` is a worthwhile (non-trivial) task.
-- **`remark-reading-time.mjs`** sets `frontmatter.minutesRead` to a friendly string like
-  `"3 min read"` (via the `reading-time` package). Surfaced on the article header in
-  `src/pages/posts/[...slug].astro`.
-- **Pages vs nav:** nav links Home / Featured / Archive / About — **all four exist**
-  (`index`, `featured`, `archive`, `about`), plus `posts/[...slug]`, `tags/[tag]`, `admin`,
-  and `rss.xml.js`.
-- **Ghost artefacts:** none obvious. `README.md` is still the stock Astro "Minimal Starter"
-  template. Dead/broken code worth deleting: `src/components/SearchBar.astro` (non-functional
-  + unused) and `src/utils/paginate.js` (unused) — see `ISSUES.md §2c/§2d`.
-
-**Full findings live in `ISSUES.md` at the repo root.**
+Pages that exist: `index`, `about`, `archive`, `featured`, `posts/[...slug]`, `tags/[tag]`,
+`admin`, `rss.xml.js`. Nav links Home / Featured / Archive / About.
 
 ---
 
 ## 8. Commands
 
-All verified working on 2026-07-25 (Node 24.18.0). Note: Node was **not on `PATH`** during
-the audit — it lives at `C:\Program Files\nodejs`. If `npm` isn't found, add that folder to
-`PATH` (or prefix the session: `$env:Path = "C:\Program Files\nodejs;$env:Path"`).
+Prefix with the PATH fix if `npm` isn't found (see §3 environment quirk):
+`$env:Path = "C:\Program Files\nodejs;$env:Path"`
 
 ```bash
-npm install       # exit 0 — 1217 packages (55 audit vulns, mostly from the CMS tree)
-npm run dev       # ✓ serves http://localhost:4321/ (HTTP 200)
-npm run build     # ✓ 44 pages built to ./dist/ in ~2s
+npm install       # deps; audit is clean
+npm run dev       # dev server at http://localhost:4321/
+npm run build     # static build -> ./dist/ (40 pages, incl. sitemap)
 npm run preview   # preview the built ./dist/ locally
-npx astro check   # ✗ exits 1 — 54 strict type errors; does NOT block build (see ISSUES.md §4)
+npx astro check   # type check — ~47 pre-existing errors, does NOT block the build
 ```
 
 ---
@@ -322,5 +300,6 @@ npx astro check   # ✗ exits 1 — 54 strict type errors; does NOT block build 
 ## 9. Out of scope
 
 Don't build these unless explicitly asked: comments, user accounts, search-as-a-service,
-a CMS or admin UI, newsletter signup embeds, analytics, ads, dark mode, or any feature
-that introduces a recurring cost or a third-party request.
+newsletter signup embeds, analytics, ads, dark mode, or any feature that introduces a
+recurring cost or a third-party request. (A Buttondown newsletter form was removed in
+2026-07 — RSS is the subscription path.)

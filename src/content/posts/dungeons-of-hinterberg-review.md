@@ -1,5 +1,5 @@
 ---
-title: Dunegons of Hinterberg Review
+title: Dungeons of Hinterberg Review
 pubDate: 2024-09-05T20:21:00.000Z
 description: Dungeons of Hinterberg is a fresh take on the classic Zelda-like dungeon crawler. Magic, swords and Europeans abound in this game about the most unconventional holiday you can possibly imagine.
 author: Kyle

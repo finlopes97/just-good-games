@@ -41,16 +41,28 @@ npx astro check    # exit 1 — 54 type errors, 0 warnings (see §4; does NOT bl
 
 ## 1. Dependencies
 
-### Install is clean but noisy
-`npm install` succeeds. It prints deprecation warnings (`trim`, `redux-devtools-extension`,
-`@types/axios` — see below) and **`npm audit` reports 55 vulnerabilities
-(3 critical, 26 high, 23 moderate, 3 low)**. The bulk of these come from the
-`decap-cms-app` dependency tree (the admin CMS) and Astro's older build chain, not from
-runtime site code.
+### ✅ Largely resolved (2026-07-25): 55 → 5 vulnerabilities
 
-> No dependency versions were changed as part of this review. Per `CLAUDE.md §6`, anything
-> touching a dependency **major** version needs sign-off first. The safe in-range updates
-> and the major upgrades are both listed below as recommendations only.
+Original state: `npm audit` reported **55 vulnerabilities (3 critical, 26 high, 23 moderate,
+3 low)**, the bulk from the `decap-cms-app` tree and the Astro build chain.
+
+Actions taken (build verified green + dev server HTTP 200 after each):
+1. **`npm audit fix`** (no `--force`) — applied all in-range security patches.
+2. **Removed `decap-cms-app`** — it was **imported nowhere**; `/admin` loads Decap from the
+   unpkg CDN at runtime, so the local package was dead weight. Pruned **515 packages** and
+   eliminated the entire React/immutable/uuid vuln cluster (which had *no fix* available).
+3. **Removed `@types/axios`** — a types stub for a package nothing imports.
+4. **`npm update`** — brought all remaining direct deps to their in-range "Wanted" versions.
+5. **Pinned `@astrojs/sitemap` to exact `3.1.6`** — the in-range "Wanted" 3.7.3 **breaks the
+   build** under Astro 4.16 (`Cannot read properties of undefined (reading 'reduce')` at
+   `@astrojs/sitemap/dist/index.js:85`, in the `astro:build:done` hook). Exact-pinned so the
+   broken 3.7.x can't be re-resolved. Revisit when the Astro 7 migration happens.
+
+**Remaining: 5 vulnerabilities (3 high, 2 moderate) — all require the Astro 7 major.**
+`astro`, `@astrojs/mdx`, `esbuild`, `sharp`, `vite` — every fix is gated behind
+`astro@7.x`. All are **build-time toolchain**, not code shipped to visitors, and the
+specific advisories (dev-server SSRF, Cloudflare-adapter XSS) don't apply to a static
+Netlify build. Low practical risk; clears with the sign-off-required Astro 4→7 migration.
 
 ### Outdated packages (`npm outdated`)
 
@@ -71,22 +83,26 @@ Everything currently pinned with `^` is behind. Notable:
 | `@types/node` | 20.14.12 | 20.19.43 | 26.1.1 |
 | `@types/react` / `-dom` | 18.3.x | 18.3.x | 19.x |
 
-**Recommendations (not yet applied):**
-1. **Low risk, do soon:** bump everything to the *Wanted* column
-   (`npm update`) — these stay inside the existing `^` ranges and match `package.json`.
-   Re-run `npm run build` after.
-2. **Needs sign-off (major):** Astro 4 → 7 and Tailwind 3 → 4 are both multi-major jumps.
-   `CLAUDE.md §7` already flags the Tailwind v4 migration (CSS-first `@theme` config,
-   `require()` in `tailwind.config.mjs` will break) as a deliberate decision, not a
-   drive-by. Astro 4 → 7 similarly needs its own migration pass. Do **not** bundle these.
+*(Table above is the original audit snapshot.)* Status now:
+1. **✅ Done — in-range bumps applied** via `npm update` (all direct deps at their "Wanted"
+   version), except `@astrojs/sitemap` which is deliberately pinned to `3.1.6` (see above).
+2. **Still needs sign-off (major):** Astro 4 → 7 and Tailwind 3 → 4 are multi-major jumps.
+   `CLAUDE.md §7` flags the Tailwind v4 migration (CSS-first `@theme` config; `require()` in
+   `tailwind.config.mjs` will break) as a deliberate decision. Astro 4 → 7 needs its own
+   migration pass (and would clear the last 5 vulns + let `@astrojs/sitemap` move forward).
+   Do **not** bundle these. Also still on old majors by choice: `typescript` (5→7),
+   `@types/node` (20→26), `@types/react`/`-dom` (18→19), `astro-seo` (0.8→1),
+   `@astrojs/markdown-remark` (5→7), `@astrojs/mdx` (3→7), `@astrojs/tailwind` (5→6).
 3. `@astrojs/rss` **is installed and working** (contradicts `CLAUDE.md §5/§7`, which say
    RSS is not installed — the doc is stale here; see §3).
 
 ### Deprecated transitive deps
-- `@types/axios@0.14.0` — a stub; axios ships its own types. It's a listed `devDependency`
-  but **nothing in `src/` imports axios**. Candidate for removal.
-- `trim@0.0.1`, `redux-devtools-extension` — pulled in transitively (markdown / decap),
-  not directly actionable.
+- ~~`@types/axios@0.14.0`~~ — **✅ removed** (stub for a package nothing imports).
+- `trim@0.0.1`, `redux-devtools-extension` — were pulled in via the `decap-cms-app` tree,
+  now **gone** since that package was removed.
+- `astro-seo` (in `dependencies`) appears **unused** — the site uses a hand-rolled
+  `Head.astro`, not `astro-seo`. Candidate for removal in a future cleanup (not done here to
+  keep this change scoped to the vuln/dependency pass).
 
 ---
 
@@ -282,12 +298,12 @@ command fails. Categories:
 | ~~3~~ | ~~JSON-LD inert / placeholder publisher (§3c)~~ ✅ Fixed | High (SEO) | Small |
 | ~~4~~ | ~~Google Fonts CDN instead of self-hosted (§3a)~~ ✅ Fixed | Medium | Medium |
 | ~~5~~ | ~~Netlify Identity widget on every page (§3b)~~ ✅ Fixed | Medium (perf/privacy) | Trivial |
-| 6 | 55 npm vulnerabilities; deps behind (§1) | Medium | Small (in-range) / Large (majors) |
+| 6 | npm vulnerabilities / stale deps (§1) — ✅ 55→5 (rest need Astro 7) | Medium | Done (in-range) / Large (majors) |
 | ~~7~~ | ~~`justify-betwen` typo (§2b)~~ ✅ Fixed | Low | Trivial |
 | 8 | Case-duplicate tag pages (§5) | Low–Med (SEO) | Small |
 | 9 | Dead code: `SearchBar`, `paginate` (§2c/§2d) | Low | Trivial |
 | 10 | Invalid `typescript` config key (§3f) | Low | Trivial |
 
-**Remaining open:** #6 (deps/vulns), #8 (case-duplicate tags), #9 (dead code), #10 (invalid
-config key), plus §3h–§3j and §6 housekeeping. The JSON-LD page-type refinement
-(`WebSite`/`Review`/`VideoGame`) noted in §3c is also still open.
+**Remaining open:** #8 (case-duplicate tags), #9 (dead code), #10 (invalid config key), the
+5 Astro-major-gated vulns from #6, plus §3h–§3j and §6 housekeeping. The JSON-LD page-type
+refinement (`WebSite`/`Review`/`VideoGame`) noted in §3c is also still open.

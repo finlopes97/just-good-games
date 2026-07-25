@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import getReadingTime from 'reading-time';
 import MarkdownPostLayout from '../../layouts/MarkdownPostLayout.astro';
 import Prose from '../../components/Prose.astro';
 
@@ -11,13 +12,16 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content, remarkPluginFrontmatter  } = await render(entry);
+const { Content } = await render(entry);
+// Sätteri (Astro 7 default) doesn't run remark plugins, so compute reading time here from
+// the raw markdown body instead of the old remark-reading-time plugin.
+const minutesRead = getReadingTime(entry.body ?? "").text;
 
 ---
 
 <MarkdownPostLayout frontmatter={entry.data}>
   <p class="font-subheading font-bold mb-2 inline-block uppercase underline underline-offset-4 decoration-2 rotate-1">
-    {remarkPluginFrontmatter.minutesRead}
+    {minutesRead}
   </p>
   <Prose>
     <Content />

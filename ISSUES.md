@@ -41,10 +41,11 @@ npx astro check    # exit 1 — 54 type errors, 0 warnings (see §4; does NOT bl
 
 ## 1. Dependencies
 
-### ✅ Largely resolved (2026-07-25): 55 → 5 vulnerabilities
+### ✅ RESOLVED: 55 → 0 vulnerabilities
 
 Original state: `npm audit` reported **55 vulnerabilities (3 critical, 26 high, 23 moderate,
-3 low)**, the bulk from the `decap-cms-app` tree and the Astro build chain.
+3 low)**, the bulk from the `decap-cms-app` tree and the Astro build chain. **Now 0** — the
+first pass (below) took it to 5; the Astro 7 migration cleared the rest.
 
 Actions taken (build verified green + dev server HTTP 200 after each):
 1. **`npm audit fix`** (no `--force`) — applied all in-range security patches.
@@ -58,11 +59,11 @@ Actions taken (build verified green + dev server HTTP 200 after each):
    `@astrojs/sitemap/dist/index.js:85`, in the `astro:build:done` hook). Exact-pinned so the
    broken 3.7.x can't be re-resolved. Revisit when the Astro 7 migration happens.
 
-**Remaining: 5 vulnerabilities (3 high, 2 moderate) — all require the Astro 7 major.**
-`astro`, `@astrojs/mdx`, `esbuild`, `sharp`, `vite` — every fix is gated behind
-`astro@7.x`. All are **build-time toolchain**, not code shipped to visitors, and the
-specific advisories (dev-server SSRF, Cloudflare-adapter XSS) don't apply to a static
-Netlify build. Low practical risk; clears with the sign-off-required Astro 4→7 migration.
+**✅ The final 5 were cleared by the Astro 4→7 migration (2026-07-26).** They were
+`astro`/`@astrojs/mdx`/`esbuild`/`sharp`/`vite`, all gated behind `astro@7`. Astro 7 fixed
+astro/esbuild/vite; removing `@astrojs/mdx` (post-`.md` switch) removed that one; a final
+in-range `npm audit fix` cleared `sharp`. **`npm audit` now reports 0 vulnerabilities.**
+See `MIGRATION.md` for the full upgrade record.
 
 ### Outdated packages (`npm outdated`)
 
@@ -314,7 +315,7 @@ command fails. Categories:
 | ~~3~~ | ~~JSON-LD inert / placeholder publisher (§3c)~~ ✅ Fixed | High (SEO) | Small |
 | ~~4~~ | ~~Google Fonts CDN instead of self-hosted (§3a)~~ ✅ Fixed | Medium | Medium |
 | ~~5~~ | ~~Netlify Identity widget on every page (§3b)~~ ✅ Fixed | Medium (perf/privacy) | Trivial |
-| 6 | npm vulnerabilities / stale deps (§1) — ✅ 55→5 (rest need Astro 7) | Medium | Done (in-range) / Large (majors) |
+| ~~6~~ | ~~npm vulnerabilities / stale deps (§1)~~ ✅ **55→0** (Astro 7 cleared the rest) | Medium | Done |
 | ~~7~~ | ~~`justify-betwen` typo (§2b)~~ ✅ Fixed | Low | Trivial |
 | ~~8~~ | ~~Case-duplicate tag pages (§5)~~ ✅ Fixed | Low–Med (SEO) | Small |
 | ~~9~~ | ~~Dead code: `SearchBar`, `paginate` (§2c/§2d)~~ ✅ Fixed | Low | Trivial |

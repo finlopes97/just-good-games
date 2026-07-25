@@ -87,7 +87,7 @@ early. `npx @astrojs/upgrade` bumps Astro + official integrations together.
   - `src/pages/posts/[...slug].astro` (getStaticPaths param)
   - `src/pages/rss.xml.js` (×2 — `link` and `guid`)
 
-- [ ] **`entry.render()` → `render(entry)`** in `src/pages/posts/[...slug].astro`:
+- [x] **`entry.render()` → `render(entry)`** in `src/pages/posts/[...slug].astro`:
 
   ```astro
   ---
@@ -98,14 +98,15 @@ early. `npx @astrojs/upgrade` bumps Astro + official integrations together.
   ---
   ```
 
-- [ ] `getCollection("posts")` stays as-is (still valid). Entries become plain serializable
+- [x] `getCollection("posts")` stays as-is (still valid). Entries became plain serializable
   objects — fine for our usage.
 
-### 4.2 Markdown pipeline → Sätteri + reading-time reimplementation
+### 4.2 Markdown pipeline → Sätteri + reading-time reimplementation — ✅ DONE (Phase 3)
 
-Sätteri won't run `remark-reading-time.mjs`. Reimplement reading time in the page and delete
-the plugin (**recommended — keeps the speed win**). See §6 for the trade-off if you'd rather
-keep the unified pipeline.
+Sätteri (Astro 7 default) doesn't run `remark-reading-time.mjs`. Reading time was
+reimplemented page-side (`getReadingTime(entry.body ?? "")`) and the plugin + wiring deleted,
+keeping the Sätteri build-speed win. See §6 for the unified-pipeline trade-off we chose not
+to take.
 
 - [ ] Delete `remark-reading-time.mjs` and its `markdown.remarkPlugins` wiring in
   `astro.config.mjs`.
@@ -263,19 +264,33 @@ same URL as today's `entry.slug`, or published `/posts/<slug>/` URLs break.
   `.grid`/`.filter` dropped — they came from alt-text/JS, never real classes), URL parity
   identical, prose + self-hosted fonts intact, `astro check` unchanged (47 / 15).
 
-**Phase 3 — Astro 7 + Sätteri**
-- [ ] Upgrade to 7. Sätteri becomes default.
-- [ ] Reimplement reading time; delete the remark plugin + wiring (§4.2).
-- [ ] Verify all 6 posts render correctly (images, links, headings, prose).
-- [ ] Re-verify `@tailwindcss/vite` + sitemap + astro-icon under Vite 8 / Rolldown.
-- [ ] Build + URL diff.
+**Phase 3 — Astro 7 + Sätteri — ✅ DONE (2026-07-26)**
+- [x] Upgraded to `astro@7.1.3`; Sätteri is the default markdown engine. Integrations
+  resolved with no peer conflicts.
+- [x] Reading time reimplemented page-side in `posts/[...slug].astro`
+  (`getReadingTime(entry.body ?? "")`); deleted `remark-reading-time.mjs` + the
+  `markdown.remarkPlugins` wiring; removed now-unused `mdast-util-to-string` and the npm
+  `remark-reading-time` package. (`entry.body` is `string | undefined` in Astro 7 — the
+  `?? ""` clears the one type error that introduced.)
+- [x] Posts render correctly under Sätteri — images/links/headings/prose intact. **No
+  typography regression:** verified against the live (old) site — both use straight
+  apostrophes and preserve the source's literal em-dashes identically, so smartypants was
+  deliberately NOT enabled (enabling it would *diverge* by curling quotes).
+- [x] `@tailwindcss/vite`, sitemap, astro-icon, astro-navbar all build fine under Vite 8.
+- [x] Build green (40 pages), URL diff IDENTICAL, reading-time chip renders. Reading time
+  18→19 min (raw-body counts image URLs; negligible for an estimate).
 
-**Phase 4 — Remaining integrations + audit**
-- [x] Tailwind resolved (Phase 2.5). `@astrojs/sitemap` un-pinned (Phase 2).
-- [ ] Confirm `astro-icon` / `astro-navbar` on Astro 7.
-- [ ] `npm audit` → expect the last 5 vulns cleared.
+**Phase 4 — Remaining integrations + audit — ✅ DONE (2026-07-26)**
+- [x] Tailwind resolved (Phase 2.5); `@astrojs/sitemap` un-pinned (Phase 2).
+- [x] `astro-icon` / `astro-navbar` confirmed working on Astro 7.
+- [x] **`npm audit` → 0 vulnerabilities** (55 at session start → 0). Astro 7 cleared
+  astro/esbuild/vite; `@astrojs/mdx` removal cleared that one; `npm audit fix` cleared the
+  last in-range `sharp` advisory.
 
-**Phase 5 — Final verification (§9) → merge.**
+**Phase 5 — Final verification — ✅ PASSED (2026-07-26) → ready to merge.**
+- [x] Full §9 acceptance checklist passes (build, URL parity 43, reading-time, JSON-LD
+  valid, OG/canonical, RSS, sitemap, self-hosted fonts, Netlify Identity guard, brand CSS,
+  `astro check` 47 unchanged, audit 0). Merge `astro-7-migration` → `main` when ready.
 
 ---
 

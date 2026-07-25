@@ -10,7 +10,7 @@ collections:
     create: true
     format: "frontmatter"
     slug: "{{slug}}"
-    extension: "mdx"
+    extension: "md"
     fields:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Publish Date", name: "pubDate", widget: "datetime" }

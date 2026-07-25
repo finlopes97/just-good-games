@@ -26,7 +26,7 @@ Drafted 2026-07-25. This is a plan, not a record of work done — check items of
 | Node | 24.18.0 (well above any Astro 7 minimum) |
 | Content API | **Legacy** collections (`type: 'content'`, `entry.slug`, `entry.render()`) |
 | Markdown | unified/remark pipeline + 1 custom plugin (`remark-reading-time.mjs`) |
-| Content files | 7 `.mdx`, **all pure CommonMark/GFM** — zero MDX features (verified) |
+| Content files | 7 `.md` (renamed from `.mdx` 2026-07-25), **pure CommonMark/GFM** — no MDX requirement |
 | Styling | `@astrojs/tailwind` v5 + Tailwind v3 (`tailwind.config.mjs` with `require()`) |
 
 ---
@@ -63,7 +63,7 @@ early. `npx @astrojs/upgrade` bumps Astro + official integrations together.
   import { glob } from 'astro/loaders';
 
   const posts = defineCollection({
-    loader: glob({ pattern: '**/*.mdx', base: './src/content/posts' }),
+    loader: glob({ pattern: '**/*.md', base: './src/content/posts' }),
     schema: z.object({
       title: z.string(),
       pubDate: z.date(),
@@ -127,14 +127,17 @@ keep the unified pipeline.
   needed**. Confirm the 7 posts render identically (they use no remark/rehype-specific
   syntax).
 
-### 4.3 `.mdx` vs `.md` (optional simplification)
+### 4.3 `.md` conversion — ✅ DONE (2026-07-25)
 
-Since **no file uses MDX features**, you *can* rename `.mdx` → `.md` and drop the
-`@astrojs/mdx` integration entirely.
-- [ ] **Decision:** keep `.mdx` (no content churn, but must keep `@astrojs/mdx` on a v7-
-  compatible version) **or** rename to `.md` + remove `@astrojs/mdx`. If renaming, update the
-  `glob()` pattern and the Decap CMS `extension`/`format` in `public/admin/config.yml`.
-  ⚠️ Renaming a file changes its `id` → its URL. If you rename, add redirects (§7).
+Files were renamed `.mdx` → `.md` (committed/pushed). The extension is **not** part of the
+`id`/URL (both legacy slug and the `glob()` loader strip it), so no URLs changed. Follow-ups
+this creates:
+- [ ] **Remove the `@astrojs/mdx` integration** — no `.mdx` files remain, so it's now dead
+  weight. Drop `mdx()` from `astro.config.mjs` and `@astrojs/mdx` from `package.json`. (Can
+  be done independently, even before the Astro upgrade.)
+- [ ] **Update Decap CMS** — `public/admin/config.yml` still has `extension: "mdx"`, so a
+  post created via the CMS would write a new `.mdx` file, reintroducing the split. Change to
+  `extension: "md"`. ⚠️ Worth doing soon, regardless of the Astro 7 timeline.
 
 ### 4.4 Integration compatibility (verify each against Astro 7)
 
@@ -146,7 +149,7 @@ Since **no file uses MDX features**, you *can* rename `.mdx` → `.md` and drop 
   whole migration** and is a deliberate design decision (`CLAUDE.md §7`). Treat as its own
   sub-task. Verify whether any `@astrojs/tailwind` v6 path keeps Tailwind 3 working before
   committing to the v4 rewrite.
-- [ ] **`@astrojs/mdx`** — bump to the Astro-7-compatible major (v6+), or drop (§4.3).
+- [ ] **`@astrojs/mdx`** — **remove** (no `.mdx` files remain, §4.3), rather than bump.
 - [ ] **`astro-icon`** — confirm Astro 7 support; it pulls `@iconify/tools` (source of the
   `tar`/`svgo` advisories cleared earlier — re-check after upgrade).
 - [ ] **`astro-navbar`** — confirm Astro 7 support.

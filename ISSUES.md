@@ -212,10 +212,11 @@ the homepage omits the tag.
 key** and was silently ignored (TS strictness already lives correctly in `tsconfig.json`).
 **Fix:** deleted the no-op block. Build unaffected.
 
-### 3g. `require()` in an ESM config file — confirmed (§7.3)
-`tailwind.config.mjs:105` uses `require("@tailwindcss/typography")` inside an `.mjs` ESM
-file. Works today only because Tailwind's config loader transpiles it; it will break under
-a Tailwind v4 migration. Noted, not urgent.
+### 3g. `require()` in an ESM config file — ✅ RESOLVED (2026-07-25)
+`tailwind.config.mjs` used `require("@tailwindcss/typography")` in an ESM file. **Resolved
+by the Tailwind 4 migration:** `tailwind.config.mjs` is deleted entirely — config is now
+CSS-first in `src/styles/global.css` (`@theme` + `@plugin "@tailwindcss/typography"`), so
+there is no `require()` left. See MIGRATION.md (Tailwind 4 step).
 
 ### 3h. Content schema differs from the §4 target
 `src/content/config.ts` uses `{ pubDate, author, gameTitle, image:{url,alt} }`. The

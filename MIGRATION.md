@@ -141,21 +141,18 @@ Files were renamed `.mdx` → `.md` (committed/pushed). The extension is **not**
 
 ### 4.4 Integration compatibility (verify each against Astro 7)
 
-- [ ] **`@astrojs/tailwind` (v5) — biggest decision.** The Tailwind integration is
-  deprecated in favour of `@tailwindcss/vite` + **Tailwind v4** (CSS-first `@theme` config).
-  Under Astro 7 you will likely have to migrate Tailwind 3 → 4, which means rewriting
-  `tailwind.config.mjs` (colour tokens, `font*`, `maxWidth` utilities) as `@theme` CSS and
-  removing the `require()` (`ISSUES.md §3g`). **This may be the single largest chunk of the
-  whole migration** and is a deliberate design decision (`CLAUDE.md §7`). Treat as its own
-  sub-task. Verify whether any `@astrojs/tailwind` v6 path keeps Tailwind 3 working before
-  committing to the v4 rewrite.
+- [x] **`@astrojs/tailwind` → `@tailwindcss/vite` + Tailwind v4 — ✅ DONE (Phase 2.5).**
+  (`@astrojs/tailwind` had no Astro 6+ support at any version.) Migrated to
+  `@tailwindcss/vite` + `tailwindcss@4.3.3`; `tailwind.config.mjs` deleted, config ported 1:1
+  to `src/styles/global.css` (`@theme` + `@plugin "@tailwindcss/typography@0.5.20"`), imported
+  in `Head.astro`. `.npmrc` bridge deleted (clean install no longer ERESOLVEs). Verified: all
+  used utilities present with identical values, URL parity, prose intact, fonts intact.
 - [x] **`@astrojs/mdx`** — **removed** (no `.mdx` files remain, §4.3). ✅ Done 2026-07-25.
 - [ ] **`astro-icon`** — confirm Astro 7 support; it pulls `@iconify/tools` (source of the
   `tar`/`svgo` advisories cleared earlier — re-check after upgrade).
 - [ ] **`astro-navbar`** — confirm Astro 7 support.
-- [ ] **`@astrojs/sitemap`** — currently pinned to exact `3.1.6` because 3.7.3 crashes under
-  Astro 4.16 (`ISSUES.md §1`). Un-pin and test the latest against Astro 7; the crash may be
-  gone. **Re-verify `sitemap-index.xml` builds.**
+- [x] **`@astrojs/sitemap`** — ✅ un-pinned to `3.7.3` in Phase 2 (the 3.1.6 pin crashed on
+  Astro 6). `sitemap-index.xml` verified building. Re-confirm on Astro 7.
 - [ ] **`@astrojs/rss`** — confirm the `rss.xml.js` API (uses `post.body`, `post.slug`→`id`)
   still works; update the `link`/`guid` to `id`.
 - [ ] **`@astrojs/markdown-remark`** — only needed if you keep the unified pipeline (§6).
@@ -241,19 +238,41 @@ same URL as today's `entry.slug`, or published `/posts/<slug>/` URLs break.
 - Note: reading time still comes from the remark plugin (fine on Astro 5) — it moves to a
   page-side calc in Phase 3 when Sätteri takes over.
 
-**Phase 2 — Astro 6**
-- [ ] Upgrade to 6. Confirm no legacy-collection warnings remain.
-- [ ] Build + URL diff.
+**Phase 2 — Astro 6 — ✅ DONE (2026-07-25)**
+- [x] Upgraded to `astro@6.4.8`. No legacy-collection errors (already on Content Layer).
+- [x] **`@astrojs/sitemap` un-pinned 3.1.6 → 3.7.3** — the old pin crashed on Astro 6
+  (`reduce` of undefined in `astro:build:done`); 3.7.3 is built for current Astro. Sitemap
+  builds again.
+- [x] **Added `.npmrc` `legacy-peer-deps=true` bridge** — `@astrojs/tailwind` peer-caps at
+  `astro ^5`, so its unmet peer made every `npm install`/`ci` (incl. Netlify) ERESOLVE.
+  Bridge lets installs proceed; Tailwind CSS still emits correctly. **Temporary — remove
+  when Tailwind 4 lands (see §4.4 / decision below).**
+- [x] Build green (40 pages). URL diff vs baseline: IDENTICAL. Reading-time intact.
+  `astro check`: 47 errors (unchanged), hints 2→15 (non-blocking Astro 6 suggestions).
+- ✅ The Tailwind decision it raised was resolved in Phase 2.5 (below); the `.npmrc` bridge
+  has since been removed.
+
+**Phase 2.5 — Tailwind 3 → 4 (CSS-first) — ✅ DONE (2026-07-25)**
+- [x] `@astrojs/tailwind` → `@tailwindcss/vite` + `tailwindcss@4.3.3`;
+  `@tailwindcss/typography@0.5.20` via `@plugin`.
+- [x] `tailwind.config.mjs` deleted; theme ported **1:1** to `src/styles/global.css`
+  (`@theme`), imported in `Head.astro`. `astro.config.mjs` now uses `vite.plugins`.
+- [x] `.npmrc` bridge deleted — clean install no longer ERESOLVEs (peer conflict gone with
+  `@astrojs/tailwind`).
+- [x] Verified 1:1: every used utility present with identical values (only TW3 false-positives
+  `.grid`/`.filter` dropped — they came from alt-text/JS, never real classes), URL parity
+  identical, prose + self-hosted fonts intact, `astro check` unchanged (47 / 15).
 
 **Phase 3 — Astro 7 + Sätteri**
 - [ ] Upgrade to 7. Sätteri becomes default.
 - [ ] Reimplement reading time; delete the remark plugin + wiring (§4.2).
-- [ ] Verify all 7 posts render correctly (images, links, headings, prose).
+- [ ] Verify all 6 posts render correctly (images, links, headings, prose).
+- [ ] Re-verify `@tailwindcss/vite` + sitemap + astro-icon under Vite 8 / Rolldown.
 - [ ] Build + URL diff.
 
-**Phase 4 — Integrations + Tailwind decision**
-- [ ] Resolve every item in §4.4 (Tailwind is the big one).
-- [ ] Un-pin `@astrojs/sitemap`; verify sitemap output.
+**Phase 4 — Remaining integrations + audit**
+- [x] Tailwind resolved (Phase 2.5). `@astrojs/sitemap` un-pinned (Phase 2).
+- [ ] Confirm `astro-icon` / `astro-navbar` on Astro 7.
 - [ ] `npm audit` → expect the last 5 vulns cleared.
 
 **Phase 5 — Final verification (§9) → merge.**

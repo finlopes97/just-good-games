@@ -61,10 +61,10 @@ const groupedPosts = groupPosts(allPosts);
                       .sort((a, b) => new Date(b.data.pubDate) - new Date(a.data.pubDate))
                       .map((post) => (
                         <BlogPostListing
-                          url={`/posts/${post.slug}/`}
+                          url={`/posts/${post.id}/`}
                           title={post.data.title}
                           pubDate={formatDate(post.data.pubDate)}
-                          key={post.slug}
+                          key={post.id}
                         />
                       ))}
                   </ul>

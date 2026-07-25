@@ -51,9 +51,9 @@ early. `npx @astrojs/upgrade` bumps Astro + official integrations together.
 
 ## 4. Migration surface in THIS repo (from the audit)
 
-### 4.1 Content collections → Content Layer (the bulk of the work)
+### 4.1 Content collections → Content Layer (the bulk of the work) — ✅ DONE (Phase 1)
 
-- [ ] **Move + rewrite config:** `src/content/config.ts` → `src/content.config.ts`.
+- [x] **Move + rewrite config:** `src/content/config.ts` → `src/content.config.ts`.
   Replace `type: 'content'` with a `glob()` loader. The Zod schema (including the tag
   `trim()+toLowerCase()` normalization we just added) carries over unchanged:
 
@@ -228,11 +228,18 @@ same URL as today's `entry.slug`, or published `/posts/<slug>/` URLs break.
 - [ ] Skim the official upgrade guides: [v5](https://docs.astro.build/en/guides/upgrade-to/v5/),
   [v6](https://docs.astro.build/en/guides/upgrade-to/v6/), v7.
 
-**Phase 1 — Astro 5 (Content Layer)**
-- [ ] `npx @astrojs/upgrade` to 5 (or pin `astro@5` + integrations).
-- [ ] Move/rewrite config to `src/content.config.ts` with `glob()` (§4.1).
-- [ ] `slug` → `id` everywhere; `entry.render()` → `render(entry)` (§4.1).
-- [ ] Build + URL diff (§7) + dev smoke test.
+**Phase 1 — Astro 5 (Content Layer) — ✅ DONE (2026-07-25)**
+- [x] Upgraded to `astro@5.18.2` (integrations resolved with no peer conflicts). Removed the
+  vestigial `@astrojs/markdown-remark` direct dep.
+- [x] Config moved to `src/content.config.ts` with a `glob()` loader; old
+  `src/content/config.ts` deleted.
+- [x] `slug` → `id` (10 refs across 6 files); `entry.render()` → `render(entry)`.
+- [x] Build green (40 pages / 43 routes). **URL diff vs baseline: IDENTICAL** — the loader
+  `id` reproduces every slug incl. the underscore in `01-25_monthly-update`.
+- [x] Verified: reading-time chip still renders ("min read"), RSS links correct, `astro
+  check` unchanged at 47 errors / 2 hints (no new type errors).
+- Note: reading time still comes from the remark plugin (fine on Astro 5) — it moves to a
+  page-side calc in Phase 3 when Sätteri takes over.
 
 **Phase 2 — Astro 6**
 - [ ] Upgrade to 6. Confirm no legacy-collection warnings remain.

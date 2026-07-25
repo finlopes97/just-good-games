@@ -15,8 +15,8 @@ export async function GET(context) {
       title: post.data.title,
       pubDate: post.data.pubDate,
       description: post.data.description,
-      link: `https://justgood.games/posts/${post.slug}`,
-      guid: `https://justgood.games/posts/${post.slug}`,
+      link: `https://justgood.games/posts/${post.id}`,
+      guid: `https://justgood.games/posts/${post.id}`,
       content: sanitizeHtml(parser.render(post.body), {
         allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img'])
       }),

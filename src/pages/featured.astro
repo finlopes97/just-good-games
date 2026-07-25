@@ -60,9 +60,9 @@ const groupedPosts = groupPosts(featuredPosts);
                       {groupedPosts[year][month]
                         .sort((a, b) => new Date(b.data.pubDate) - new Date(a.data.pubDate))
                         .map((post) => (
-                          <li class="list-none" key={post.slug}>
+                          <li class="list-none" key={post.id}>
                             <BlogPostCard
-                              url={`/posts/${post.slug}/`}
+                              url={`/posts/${post.id}/`}
                               title={post.data.title}
                               pubDate={formatDate(post.data.pubDate)}
                               description={post.data.description}

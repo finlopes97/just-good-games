@@ -42,7 +42,7 @@ const latestFeaturedGame = featuredPosts[0]; // This will be the most recent fea
       (latestFeaturedGame && (
         <FeaturedBanner
           title={latestFeaturedGame.data.title}
-          url={`/posts/${latestFeaturedGame.slug}/`}
+          url={`/posts/${latestFeaturedGame.id}/`}
           pubDate={formatDate(latestFeaturedGame.data.pubDate)}
           description={latestFeaturedGame.data.description}
           image={latestFeaturedGame.data.image}
@@ -88,7 +88,7 @@ const latestFeaturedGame = featuredPosts[0]; // This will be the most recent fea
         {
           recentPosts.map((post) => (
             <BlogPostCard
-              url={`/posts/${post.slug}/`}
+              url={`/posts/${post.id}/`}
               title={post.data.title}
               pubDate={formatDate(post.data.pubDate)}
               description={post.data.description}

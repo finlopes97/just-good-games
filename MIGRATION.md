@@ -51,9 +51,9 @@ early. `npx @astrojs/upgrade` bumps Astro + official integrations together.
 
 ## 4. Migration surface in THIS repo (from the audit)
 
-### 4.1 Content collections → Content Layer (the bulk of the work)
+### 4.1 Content collections → Content Layer (the bulk of the work) — ✅ DONE (Phase 1)
 
-- [ ] **Move + rewrite config:** `src/content/config.ts` → `src/content.config.ts`.
+- [x] **Move + rewrite config:** `src/content/config.ts` → `src/content.config.ts`.
   Replace `type: 'content'` with a `glob()` loader. The Zod schema (including the tag
   `trim()+toLowerCase()` normalization we just added) carries over unchanged:
 
@@ -87,7 +87,7 @@ early. `npx @astrojs/upgrade` bumps Astro + official integrations together.
   - `src/pages/posts/[...slug].astro` (getStaticPaths param)
   - `src/pages/rss.xml.js` (×2 — `link` and `guid`)
 
-- [ ] **`entry.render()` → `render(entry)`** in `src/pages/posts/[...slug].astro`:
+- [x] **`entry.render()` → `render(entry)`** in `src/pages/posts/[...slug].astro`:
 
   ```astro
   ---
@@ -98,14 +98,15 @@ early. `npx @astrojs/upgrade` bumps Astro + official integrations together.
   ---
   ```
 
-- [ ] `getCollection("posts")` stays as-is (still valid). Entries become plain serializable
+- [x] `getCollection("posts")` stays as-is (still valid). Entries became plain serializable
   objects — fine for our usage.
 
-### 4.2 Markdown pipeline → Sätteri + reading-time reimplementation
+### 4.2 Markdown pipeline → Sätteri + reading-time reimplementation — ✅ DONE (Phase 3)
 
-Sätteri won't run `remark-reading-time.mjs`. Reimplement reading time in the page and delete
-the plugin (**recommended — keeps the speed win**). See §6 for the trade-off if you'd rather
-keep the unified pipeline.
+Sätteri (Astro 7 default) doesn't run `remark-reading-time.mjs`. Reading time was
+reimplemented page-side (`getReadingTime(entry.body ?? "")`) and the plugin + wiring deleted,
+keeping the Sätteri build-speed win. See §6 for the unified-pipeline trade-off we chose not
+to take.
 
 - [ ] Delete `remark-reading-time.mjs` and its `markdown.remarkPlugins` wiring in
   `astro.config.mjs`.
@@ -130,32 +131,29 @@ keep the unified pipeline.
 ### 4.3 `.md` conversion — ✅ DONE (2026-07-25)
 
 Files were renamed `.mdx` → `.md` (committed/pushed). The extension is **not** part of the
-`id`/URL (both legacy slug and the `glob()` loader strip it), so no URLs changed. Follow-ups
-this creates:
-- [ ] **Remove the `@astrojs/mdx` integration** — no `.mdx` files remain, so it's now dead
-  weight. Drop `mdx()` from `astro.config.mjs` and `@astrojs/mdx` from `package.json`. (Can
-  be done independently, even before the Astro upgrade.)
-- [ ] **Update Decap CMS** — `public/admin/config.yml` still has `extension: "mdx"`, so a
-  post created via the CMS would write a new `.mdx` file, reintroducing the split. Change to
-  `extension: "md"`. ⚠️ Worth doing soon, regardless of the Astro 7 timeline.
+`id`/URL (both legacy slug and the `glob()` loader strip it), so no URLs changed. Follow-ups,
+**both now done (2026-07-25):**
+- [x] **Removed the `@astrojs/mdx` integration** — dropped `mdx()` + import from
+  `astro.config.mjs`, removed `@astrojs/mdx` from `package.json`, re-synced the lockfile
+  (−46 packages). (This was also a latent Netlify build failure — the config still called
+  `mdx()` after the package was gone; see `ISSUES.md §3k`.)
+- [x] **Updated Decap CMS** — `public/admin/config.yml` `extension` switched to `md`, so
+  CMS-authored posts no longer reintroduce `.mdx`.
 
 ### 4.4 Integration compatibility (verify each against Astro 7)
 
-- [ ] **`@astrojs/tailwind` (v5) — biggest decision.** The Tailwind integration is
-  deprecated in favour of `@tailwindcss/vite` + **Tailwind v4** (CSS-first `@theme` config).
-  Under Astro 7 you will likely have to migrate Tailwind 3 → 4, which means rewriting
-  `tailwind.config.mjs` (colour tokens, `font*`, `maxWidth` utilities) as `@theme` CSS and
-  removing the `require()` (`ISSUES.md §3g`). **This may be the single largest chunk of the
-  whole migration** and is a deliberate design decision (`CLAUDE.md §7`). Treat as its own
-  sub-task. Verify whether any `@astrojs/tailwind` v6 path keeps Tailwind 3 working before
-  committing to the v4 rewrite.
-- [ ] **`@astrojs/mdx`** — **remove** (no `.mdx` files remain, §4.3), rather than bump.
+- [x] **`@astrojs/tailwind` → `@tailwindcss/vite` + Tailwind v4 — ✅ DONE (Phase 2.5).**
+  (`@astrojs/tailwind` had no Astro 6+ support at any version.) Migrated to
+  `@tailwindcss/vite` + `tailwindcss@4.3.3`; `tailwind.config.mjs` deleted, config ported 1:1
+  to `src/styles/global.css` (`@theme` + `@plugin "@tailwindcss/typography@0.5.20"`), imported
+  in `Head.astro`. `.npmrc` bridge deleted (clean install no longer ERESOLVEs). Verified: all
+  used utilities present with identical values, URL parity, prose intact, fonts intact.
+- [x] **`@astrojs/mdx`** — **removed** (no `.mdx` files remain, §4.3). ✅ Done 2026-07-25.
 - [ ] **`astro-icon`** — confirm Astro 7 support; it pulls `@iconify/tools` (source of the
   `tar`/`svgo` advisories cleared earlier — re-check after upgrade).
 - [ ] **`astro-navbar`** — confirm Astro 7 support.
-- [ ] **`@astrojs/sitemap`** — currently pinned to exact `3.1.6` because 3.7.3 crashes under
-  Astro 4.16 (`ISSUES.md §1`). Un-pin and test the latest against Astro 7; the crash may be
-  gone. **Re-verify `sitemap-index.xml` builds.**
+- [x] **`@astrojs/sitemap`** — ✅ un-pinned to `3.7.3` in Phase 2 (the 3.1.6 pin crashed on
+  Astro 6). `sitemap-index.xml` verified building. Re-confirm on Astro 7.
 - [ ] **`@astrojs/rss`** — confirm the `rss.xml.js` API (uses `post.body`, `post.slug`→`id`)
   still works; update the `link`/`guid` to `id`.
 - [ ] **`@astrojs/markdown-remark`** — only needed if you keep the unified pipeline (§6).
@@ -199,8 +197,8 @@ Markdown-heavy site. Not recommended.** Reimplementing reading time (§4.2) is ~
 With the `glob()` loader, `entry.id` is derived from the filename. It **must** produce the
 same URL as today's `entry.slug`, or published `/posts/<slug>/` URLs break.
 
-- [ ] **Before upgrading:** capture the current URL list —
-  `Get-ChildItem dist -Recurse -Filter index.html` after a clean `npm run build`.
+- [x] **Before upgrading:** captured the current URL list — 43 routes in
+  `scratchpad/baseline-urls.txt` (clean `npm run build` on `main`/branch start).
 - [ ] **After upgrading:** rebuild and diff the URL list against the baseline. Expect an
   identical set (minus nothing; plus nothing).
 - [ ] Current post slugs to preserve exactly:
@@ -217,40 +215,88 @@ same URL as today's `entry.slug`, or published `/posts/<slug>/` URLs break.
 ## 8. Step-by-step plan
 
 **Phase 0 — Prep**
-- [ ] Branch: `git checkout -b astro-7-migration`.
-- [ ] Clean baseline: `npm run build` green; capture the URL list (§7).
-- [ ] Add `@astrojs/check` as a devDependency (type-checking was pruned with `astro-seo`).
+- [x] **Netlify build green + Node pinned to `22`** (`netlify.toml`, 2026-07-25) — CI now runs
+  a modern Node that satisfies Astro 7 / Vite 8 (was failing on Node 18; `ISSUES.md §3k`).
+- [x] Branch: `astro-7-migration` created off `main` (2026-07-25).
+- [x] Clean baseline: `npm run build` green — **40 pages / 43 routes** (6 posts, 29 tags,
+  `/`, `/about/`, `/admin/`, `/archive/`, `/featured/`, `/rss.xml`, sitemaps). URL list saved
+  to `scratchpad/baseline-urls.txt` (§7).
+- [x] `@astrojs/check` added as a devDependency. **Type-check baseline: 47 errors, 2 hints**
+  (pre-existing; target after migration = no *new* errors).
 - [ ] Skim the official upgrade guides: [v5](https://docs.astro.build/en/guides/upgrade-to/v5/),
   [v6](https://docs.astro.build/en/guides/upgrade-to/v6/), v7.
 
-**Phase 1 — Astro 5 (Content Layer)**
-- [ ] `npx @astrojs/upgrade` to 5 (or pin `astro@5` + integrations).
-- [ ] Move/rewrite config to `src/content.config.ts` with `glob()` (§4.1).
-- [ ] `slug` → `id` everywhere; `entry.render()` → `render(entry)` (§4.1).
-- [ ] Build + URL diff (§7) + dev smoke test.
+**Phase 1 — Astro 5 (Content Layer) — ✅ DONE (2026-07-25)**
+- [x] Upgraded to `astro@5.18.2` (integrations resolved with no peer conflicts). Removed the
+  vestigial `@astrojs/markdown-remark` direct dep.
+- [x] Config moved to `src/content.config.ts` with a `glob()` loader; old
+  `src/content/config.ts` deleted.
+- [x] `slug` → `id` (10 refs across 6 files); `entry.render()` → `render(entry)`.
+- [x] Build green (40 pages / 43 routes). **URL diff vs baseline: IDENTICAL** — the loader
+  `id` reproduces every slug incl. the underscore in `01-25_monthly-update`.
+- [x] Verified: reading-time chip still renders ("min read"), RSS links correct, `astro
+  check` unchanged at 47 errors / 2 hints (no new type errors).
+- Note: reading time still comes from the remark plugin (fine on Astro 5) — it moves to a
+  page-side calc in Phase 3 when Sätteri takes over.
 
-**Phase 2 — Astro 6**
-- [ ] Upgrade to 6. Confirm no legacy-collection warnings remain.
-- [ ] Build + URL diff.
+**Phase 2 — Astro 6 — ✅ DONE (2026-07-25)**
+- [x] Upgraded to `astro@6.4.8`. No legacy-collection errors (already on Content Layer).
+- [x] **`@astrojs/sitemap` un-pinned 3.1.6 → 3.7.3** — the old pin crashed on Astro 6
+  (`reduce` of undefined in `astro:build:done`); 3.7.3 is built for current Astro. Sitemap
+  builds again.
+- [x] **Added `.npmrc` `legacy-peer-deps=true` bridge** — `@astrojs/tailwind` peer-caps at
+  `astro ^5`, so its unmet peer made every `npm install`/`ci` (incl. Netlify) ERESOLVE.
+  Bridge lets installs proceed; Tailwind CSS still emits correctly. **Temporary — remove
+  when Tailwind 4 lands (see §4.4 / decision below).**
+- [x] Build green (40 pages). URL diff vs baseline: IDENTICAL. Reading-time intact.
+  `astro check`: 47 errors (unchanged), hints 2→15 (non-blocking Astro 6 suggestions).
+- ✅ The Tailwind decision it raised was resolved in Phase 2.5 (below); the `.npmrc` bridge
+  has since been removed.
 
-**Phase 3 — Astro 7 + Sätteri**
-- [ ] Upgrade to 7. Sätteri becomes default.
-- [ ] Reimplement reading time; delete the remark plugin + wiring (§4.2).
-- [ ] Verify all 7 posts render correctly (images, links, headings, prose).
-- [ ] Build + URL diff.
+**Phase 2.5 — Tailwind 3 → 4 (CSS-first) — ✅ DONE (2026-07-25)**
+- [x] `@astrojs/tailwind` → `@tailwindcss/vite` + `tailwindcss@4.3.3`;
+  `@tailwindcss/typography@0.5.20` via `@plugin`.
+- [x] `tailwind.config.mjs` deleted; theme ported **1:1** to `src/styles/global.css`
+  (`@theme`), imported in `Head.astro`. `astro.config.mjs` now uses `vite.plugins`.
+- [x] `.npmrc` bridge deleted — clean install no longer ERESOLVEs (peer conflict gone with
+  `@astrojs/tailwind`).
+- [x] Verified 1:1: every used utility present with identical values (only TW3 false-positives
+  `.grid`/`.filter` dropped — they came from alt-text/JS, never real classes), URL parity
+  identical, prose + self-hosted fonts intact, `astro check` unchanged (47 / 15).
 
-**Phase 4 — Integrations + Tailwind decision**
-- [ ] Resolve every item in §4.4 (Tailwind is the big one).
-- [ ] Un-pin `@astrojs/sitemap`; verify sitemap output.
-- [ ] `npm audit` → expect the last 5 vulns cleared.
+**Phase 3 — Astro 7 + Sätteri — ✅ DONE (2026-07-26)**
+- [x] Upgraded to `astro@7.1.3`; Sätteri is the default markdown engine. Integrations
+  resolved with no peer conflicts.
+- [x] Reading time reimplemented page-side in `posts/[...slug].astro`
+  (`getReadingTime(entry.body ?? "")`); deleted `remark-reading-time.mjs` + the
+  `markdown.remarkPlugins` wiring; removed now-unused `mdast-util-to-string` and the npm
+  `remark-reading-time` package. (`entry.body` is `string | undefined` in Astro 7 — the
+  `?? ""` clears the one type error that introduced.)
+- [x] Posts render correctly under Sätteri — images/links/headings/prose intact. **No
+  typography regression:** verified against the live (old) site — both use straight
+  apostrophes and preserve the source's literal em-dashes identically, so smartypants was
+  deliberately NOT enabled (enabling it would *diverge* by curling quotes).
+- [x] `@tailwindcss/vite`, sitemap, astro-icon, astro-navbar all build fine under Vite 8.
+- [x] Build green (40 pages), URL diff IDENTICAL, reading-time chip renders. Reading time
+  18→19 min (raw-body counts image URLs; negligible for an estimate).
 
-**Phase 5 — Final verification (§9) → merge.**
+**Phase 4 — Remaining integrations + audit — ✅ DONE (2026-07-26)**
+- [x] Tailwind resolved (Phase 2.5); `@astrojs/sitemap` un-pinned (Phase 2).
+- [x] `astro-icon` / `astro-navbar` confirmed working on Astro 7.
+- [x] **`npm audit` → 0 vulnerabilities** (55 at session start → 0). Astro 7 cleared
+  astro/esbuild/vite; `@astrojs/mdx` removal cleared that one; `npm audit fix` cleared the
+  last in-range `sharp` advisory.
+
+**Phase 5 — Final verification — ✅ PASSED (2026-07-26) → ready to merge.**
+- [x] Full §9 acceptance checklist passes (build, URL parity 43, reading-time, JSON-LD
+  valid, OG/canonical, RSS, sitemap, self-hosted fonts, Netlify Identity guard, brand CSS,
+  `astro check` 47 unchanged, audit 0). Merge `astro-7-migration` → `main` when ready.
 
 ---
 
 ## 9. Acceptance checklist
 
-- [ ] `npm run build` green; page count matches baseline (42) unless intentionally changed.
+- [ ] `npm run build` green; route count matches baseline (**43**) unless intentionally changed.
 - [ ] **URL parity** — post + tag URL set identical to pre-migration (§7).
 - [ ] Reading-time chip still shows on articles.
 - [ ] JSON-LD still valid on an article + homepage (re-run the `ConvertFrom-Json` check).

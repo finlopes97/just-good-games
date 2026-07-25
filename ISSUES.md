@@ -41,10 +41,11 @@ npx astro check    # exit 1 — 54 type errors, 0 warnings (see §4; does NOT bl
 
 ## 1. Dependencies
 
-### ✅ Largely resolved (2026-07-25): 55 → 5 vulnerabilities
+### ✅ RESOLVED: 55 → 0 vulnerabilities
 
 Original state: `npm audit` reported **55 vulnerabilities (3 critical, 26 high, 23 moderate,
-3 low)**, the bulk from the `decap-cms-app` tree and the Astro build chain.
+3 low)**, the bulk from the `decap-cms-app` tree and the Astro build chain. **Now 0** — the
+first pass (below) took it to 5; the Astro 7 migration cleared the rest.
 
 Actions taken (build verified green + dev server HTTP 200 after each):
 1. **`npm audit fix`** (no `--force`) — applied all in-range security patches.
@@ -58,11 +59,11 @@ Actions taken (build verified green + dev server HTTP 200 after each):
    `@astrojs/sitemap/dist/index.js:85`, in the `astro:build:done` hook). Exact-pinned so the
    broken 3.7.x can't be re-resolved. Revisit when the Astro 7 migration happens.
 
-**Remaining: 5 vulnerabilities (3 high, 2 moderate) — all require the Astro 7 major.**
-`astro`, `@astrojs/mdx`, `esbuild`, `sharp`, `vite` — every fix is gated behind
-`astro@7.x`. All are **build-time toolchain**, not code shipped to visitors, and the
-specific advisories (dev-server SSRF, Cloudflare-adapter XSS) don't apply to a static
-Netlify build. Low practical risk; clears with the sign-off-required Astro 4→7 migration.
+**✅ The final 5 were cleared by the Astro 4→7 migration (2026-07-26).** They were
+`astro`/`@astrojs/mdx`/`esbuild`/`sharp`/`vite`, all gated behind `astro@7`. Astro 7 fixed
+astro/esbuild/vite; removing `@astrojs/mdx` (post-`.md` switch) removed that one; a final
+in-range `npm audit fix` cleared `sharp`. **`npm audit` now reports 0 vulnerabilities.**
+See `MIGRATION.md` for the full upgrade record.
 
 ### Outdated packages (`npm outdated`)
 
@@ -102,6 +103,10 @@ Everything currently pinned with `^` is behind. Notable:
   now **gone** since that package was removed.
 - ~~`astro-seo` (in `dependencies`) appears **unused**~~ — **✅ removed** (2026-07-25); the
   site uses a hand-rolled `Head.astro`. Pruned 74 packages.
+- ~~`@astrojs/mdx`~~ — **✅ removed** (2026-07-25) after the content files were renamed
+  `.mdx` → `.md`; no MDX features are used. Integration dropped from `astro.config.mjs`,
+  package removed, lockfile synced (−46 packages). Decap CMS `extension` also switched to
+  `md` so CMS-authored posts don't reintroduce `.mdx`.
 
 ---
 
@@ -208,10 +213,11 @@ the homepage omits the tag.
 key** and was silently ignored (TS strictness already lives correctly in `tsconfig.json`).
 **Fix:** deleted the no-op block. Build unaffected.
 
-### 3g. `require()` in an ESM config file — confirmed (§7.3)
-`tailwind.config.mjs:105` uses `require("@tailwindcss/typography")` inside an `.mjs` ESM
-file. Works today only because Tailwind's config loader transpiles it; it will break under
-a Tailwind v4 migration. Noted, not urgent.
+### 3g. `require()` in an ESM config file — ✅ RESOLVED (2026-07-25)
+`tailwind.config.mjs` used `require("@tailwindcss/typography")` in an ESM file. **Resolved
+by the Tailwind 4 migration:** `tailwind.config.mjs` is deleted entirely — config is now
+CSS-first in `src/styles/global.css` (`@theme` + `@plugin "@tailwindcss/typography"`), so
+there is no `require()` left. See MIGRATION.md (Tailwind 4 step).
 
 ### 3h. Content schema differs from the §4 target
 `src/content/config.ts` uses `{ pubDate, author, gameTitle, image:{url,alt} }`. The
@@ -225,6 +231,18 @@ There was no `netlify.toml`, so the `CLAUDE.md §4` URL-redirect policy had nowh
 tag pages — see §5). Future slug/redirect needs now have a home. *Post-deploy check:* verify
 Netlify honours the two tag redirects (path matching is case-sensitive, so `/tags/RPG` won't
 collide with `/tags/rpg`). The sitemap *is* configured and reaches `dist/`.
+
+### 3k. Netlify build failed on Node 18 (local passed) — ✅ FIXED (2026-07-25)
+Netlify builds failed (`npm run build` exit 1) while local builds were green. Root cause:
+Netlify defaulted to **Node.js v18.20.8** (EOL Apr 2025); local runs Node 24. This session's
+dependency refresh pulled in build tooling that needs Node 20+, so it built locally and died
+on Netlify — the classic local-passes/CI-fails split. **Fix:** pinned `NODE_VERSION = "22"`
+in `netlify.toml` `[build.environment]` (current LTS; also satisfies the coming Astro 7 /
+Vite 8 requirement). A second latent failure was caught at the same time: `@astrojs/mdx` was
+removed from `package.json` (post-`.md` switch) but `astro.config.mjs` still imported and
+called `mdx()` — fine locally (stale `node_modules`) but a fresh Netlify install would fail
+with "Cannot find package @astrojs/mdx". **Fix:** removed the `mdx()` integration + import
+and re-synced the lockfile.
 
 ### 3j. `Subscribe.astro` embeds a Buttondown form — vs §9
 `src/components/Subscribe.astro` posts to `buttondown.com` and is rendered on the homepage.
@@ -297,7 +315,7 @@ command fails. Categories:
 | ~~3~~ | ~~JSON-LD inert / placeholder publisher (§3c)~~ ✅ Fixed | High (SEO) | Small |
 | ~~4~~ | ~~Google Fonts CDN instead of self-hosted (§3a)~~ ✅ Fixed | Medium | Medium |
 | ~~5~~ | ~~Netlify Identity widget on every page (§3b)~~ ✅ Fixed | Medium (perf/privacy) | Trivial |
-| 6 | npm vulnerabilities / stale deps (§1) — ✅ 55→5 (rest need Astro 7) | Medium | Done (in-range) / Large (majors) |
+| ~~6~~ | ~~npm vulnerabilities / stale deps (§1)~~ ✅ **55→0** (Astro 7 cleared the rest) | Medium | Done |
 | ~~7~~ | ~~`justify-betwen` typo (§2b)~~ ✅ Fixed | Low | Trivial |
 | ~~8~~ | ~~Case-duplicate tag pages (§5)~~ ✅ Fixed | Low–Med (SEO) | Small |
 | ~~9~~ | ~~Dead code: `SearchBar`, `paginate` (§2c/§2d)~~ ✅ Fixed | Low | Trivial |

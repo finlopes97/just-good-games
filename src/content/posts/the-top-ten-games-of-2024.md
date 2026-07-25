@@ -1,11 +1,8 @@
 ---
 title: The Top Ten Games of 2024
 pubDate: 2024-12-27T17:17:00.000Z
-description: This is it, the comeback era has arrived. I'm finally posting
-  again. Delve into the best games 2024 had to offer. Deciding on just ten games
-  was about the hardest thing I'll do all year, here's hoping next year is just
-  as good.
-author: Kyle Lopez-Finlayson
+description: These are the best games 2024 had to offer. 
+author: Kyle
 tags:
   - list
   - featured

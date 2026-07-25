@@ -1,9 +1,8 @@
 ---
-title: "Biweekly, Bipartisan, Bisexual Roundup #2"
+title: September 2024 - Path of Achra is Perfect
 pubDate: 2024-09-13T08:37:00.000Z
-description: "Two roguelikes walk into a bar, and then they both die and have to
-  do it all over again. Plus chocolate. "
-author: Kyle Lopez-Finlayson
+description: Die and die and die and die and die again.
+author: Kyle
 tags:
   - indie
   - itch
@@ -16,8 +15,6 @@ image:
   url: /images/posts/thumbnails/2024_09/roundup_archive_2.jpg
   alt: "A snake man  with a spear and a red mask."
 ---
-Wow, this is late. I know I'm not beholden to any regular readers or a schedule besides a self-imposed one. Still, that self-imposed schedule is important to me. I ***like*** to write, and when I don't get to write I ***feel*** bad. Similarly, I like to play games, but haven't had much of a chance to of late. Things have been crazy for me. So this is a bit shorter than I'd like it to be, I wanted to write about my time with Arco (which is amazing by the way) and I had bought a bunch of games from itch.io to play too but those will just have to wait. I have a feeling Arco will get its own dedicated review anyway, such a good fucking game. Without further ado, let the roundup commenceth.
-
 ## Break the Loop
 
 Break the Loop is a time-looping rougelite. There's not a whole lot else to say about it. The gameplay is very reminiscent of Darkest Dungeon but with one big twist. It's cute as fuck. I'm not sure quite how to describe the art style other than minimalist pop art. Every character looks unique and the animations are super slick and smooth. 

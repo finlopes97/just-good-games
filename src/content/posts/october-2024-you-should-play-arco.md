@@ -1,10 +1,8 @@
 ---
-title: "Biweekly, Bipartisan, Bisexual Roundup #3"
-pubDate: 2024-09-18T12:00:00.000Z
-description: Back on track, in this roundup we mount up in Arco, jump jubilently
-  in Electric Fairyland, experience cosmic dread in The Nameless City and play a
-  mod for a 20 year old game in Swelter.
-author: Kyle Lopez-Finlayson
+title: October 2024 - You Should Play Arco
+pubDate: 2024-10-18T12:00:00.000Z
+description: Mount up in Arco, jump jubilently in Electric Fairyland, experience cosmic dread in The Nameless City and play a mod for a 20 year old game in Swelter.
+author: Kyle
 tags:
   - indie
   - tactical

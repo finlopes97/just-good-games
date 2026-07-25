@@ -2,7 +2,7 @@
 title: "August 2024 - Clickolding is a Fever Dream"
 pubDate: 2024-08-20T20:33:00.000Z
 description: "I don't feel so good Mr. Clickolding."
-author: Kyle Lopez-Finlayson
+author: Kyle
 tags:
   - indie
   - itch

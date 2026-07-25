@@ -21,3 +21,25 @@
   from = "/tags/itch.io"
   to = "/tags/itch/"
   status = 301
+
+# Post slug renames (filenames aligned to the "Month Year - Title" scheme, 2026-07-26).
+# 301 the old published URLs to the new ones so nothing 404s (CLAUDE.md §1).
+[[redirects]]
+  from = "/posts/01-25_monthly-update"
+  to = "/posts/january-2025-cruel-for-me-mule/"
+  status = 301
+
+[[redirects]]
+  from = "/posts/biweekly-bipartisan-bisexual-roundup-1"
+  to = "/posts/august-2024-clickolding-is-a-fever-dream/"
+  status = 301
+
+[[redirects]]
+  from = "/posts/biweekly-bipartisan-bisexual-roundup-2"
+  to = "/posts/september-2024-path-of-achra-is-perfect/"
+  status = 301
+
+[[redirects]]
+  from = "/posts/biweekly-bipartisan-bisexual-roundup-3"
+  to = "/posts/october-2024-you-should-play-arco/"
+  status = 301

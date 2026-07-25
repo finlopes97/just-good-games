@@ -91,10 +91,10 @@ export default {
         "5xl": "4.210rem",
       },
       fontFamily: {
-        // heading: 'Montserrat',
-        heading: "Bebas Neue",
-        subheading: "Piazzolla",
-        body: "Ysabeau",
+        // Variable faces register under a "… Variable" family name via @fontsource.
+        heading: ["Bebas Neue", "sans-serif"],
+        subheading: ["Piazzolla Variable", "serif"],
+        body: ["Ysabeau Variable", "sans-serif"],
       },
       fontWeight: {
         normal: "400",

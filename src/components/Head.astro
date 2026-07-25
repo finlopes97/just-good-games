@@ -1,6 +1,41 @@
 ---
+// Self-hosted fonts via @fontsource (replaces the old render-blocking Google Fonts CDN
+// link). Each `wght.css` is subset-split by unicode-range, so English readers only fetch
+// the Latin woff2 on demand. Italics are real (not browser-synthesised) for the serif and
+// body faces, which both render <em> text.
+import "@fontsource/bebas-neue/latin-400.css"; // display / headings (single weight)
+import "@fontsource-variable/piazzolla/wght.css"; // subheadings (serif)
+import "@fontsource-variable/piazzolla/wght-italic.css";
+import "@fontsource-variable/ysabeau/wght.css"; // body copy
+import "@fontsource-variable/ysabeau/wght-italic.css";
+
 const { title, description, pubDate, author, image } = Astro.props;
 const siteUrl = "https://justgood.games";
+
+// Build the structured data as a real object here (frontmatter), then inject it with
+// `set:html` below. Astro does NOT evaluate `{...}` expressions inside <script>/<style>
+// raw-text elements, so the previous inline `{{...}}` shipped as literal source text and
+// was inert. JSON.stringify also drops any `undefined` fields, so non-article pages (which
+// only pass `title`) emit a clean object.
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: title,
+  description,
+  ...(image?.url && { image: siteUrl + image.url }),
+  ...(author && { author: { "@type": "Person", name: author } }),
+  ...(pubDate && {
+    datePublished: pubDate instanceof Date ? pubDate.toISOString() : pubDate,
+  }),
+  publisher: {
+    "@type": "Organization",
+    name: "Just Good Games",
+    logo: {
+      "@type": "ImageObject",
+      url: siteUrl + "/images/favicon.png",
+    },
+  },
+};
 ---
 
 <meta charset="utf-8" />
@@ -19,7 +54,12 @@ const siteUrl = "https://justgood.games";
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 {image && <meta property="og:image" content={siteUrl + image.url} />}
-<meta property="article:published_time" content={pubDate} />
+{pubDate && (
+  <meta
+    property="article:published_time"
+    content={pubDate instanceof Date ? pubDate.toISOString() : pubDate}
+  />
+)}
 <meta property="article:author" content={author} />
 
 <!-- Twitter -->
@@ -30,30 +70,4 @@ const siteUrl = "https://justgood.games";
 {image && <meta name="twitter:image" content={siteUrl + image.url} />}
 
 <!-- Structured Data -->
-<script type="application/ld+json">
-{{
-  "@context": "http://schema.org",
-  "@type": "BlogPosting",
-  "headline": title,
-  "image": image ? image.url : undefined,
-  "author": {
-    "@type": "Person",
-    "name": author
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Your Blog Name",
-    "logo": {
-      "@type": "ImageObject",
-      "url": siteUrl + "/logo.jpg" // Replace with your logo URL
-    }
-  },
-  "datePublished": pubDate,
-  "description": description
-}}
-</script>
-
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lexend+Mega:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Piazzolla:ital,opsz,wght@0,8..30,100..900;1,8..30,100..900&family=Ysabeau:ital,wght@0,1..1000;1,1..1000&display=swap" rel="stylesheet">
+<script type="application/ld+json" set:html={JSON.stringify(structuredData)} />

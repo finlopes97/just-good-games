@@ -92,17 +92,16 @@ Everything currently pinned with `^` is behind. Notable:
 
 ## 2. Functional bugs (real, not just type noise)
 
-### 2a. Tag pages render with no `<title>` — SEO bug
-`src/pages/tags/[tag].astro:36` passes `<Layout pageTitle={tag}>`, but `Layout.astro:5`
-reads `const { title } = Astro.props;`. The prop name doesn't match, so **every
-`/tags/<tag>/` page gets an `undefined` title**. All other pages (`index`, `archive`,
-`featured`, `about`) correctly pass `title={...}`. Given the project's entire strategy is
-search + unique per-page titles (`CLAUDE.md §5`), this is worth fixing.
-Fix: rename the prop to `title={tag}`.
+### 2a. Tag pages render with no `<title>` — ✅ FIXED (2026-07-25)
+`src/pages/tags/[tag].astro` passed `<Layout pageTitle={tag}>`, but `Layout.astro` reads
+`const { title } = Astro.props;` — so **every `/tags/<tag>/` page got an `undefined`
+title**, undermining the search-driven strategy (`CLAUDE.md §5`). **Fix:** renamed the prop
+to `title={tag}`. All pages now pass `title`.
 
-### 2b. Typo: `justify-betwen`
-`src/layouts/MarkdownPostLayout.astro:21` — `justify-betwen` is not a Tailwind class
-(missing a `t`). The intended `justify-between` silently does nothing on article pages.
+### 2b. Typo: `justify-betwen` — ✅ FIXED (2026-07-25)
+`src/layouts/MarkdownPostLayout.astro` had `justify-betwen` (missing a `t`), which is not a
+Tailwind class and silently did nothing on article pages. **Fix:** corrected to
+`justify-between`.
 
 ### 2c. `SearchBar.astro` is broken and unused
 `src/components/SearchBar.astro:9` uses `onInput={e => onSearch(e.target.value)}` with an
@@ -124,39 +123,74 @@ it if archive length ever matters).
 `CLAUDE.md` explicitly says the doc is the target and the code is expected to be stale;
 these are flagged, not "fixed silently."
 
-### 3a. Fonts load from Google's CDN — contradicts §2.3
-`src/components/Head.astro:56-58` includes `<link rel="preconnect">` to
-`fonts.googleapis.com` / `fonts.gstatic.com` and a render-blocking Google Fonts
-stylesheet. `CLAUDE.md §2.3` is explicit: *"Self-host the fonts… Do not load them from
-Google's CDN."* This is a third-party, render-blocking request on a site whose whole pitch
-is instant loads. The stylesheet also requests **Lexend Mega** and **Montserrat**, which
-aren't in the `tailwind.config.mjs` font stack — extra unused font payload.
+### 3a. Fonts loaded from Google's CDN — ✅ FIXED (2026-07-25)
+`src/components/Head.astro` used to `<link>` a render-blocking Google Fonts stylesheet
+(plus `preconnect` to `fonts.googleapis.com` / `fonts.gstatic.com`) — a third-party,
+render-blocking request on a site whose whole pitch is instant loads, contradicting
+`CLAUDE.md §2.3`. The stylesheet also pulled **Lexend Mega** and **Montserrat**, which
+aren't in the Tailwind font stack at all.
 
-### 3b. Netlify Identity widget loads on *every* page — contradicts §3
-`src/layouts/Layout.astro:10-34` injects
+**Fix:** self-hosted via `@fontsource`, the CDN `<link>` block deleted entirely.
+- `@fontsource/bebas-neue/latin-400.css` (display, single weight)
+- `@fontsource-variable/piazzolla/wght.css` + `wght-italic.css` (serif subheadings)
+- `@fontsource-variable/ysabeau/wght.css` + `wght-italic.css` (body)
+
+`tailwind.config.mjs` `fontFamily` was updated to the variable family names
+(`Piazzolla Variable`, `Ysabeau Variable`) with generic fallbacks, since `@fontsource`
+registers variable faces under a `"… Variable"` name. Verified in the build: 31 self-hosted
+`woff2` files emitted to `dist/_astro/` (unicode-range split, so English readers fetch only
+the Latin subset), zero `googleapis`/`gstatic`/`Lexend`/`Montserrat` references, and the
+`.font-*` utilities match the bundled `@font-face` families. Unused fonts removed as part
+of the swap.
+
+### 3b. Netlify Identity widget loaded on *every* page — ✅ FIXED (2026-07-25)
+`src/layouts/Layout.astro` used to inject
 `https://identity.netlify.com/v1/netlify-identity-widget.js` into every page that uses
-`Layout` (home, archive, featured, about, tags), not just the admin route. `CLAUDE.md §3`
-targets *"zero third-party requests."* The identity widget only belongs on the CMS login
-flow (`admin.astro` already has its own copy). Recommend removing it from `Layout.astro`.
+`Layout` (home, archive, featured, about, tags), not just the admin route — contradicting
+`CLAUDE.md §3`'s *"zero third-party requests"* target.
 
-### 3c. Placeholder JSON-LD ships on every article — §5
-`src/components/Head.astro:33-54` emits `BlogPosting` structured data with
-`"name": "Your Blog Name"` and a `"logo"` pointing at `siteUrl + "/logo.jpg"` (a file
-that doesn't exist in `public/`), with a literal `// Replace with your logo URL` comment.
-Placeholder publisher data is being served as real structured data. `CLAUDE.md §5` wants
-proper `Review` / `VideoGame` JSON-LD; at minimum the publisher name/logo need to be real.
+**Fix:** the widget's only unique job in `Layout` was accepting a CMS invite link
+(`/#invite_token=...`); normal admin login is already handled by `admin.astro`'s own copy.
+The script now bails out early unless `invite_token` is present in the URL hash, so the
+third-party widget is fetched **only** during the invite flow. Verified in the build: the
+guard (`…includes("invite_token"))return`) is present on every `Layout` page, and post
+pages (a different layout) never included it. Normal visitors now make zero requests to
+`identity.netlify.com`.
 
-### 3d. Open Graph image uses a relative URL — §1/§5
-`Head.astro:21` sets `og:image` to `image.url`, which in content frontmatter is a
-site-relative path (e.g. `/images/posts/thumbnails/...`). Most scrapers (Discord, Bluesky,
-Slack, Facebook) require an **absolute** URL for `og:image` and will drop a relative one —
-which directly undermines the "link previews are the second discovery channel" goal in
-`CLAUDE.md §1`. Should be `siteUrl + image.url`. Same applies to `twitter:image`.
+### 3c. JSON-LD was inert (not just placeholder) — ✅ FIXED (2026-07-25)
+Worse than first thought. The structured-data block used `<script type="application/ld+json">`
+with an inline `{{ ... }}` expression — but **Astro does not evaluate `{}` expressions inside
+`<script>`/`<style>` raw-text elements**, so the block shipped as *literal source text* on
+every page: doubled `{{ }}` braces, bare identifiers (`title`, `author`, `pubDate`), a JS
+`// comment` inside the "JSON", and the placeholders `"Your Blog Name"` / `/logo.jpg` (a
+non-existent file). Any parser hits a syntax error and discards it — the structured data
+**never functioned**.
 
-### 3e. `article:published_time` is a raw Date object
-`Head.astro:22` outputs `content={pubDate}` where `pubDate` is a JS `Date`. This renders
-as a locale/`toString()` date, not the ISO-8601 that OG expects. Should be
-`pubDate.toISOString()`.
+**Fix:** the object is now built in the component frontmatter (where expressions actually
+evaluate) and injected with `set:html={JSON.stringify(structuredData)}` — the canonical
+Astro JSON-LD pattern. Result, verified by parsing the built output:
+- Real values; **absolute** image URL; `datePublished` as ISO-8601.
+- Publisher `"Just Good Games"` with a real, absolute logo (`/images/favicon.png`).
+- `undefined` fields dropped, so non-article pages (title only) still emit valid JSON.
+- Both an article page and the homepage now `ConvertFrom-Json` cleanly.
+
+*Remaining (not in this change):* the homepage still emits `@type: BlogPosting` with only a
+headline — semantically it should be `WebSite`/`WebPage`, and article pages would ideally use
+`Review`/`VideoGame` per `CLAUDE.md §5`. Tracked, not yet done.
+
+### 3d. Open Graph image used a relative URL — ✅ FIXED (2026-07-25)
+`Head.astro` set `og:image`/`twitter:image` to the site-relative `image.url` (e.g.
+`/images/posts/...`). Most scrapers (Discord, Bluesky, Slack, Facebook) require an
+**absolute** URL and drop a relative one — undermining the link-preview channel
+(`CLAUDE.md §1`). **Fix:** both now emit `siteUrl + image.url`. (The JSON-LD `image` is also
+absolute now — see §3c.)
+
+### 3e. `article:published_time` was a raw Date object — ✅ FIXED (2026-07-25)
+`Head.astro` output `content={pubDate}` where `pubDate` is a JS `Date`, rendering as a
+`toString()` value rather than the ISO-8601 OG expects — and it fired even on non-article
+pages (empty `pubDate`). **Fix:** the tag now renders only when a date exists and emits
+`pubDate.toISOString()`. Verified: article pages show `content="2024-11-07T08:13:00.000Z"`;
+the homepage omits the tag.
 
 ### 3f. Invalid `typescript` option in `astro.config.mjs` — confirmed, still present (§7.1)
 `astro.config.mjs:12-14` still sets `typescript: { strict: true }`, which is **not a valid
@@ -243,13 +277,17 @@ command fails. Categories:
 
 | # | Issue | Severity | Effort |
 |---|---|---|---|
-| 1 | Tag pages have no `<title>` (§2a) | High (SEO) | Trivial |
-| 2 | OG image is a relative URL (§3d) | High (sharing) | Trivial |
-| 3 | Placeholder JSON-LD publisher/logo shipping live (§3c) | High (SEO) | Small |
-| 4 | Google Fonts CDN instead of self-hosted (§3a) | Medium | Medium |
-| 5 | Netlify Identity widget on every page (§3b) | Medium (perf/privacy) | Trivial |
+| ~~1~~ | ~~Tag pages have no `<title>` (§2a)~~ ✅ Fixed | High (SEO) | Trivial |
+| ~~2~~ | ~~OG image is a relative URL (§3d)~~ ✅ Fixed | High (sharing) | Trivial |
+| ~~3~~ | ~~JSON-LD inert / placeholder publisher (§3c)~~ ✅ Fixed | High (SEO) | Small |
+| ~~4~~ | ~~Google Fonts CDN instead of self-hosted (§3a)~~ ✅ Fixed | Medium | Medium |
+| ~~5~~ | ~~Netlify Identity widget on every page (§3b)~~ ✅ Fixed | Medium (perf/privacy) | Trivial |
 | 6 | 55 npm vulnerabilities; deps behind (§1) | Medium | Small (in-range) / Large (majors) |
-| 7 | `justify-betwen` typo (§2b) | Low | Trivial |
+| ~~7~~ | ~~`justify-betwen` typo (§2b)~~ ✅ Fixed | Low | Trivial |
 | 8 | Case-duplicate tag pages (§5) | Low–Med (SEO) | Small |
 | 9 | Dead code: `SearchBar`, `paginate` (§2c/§2d) | Low | Trivial |
 | 10 | Invalid `typescript` config key (§3f) | Low | Trivial |
+
+**Remaining open:** #6 (deps/vulns), #8 (case-duplicate tags), #9 (dead code), #10 (invalid
+config key), plus §3h–§3j and §6 housekeeping. The JSON-LD page-type refinement
+(`WebSite`/`Review`/`VideoGame`) noted in §3c is also still open.

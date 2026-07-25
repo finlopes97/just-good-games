@@ -130,14 +130,14 @@ keep the unified pipeline.
 ### 4.3 `.md` conversion — ✅ DONE (2026-07-25)
 
 Files were renamed `.mdx` → `.md` (committed/pushed). The extension is **not** part of the
-`id`/URL (both legacy slug and the `glob()` loader strip it), so no URLs changed. Follow-ups
-this creates:
-- [ ] **Remove the `@astrojs/mdx` integration** — no `.mdx` files remain, so it's now dead
-  weight. Drop `mdx()` from `astro.config.mjs` and `@astrojs/mdx` from `package.json`. (Can
-  be done independently, even before the Astro upgrade.)
-- [ ] **Update Decap CMS** — `public/admin/config.yml` still has `extension: "mdx"`, so a
-  post created via the CMS would write a new `.mdx` file, reintroducing the split. Change to
-  `extension: "md"`. ⚠️ Worth doing soon, regardless of the Astro 7 timeline.
+`id`/URL (both legacy slug and the `glob()` loader strip it), so no URLs changed. Follow-ups,
+**both now done (2026-07-25):**
+- [x] **Removed the `@astrojs/mdx` integration** — dropped `mdx()` + import from
+  `astro.config.mjs`, removed `@astrojs/mdx` from `package.json`, re-synced the lockfile
+  (−46 packages). (This was also a latent Netlify build failure — the config still called
+  `mdx()` after the package was gone; see `ISSUES.md §3k`.)
+- [x] **Updated Decap CMS** — `public/admin/config.yml` `extension` switched to `md`, so
+  CMS-authored posts no longer reintroduce `.mdx`.
 
 ### 4.4 Integration compatibility (verify each against Astro 7)
 
@@ -149,7 +149,7 @@ this creates:
   whole migration** and is a deliberate design decision (`CLAUDE.md §7`). Treat as its own
   sub-task. Verify whether any `@astrojs/tailwind` v6 path keeps Tailwind 3 working before
   committing to the v4 rewrite.
-- [ ] **`@astrojs/mdx`** — **remove** (no `.mdx` files remain, §4.3), rather than bump.
+- [x] **`@astrojs/mdx`** — **removed** (no `.mdx` files remain, §4.3). ✅ Done 2026-07-25.
 - [ ] **`astro-icon`** — confirm Astro 7 support; it pulls `@iconify/tools` (source of the
   `tar`/`svgo` advisories cleared earlier — re-check after upgrade).
 - [ ] **`astro-navbar`** — confirm Astro 7 support.
@@ -199,8 +199,8 @@ Markdown-heavy site. Not recommended.** Reimplementing reading time (§4.2) is ~
 With the `glob()` loader, `entry.id` is derived from the filename. It **must** produce the
 same URL as today's `entry.slug`, or published `/posts/<slug>/` URLs break.
 
-- [ ] **Before upgrading:** capture the current URL list —
-  `Get-ChildItem dist -Recurse -Filter index.html` after a clean `npm run build`.
+- [x] **Before upgrading:** captured the current URL list — 43 routes in
+  `scratchpad/baseline-urls.txt` (clean `npm run build` on `main`/branch start).
 - [ ] **After upgrading:** rebuild and diff the URL list against the baseline. Expect an
   identical set (minus nothing; plus nothing).
 - [ ] Current post slugs to preserve exactly:
@@ -217,9 +217,14 @@ same URL as today's `entry.slug`, or published `/posts/<slug>/` URLs break.
 ## 8. Step-by-step plan
 
 **Phase 0 — Prep**
-- [ ] Branch: `git checkout -b astro-7-migration`.
-- [ ] Clean baseline: `npm run build` green; capture the URL list (§7).
-- [ ] Add `@astrojs/check` as a devDependency (type-checking was pruned with `astro-seo`).
+- [x] **Netlify build green + Node pinned to `22`** (`netlify.toml`, 2026-07-25) — CI now runs
+  a modern Node that satisfies Astro 7 / Vite 8 (was failing on Node 18; `ISSUES.md §3k`).
+- [x] Branch: `astro-7-migration` created off `main` (2026-07-25).
+- [x] Clean baseline: `npm run build` green — **40 pages / 43 routes** (6 posts, 29 tags,
+  `/`, `/about/`, `/admin/`, `/archive/`, `/featured/`, `/rss.xml`, sitemaps). URL list saved
+  to `scratchpad/baseline-urls.txt` (§7).
+- [x] `@astrojs/check` added as a devDependency. **Type-check baseline: 47 errors, 2 hints**
+  (pre-existing; target after migration = no *new* errors).
 - [ ] Skim the official upgrade guides: [v5](https://docs.astro.build/en/guides/upgrade-to/v5/),
   [v6](https://docs.astro.build/en/guides/upgrade-to/v6/), v7.
 
@@ -250,7 +255,7 @@ same URL as today's `entry.slug`, or published `/posts/<slug>/` URLs break.
 
 ## 9. Acceptance checklist
 
-- [ ] `npm run build` green; page count matches baseline (42) unless intentionally changed.
+- [ ] `npm run build` green; route count matches baseline (**43**) unless intentionally changed.
 - [ ] **URL parity** — post + tag URL set identical to pre-migration (§7).
 - [ ] Reading-time chip still shows on articles.
 - [ ] JSON-LD still valid on an article + homepage (re-run the `ConvertFrom-Json` check).

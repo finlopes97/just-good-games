@@ -102,6 +102,10 @@ Everything currently pinned with `^` is behind. Notable:
   now **gone** since that package was removed.
 - ~~`astro-seo` (in `dependencies`) appears **unused**~~ — **✅ removed** (2026-07-25); the
   site uses a hand-rolled `Head.astro`. Pruned 74 packages.
+- ~~`@astrojs/mdx`~~ — **✅ removed** (2026-07-25) after the content files were renamed
+  `.mdx` → `.md`; no MDX features are used. Integration dropped from `astro.config.mjs`,
+  package removed, lockfile synced (−46 packages). Decap CMS `extension` also switched to
+  `md` so CMS-authored posts don't reintroduce `.mdx`.
 
 ---
 
@@ -225,6 +229,18 @@ There was no `netlify.toml`, so the `CLAUDE.md §4` URL-redirect policy had nowh
 tag pages — see §5). Future slug/redirect needs now have a home. *Post-deploy check:* verify
 Netlify honours the two tag redirects (path matching is case-sensitive, so `/tags/RPG` won't
 collide with `/tags/rpg`). The sitemap *is* configured and reaches `dist/`.
+
+### 3k. Netlify build failed on Node 18 (local passed) — ✅ FIXED (2026-07-25)
+Netlify builds failed (`npm run build` exit 1) while local builds were green. Root cause:
+Netlify defaulted to **Node.js v18.20.8** (EOL Apr 2025); local runs Node 24. This session's
+dependency refresh pulled in build tooling that needs Node 20+, so it built locally and died
+on Netlify — the classic local-passes/CI-fails split. **Fix:** pinned `NODE_VERSION = "22"`
+in `netlify.toml` `[build.environment]` (current LTS; also satisfies the coming Astro 7 /
+Vite 8 requirement). A second latent failure was caught at the same time: `@astrojs/mdx` was
+removed from `package.json` (post-`.md` switch) but `astro.config.mjs` still imported and
+called `mdx()` — fine locally (stale `node_modules`) but a fresh Netlify install would fail
+with "Cannot find package @astrojs/mdx". **Fix:** removed the `mdx()` integration + import
+and re-synced the lockfile.
 
 ### 3j. `Subscribe.astro` embeds a Buttondown form — vs §9
 `src/components/Subscribe.astro` posts to `buttondown.com` and is rendered on the homepage.

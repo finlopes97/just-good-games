@@ -13,7 +13,6 @@ tags:
   - rpg
   - gamejam
   - surreal
-featured: false
 gameTitle: ""
 image:
   url: /images/posts/thumbnails/2024_08/roundup_archive_1.jpg

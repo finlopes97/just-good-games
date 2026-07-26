@@ -5,9 +5,7 @@ description: These are the best games 2024 had to offer.
 author: Kyle
 tags:
   - list
-  - featured
   - top10
-featured: true
 image:
   url: /images/posts/thumbnails/2024_12/top_ten.jpg
   alt: ""

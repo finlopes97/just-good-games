@@ -1,5 +1,5 @@
 ---
-const { title, url, pubDate, description, image } = Astro.props;
+const { title, url, pubDate, preview, image } = Astro.props;
 
 // Function to truncate text
 const truncateText = (text, maxLength) => {
@@ -25,7 +25,7 @@ const truncateText = (text, maxLength) => {
             />
           ) : (
             <div class="w-full h-full bg-accent-400 flex items-center justify-center">
-              <span class="text-black font-bold text-2xl">Featured Article</span>
+              <span class="text-black font-bold text-2xl">Latest Article</span>
             </div>
           )
         }
@@ -42,15 +42,15 @@ const truncateText = (text, maxLength) => {
           </p>
           <p
             class="text-base mb-6 overflow-hidden"
-            style="display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;"
+            style="display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical;"
           >
-            {truncateText(description, 150)}
+            {preview}
           </p>
         </div>
         <p
           class="bg-accent-400 font-body font-bold w-fit p-1 shadow-[2px_2px_0px_rgba(0,0,0,1)] transition-colors duration-200 ease-in-out hover:bg-accent-500"
         >
-          Read featured article...
+          Read article...
         </p>
       </div>
     </article>

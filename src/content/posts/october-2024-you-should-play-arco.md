@@ -16,7 +16,6 @@ tags:
   - half-life
   - mod
   - shooter
-featured: false
 image:
   url: /images/posts/thumbnails/2024_09/roundup_archive_3.jpg
   alt: Screenshot of the game Arco

@@ -13,7 +13,6 @@ tags:
   - single-player
   - relaxing
   - wholesome
-featured: true
 gameTitle: Dungeons of Hinterberg
 image:
   url: /images/posts/thumbnails/2024_09/DOH_Review.jpg

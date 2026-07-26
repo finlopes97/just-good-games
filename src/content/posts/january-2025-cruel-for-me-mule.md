@@ -11,7 +11,6 @@ tags:
   - steam
   - shooter
   - rpg
-featured: false
 image:
   url: /images/posts/thumbnails/2025_01/monthly-roundup-thumbnail.png
   alt: Screenshot from the game "CRUEL" in which a small white dog is upending a

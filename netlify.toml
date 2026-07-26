@@ -49,3 +49,17 @@
   from = "/posts/dunegons-of-hinterberg-review"
   to = "/posts/dungeons-of-hinterberg-review/"
   status = 301
+
+# The "Featured" feature was removed (2026-07-26): the homepage now heros the most recent
+# post. 301 the retired /featured page to the homepage so its published URL keeps working.
+[[redirects]]
+  from = "/featured"
+  to = "/"
+  status = 301
+
+# The orphan "featured" content tag was dropped with the feature; its tag page no longer
+# generates. 301 it to the archive (the closest browse-all-posts equivalent).
+[[redirects]]
+  from = "/tags/featured"
+  to = "/archive"
+  status = 301

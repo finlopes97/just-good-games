@@ -199,7 +199,6 @@ with a `glob()` loader and a Zod schema.
   description: string,          // also the OG + meta description
   author: string,
   tags: string[],               // normalised to lowercase + trimmed by the schema
-  featured: boolean,            // drives the homepage hero slot; default false
   gameTitle?: string,
   image?: { url: string, alt: string },
 }
@@ -277,8 +276,13 @@ JSON-LD page-type refinement, branded OG cards, two third-party image hotlinks o
 homepage RSS block, images not using `astro:assets`, the type-check errors, and minor
 housekeeping (stock `README.md`, favicon MIME type). None are urgent.
 
-Pages that exist: `index`, `about`, `archive`, `featured`, `posts/[...slug]`, `tags/[tag]`,
-`admin`, `rss.xml.js`. Nav links Home / Featured / Archive / About.
+Pages that exist: `index`, `about`, `archive`, `posts/[...slug]`, `tags/[tag]`,
+`admin`, `rss.xml.js`. Nav links Home / Archive / About.
+
+The homepage hero is the **most recent post** (`HeroPost.astro`), showing a body excerpt
+(`src/utils/excerpt.js`) rather than the frontmatter description. The old `featured`
+feature — its schema field, `/featured` page, nav link, and hero component — was removed
+2026-07-26; `/featured` 301-redirects to `/`.
 
 ---
 

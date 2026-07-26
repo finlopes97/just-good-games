@@ -2,10 +2,11 @@
 import Layout from "../layouts/Layout.astro";
 import BlogPostCard from "../components/BlogPostCard.astro";
 import NavLink from "../components/NavLink.astro";
-import FeaturedBanner from "../components/FeaturedBanner.astro";
+import HeroPost from "../components/HeroPost.astro";
 import RSSReaderLink from "@components/RSSReaderLink.astro";
 import { getCollection } from "astro:content";
 import { formatDate } from "../utils/dateFormatter";
+import { getExcerpt } from "../utils/excerpt";
 import RSS from "@components/RSS.astro";
 
 const title = "Home";
@@ -16,12 +17,9 @@ const sortedPosts = allPosts.sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 
-// Get the 3 most recent posts
-const recentPosts = sortedPosts.slice(0, 6);
-
-// Get the latest featured game
-const featuredPosts = sortedPosts.filter((post) => post.data.featured);
-const latestFeaturedGame = featuredPosts[0]; // This will be the most recent featured game
+// The most recent post is the hero; the next 6 fill the "Latest Posts" grid below it.
+const heroPost = sortedPosts[0];
+const recentPosts = sortedPosts.slice(1, 7);
 ---
 
 <style>
@@ -36,19 +34,19 @@ const latestFeaturedGame = featuredPosts[0]; // This will be the most recent fea
     <h1 class="text-4xl text-center md:text-5xl font-heading text-primary-600">
       Just Good Games.
     </h1>
-    <h2 class="text-3xl font-heading text-center mb-8">Featured Article</h2>
+    <h2 class="text-3xl font-heading text-center mb-8">Latest Article</h2>
     {
-      (latestFeaturedGame && (
-        <FeaturedBanner
-          title={latestFeaturedGame.data.title}
-          url={`/posts/${latestFeaturedGame.id}/`}
-          pubDate={formatDate(latestFeaturedGame.data.pubDate)}
-          description={latestFeaturedGame.data.description}
-          image={latestFeaturedGame.data.image}
+      (heroPost && (
+        <HeroPost
+          title={heroPost.data.title}
+          url={`/posts/${heroPost.id}/`}
+          pubDate={formatDate(heroPost.data.pubDate)}
+          preview={getExcerpt(heroPost.body)}
+          image={heroPost.data.image}
         />
       )) || (
         <p class="text-center text-xl font-base">
-          It appears there isn't a featured game at the moment...
+          It appears there aren't any articles yet...
         </p>
       )
     }

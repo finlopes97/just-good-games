@@ -10,7 +10,6 @@ tags:
   - roguelike
   - roguelite
   - retro
-featured: false
 image:
   url: /images/posts/thumbnails/2024_09/roundup_archive_2.jpg
   alt: "A snake man  with a spear and a red mask."

@@ -11,7 +11,6 @@ const postsCollection = defineCollection({
     author: z.string(),
     // Normalise each tag (trim + lowercase) so casing can't spawn duplicate tag pages.
     tags: z.array(z.string().transform((tag) => tag.trim().toLowerCase())),
-    featured: z.boolean().default(false),
     gameTitle: z.string().optional(),
     image: z
       .object({

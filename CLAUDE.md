@@ -200,12 +200,37 @@ with a `glob()` loader and a Zod schema.
   author: string,
   tags: string[],               // normalised to lowercase + trimmed by the schema
   gameTitle?: string,
+  games?: Array<{               // see below
+    name: string,
+    developers?: string[],
+    publishers?: string[],
+    releaseDate?: string,       // free text: "18 July 2024" | "2024" | "TBA"
+    status?: 'full-release' | 'early-access' | 'demo' | 'free' | 'mod',
+    links?: Array<{ store: StoreId, url: string, label?: string }>,
+  }>,
   image?: { url: string, alt: string },
 }
 ```
 
+`StoreId` is `steam | itch | gog | epic | playstation | xbox | nintendo | other`.
+
+**`games[]` drives two components**, both of which render nothing when the field is absent
+(so older posts are unaffected):
+
+- `GameFacts.astro` — developer(s), publisher(s), release date and a status chip. Posts
+  covering **one** game get `variant="detail"` above the article body; **multi-game
+  roundups** get `variant="summary"` below it, because a four-game spec dump ahead of the
+  intro buries the writing. Wired up in `src/pages/posts/[...slug].astro`.
+- `StoreLinks.astro` — a "Where to get it" block of pressable store chips at the foot of
+  the article. Store links already written inline in post bodies were left in place.
+
+Both are yellow (`body-300`) panels with 3px black borders and hard shadows; the status chip
+is purple (`secondary-500`), which is `secondary`'s one job. Since Sätteri can't run
+components inside markdown, frontmatter is the only structured route — and it's what a
+future `Review`/`VideoGame` JSON-LD upgrade will read from.
+
 *Richer fields that would help SEO but aren't implemented yet* (nice-to-have, not present):
-`updatedDate`, `draft`, `games[]`, `steamAppId`. Add deliberately if needed.
+`updatedDate`, `draft`, `steamAppId`. Add deliberately if needed.
 
 **URL policy:** `/posts/[slug]/` — flat, lowercase, hyphenated. **The filename IS the slug**
 (the `glob()` loader derives `entry.id` from it), so renaming a file changes its URL. Posts

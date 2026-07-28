@@ -1,0 +1,149 @@
+---
+/*
+  Facts panel for the game(s) a post covers — developer(s), publisher(s), release date and
+  release status. Driven entirely by the optional `games` frontmatter array, so a post
+  without it renders nothing at all.
+
+  Two variants:
+    "detail"  — single-game posts. Sits above the article body, one block per field.
+    "summary" — multi-game roundups. Sits below the article body as a compact row per game,
+                because a four-game spec dump ahead of the intro buries the writing.
+*/
+interface GameLink {
+  store: string;
+  url: string;
+  label?: string;
+}
+
+interface Game {
+  name: string;
+  developers?: string[];
+  publishers?: string[];
+  releaseDate?: string;
+  status?: string;
+  links?: GameLink[];
+}
+
+interface Props {
+  games?: Game[];
+  variant?: "detail" | "summary";
+}
+
+const { games = [], variant = "detail" } = Astro.props;
+
+const STATUS_LABELS: Record<string, string> = {
+  "full-release": "Full release",
+  "early-access": "Early access",
+  demo: "Demo",
+  free: "Free",
+  mod: "Mod",
+};
+
+const statusLabel = (status?: string) =>
+  status ? (STATUS_LABELS[status] ?? status) : null;
+
+// Developers and publishers are frequently the same one-person studio; saying it twice
+// wastes a row.
+const sameParty = (game: Game) =>
+  !!game.developers?.length &&
+  !!game.publishers?.length &&
+  game.developers.join("|") === game.publishers.join("|");
+
+// Keep heading levels in order under the page's single <h1>: the detail panel is the first
+// section on the page, the summary sits under its own "The games" <h2>.
+const NameHeading = variant === "detail" ? "h2" : "h3";
+---
+
+{
+  games.length > 0 && (
+    <section
+      class:list={[
+        "border-[3px] border-foreground-500 bg-body-300 p-4 shadow-[4px_4px_0px_#000] md:shadow-[8px_8px_0px_#000]",
+        variant === "detail" ? "mb-6" : "mt-8",
+      ]}
+      aria-label={variant === "detail" ? "Game details" : "Games covered"}
+    >
+      {variant === "summary" && (
+        <h2 class="mb-3 border-b-[3px] border-foreground-500 pb-2 font-heading text-2xl md:text-3xl">
+          The games
+        </h2>
+      )}
+
+      <ul class="flex flex-col gap-4">
+        {games.map((game, index) => (
+          <li
+            class:list={[
+              index > 0 && "border-t-[3px] border-foreground-500 pt-4",
+            ]}
+          >
+            <div class="mb-2 flex flex-wrap items-baseline gap-x-3 gap-y-2">
+              <NameHeading class="font-heading text-2xl leading-none md:text-3xl">
+                {game.name}
+              </NameHeading>
+              {statusLabel(game.status) && (
+                <span class="border-[3px] border-foreground-500 bg-secondary-500 px-2 py-1 font-heading text-base leading-none uppercase shadow-[2px_2px_0px_#000]">
+                  {statusLabel(game.status)}
+                </span>
+              )}
+            </div>
+
+            <dl
+              class:list={[
+                "text-base",
+                variant === "detail"
+                  ? "flex flex-col gap-1 md:text-lg"
+                  : "flex flex-wrap gap-x-6 gap-y-1",
+              ]}
+            >
+              {!!game.developers?.length && (
+                <div class="flex flex-wrap gap-x-2">
+                  <dt
+                    class:list={[
+                      "font-heading tracking-wide uppercase",
+                      variant === "detail" && "min-w-[6.5rem]",
+                    ]}
+                  >
+                    {sameParty(game)
+                      ? "Dev / Pub"
+                      : game.developers.length > 1
+                        ? "Developers"
+                        : "Developer"}
+                  </dt>
+                  <dd class="font-body">{game.developers.join(", ")}</dd>
+                </div>
+              )}
+
+              {!!game.publishers?.length && !sameParty(game) && (
+                <div class="flex flex-wrap gap-x-2">
+                  <dt
+                    class:list={[
+                      "font-heading tracking-wide uppercase",
+                      variant === "detail" && "min-w-[6.5rem]",
+                    ]}
+                  >
+                    {game.publishers.length > 1 ? "Publishers" : "Publisher"}
+                  </dt>
+                  <dd class="font-body">{game.publishers.join(", ")}</dd>
+                </div>
+              )}
+
+              {game.releaseDate && (
+                <div class="flex flex-wrap gap-x-2">
+                  <dt
+                    class:list={[
+                      "font-heading tracking-wide uppercase",
+                      variant === "detail" && "min-w-[6.5rem]",
+                    ]}
+                  >
+                    Released
+                  </dt>
+                  <dd class="font-body">{game.releaseDate}</dd>
+                </div>
+              )}
+            </dl>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}

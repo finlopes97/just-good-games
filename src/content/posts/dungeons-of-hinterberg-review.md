@@ -14,6 +14,17 @@ tags:
   - relaxing
   - wholesome
 gameTitle: Dungeons of Hinterberg
+games:
+  - name: Dungeons of Hinterberg
+    developers:
+      - Microbird Games
+    publishers:
+      - Curve Games
+    releaseDate: 19 July, 2024
+    status: full-release
+    links:
+      - store: steam
+        url: https://store.steampowered.com/app/1983260/Dungeons_of_Hinterberg/
 image:
   url: /images/posts/thumbnails/2024_09/DOH_Review.jpg
   alt: Character in a green vest with a sword looking into the mountains, a red ski lift is to their right. 

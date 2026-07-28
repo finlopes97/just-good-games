@@ -1,0 +1,82 @@
+---
+import { Icon } from "astro-icon/components";
+
+/*
+  Storefront links for the game(s) a post covers, rendered at the foot of the article from
+  the optional `games[].links` frontmatter. Renders nothing when no game has a link.
+  Existing inline store links written into post bodies are left alone.
+*/
+interface GameLink {
+  store: string;
+  url: string;
+  label?: string;
+}
+
+interface Game {
+  name: string;
+  links?: GameLink[];
+}
+
+interface Props {
+  games?: Game[];
+}
+
+const { games = [] } = Astro.props;
+
+const STORES: Record<string, { label: string; icon: string }> = {
+  steam: { label: "Steam", icon: "mdi:steam" },
+  itch: { label: "itch.io", icon: "mdi:open-in-new" },
+  gog: { label: "GOG", icon: "mdi:gog" },
+  epic: { label: "Epic Games", icon: "mdi:open-in-new" },
+  playstation: { label: "PlayStation", icon: "mdi:sony-playstation" },
+  xbox: { label: "Xbox", icon: "mdi:microsoft-xbox" },
+  nintendo: { label: "Nintendo", icon: "mdi:nintendo-switch" },
+  other: { label: "Official site", icon: "mdi:open-in-new" },
+};
+
+const store = (name: string) => STORES[name] ?? STORES.other;
+
+// Only games that actually carry links; a post can list a game with no storefront (a mod,
+// something delisted) without leaving an empty heading behind.
+const linked = games.filter((game) => game.links?.length);
+const multiple = linked.length > 1;
+---
+
+{
+  linked.length > 0 && (
+    <section class="mt-8 border-[3px] border-foreground-500 bg-body-300 p-4 shadow-[4px_4px_0px_#000] md:shadow-[8px_8px_0px_#000]">
+      <h2 class="mb-3 border-b-[3px] border-foreground-500 pb-2 font-heading text-2xl md:text-3xl">
+        Where to get it
+      </h2>
+
+      <div class="flex flex-col gap-4">
+        {linked.map((game) => (
+          <div>
+            {multiple && (
+              <h3 class="mb-2 font-subheading text-xl font-bold">
+                {game.name}
+              </h3>
+            )}
+            <ul class="flex flex-wrap gap-3">
+              {game.links?.map((link) => (
+                <li>
+                  <a
+                    href={link.url}
+                    rel="noopener"
+                    class="jgg-press inline-flex items-center gap-2 border-[3px] border-foreground-500 bg-accent-300 px-3 py-2 font-heading text-base uppercase focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-secondary-600 md:text-xl"
+                  >
+                    <Icon name={store(link.store).icon} class="h-5 w-5" />
+                    <span>
+                      {link.label ?? store(link.store).label}
+                      <span class="sr-only"> — {game.name}</span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}

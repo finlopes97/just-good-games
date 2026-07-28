@@ -18,6 +18,48 @@ collections:
       - { label: "Author", name: "author", widget: "string" }
       - { label: "Tags", name: "tags", widget: "list" }
       - { label: "Game Title", name: "gameTitle", widget: "string", required: false }
+      - label: "Games"
+        name: "games"
+        widget: "list"
+        required: false
+        label_singular: "Game"
+        summary: "{{fields.name}}"
+        fields:
+          - { label: "Name", name: "name", widget: "string" }
+          - { label: "Developer(s)", name: "developers", widget: "list", required: false }
+          - { label: "Publisher(s)", name: "publishers", widget: "list", required: false }
+          - { label: "Release Date", name: "releaseDate", widget: "string", required: false, hint: "Free text — e.g. '18 July 2024', '2024', or 'TBA'" }
+          - label: "Release Status"
+            name: "status"
+            widget: "select"
+            required: false
+            options:
+              - { label: "Full release", value: "full-release" }
+              - { label: "Early access", value: "early-access" }
+              - { label: "Demo", value: "demo" }
+              - { label: "Free", value: "free" }
+              - { label: "Mod", value: "mod" }
+          - label: "Store Links"
+            name: "links"
+            widget: "list"
+            required: false
+            label_singular: "Store Link"
+            summary: "{{fields.store}}"
+            fields:
+              - label: "Store"
+                name: "store"
+                widget: "select"
+                options:
+                  - { label: "Steam", value: "steam" }
+                  - { label: "itch.io", value: "itch" }
+                  - { label: "GOG", value: "gog" }
+                  - { label: "Epic Games", value: "epic" }
+                  - { label: "PlayStation", value: "playstation" }
+                  - { label: "Xbox", value: "xbox" }
+                  - { label: "Nintendo", value: "nintendo" }
+                  - { label: "Other / official site", value: "other" }
+              - { label: "URL", name: "url", widget: "string" }
+              - { label: "Button Label", name: "label", widget: "string", required: false, hint: "Optional — overrides the default store name" }
       - name: "image"
         widget: "object"
         required: false

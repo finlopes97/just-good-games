@@ -50,6 +50,26 @@ const recentPosts = sortedPosts.slice(1, 7);
         </p>
       )
     }
+    <div class="my-6 flex flex-col">
+      <h2 class="text-3xl font-heading text-center mb-8">All Posts</h2>
+      <div class="w-full flex flex-wrap justify-center gap-8">
+        {
+          recentPosts.map((post) => (
+            <BlogPostCard
+              url={`/posts/${post.id}/`}
+              title={post.data.title}
+              pubDate={formatDate(post.data.pubDate)}
+              description={post.data.description}
+              image={post.data.image}
+              tags={post.data.tags}
+            />
+          ))
+        }
+      </div>
+      <span class="mt-8 mx-auto">
+        <NavLink target="/archive" title="See more." />
+      </span>
+    </div>
     <div
       class="my-12 p-4 bg-white border-black border-4
       shadow-[4px_4px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_rgba(0,0,0,1)]
@@ -74,26 +94,6 @@ const recentPosts = sortedPosts.slice(1, 7);
         />
         <RSS />
       </div>
-    </div>
-    <div class="my-6 flex flex-col">
-      <h2 class="text-3xl font-heading text-center mb-8">Latest Posts</h2>
-      <div class="w-full flex flex-wrap justify-center gap-8">
-        {
-          recentPosts.map((post) => (
-            <BlogPostCard
-              url={`/posts/${post.id}/`}
-              title={post.data.title}
-              pubDate={formatDate(post.data.pubDate)}
-              description={post.data.description}
-              image={post.data.image}
-              tags={post.data.tags}
-            />
-          ))
-        }
-      </div>
-      <span class="mt-8 mx-auto">
-        <NavLink target="/archive" title="See more." />
-      </span>
     </div>
   </div>
 </Layout>

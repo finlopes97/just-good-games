@@ -14,6 +14,8 @@ history lives in git. This file now tracks only what's **still open**. None are 
 2. **JSON-LD page types.** Every page emits `BlogPosting`. The homepage should be
    `WebSite`/`WebPage`; article pages reviewing a specific game should use `Review` /
    `VideoGame` (this is how obscure-title queries get won). Built in `src/components/Head.astro`.
+   The `games[]` frontmatter added 2026-07-28 (name, developers, publishers, releaseDate,
+   status, store links) is the data source for this — it just isn't read by `Head.astro` yet.
 3. **RSS not linked from `<head>`.** The feed works at `/rss.xml`, but add
    `<link rel="alternate" type="application/rss+xml" href="/rss.xml">` in `Head.astro` so
    readers can auto-discover it.
@@ -32,8 +34,12 @@ history lives in git. This file now tracks only what's **still open**. None are 
    params in components, meaningless React-ism `key={}` props in `.astro` files, and a
    `Tag` import-name collision in `src/pages/tags/[tag].astro`. Clear by typing params and
    renaming the `Tag` import.
-7. **Content schema is lighter than SEO-ideal** — no `updatedDate`, `draft`, `games[]`, or
-   `steamAppId` in `src/content.config.ts`. Add deliberately if/when needed.
+7. **Content schema is lighter than SEO-ideal** — no `updatedDate`, `draft` or `steamAppId`
+   in `src/content.config.ts`. Add deliberately if/when needed. (`games[]` landed 2026-07-28.)
+   **Backfill outstanding:** only `dungeons-of-hinterberg-review.md` carries `games` so far,
+   and only with facts verifiable from the repo (developer Microbird Games, its Steam URL,
+   full release). Publishers and release dates for every post are a data-entry pass via
+   `/admin` — don't guess them.
 8. **`Score.astro` is unused** — a review-score component kept as future scaffolding. If you
    wire it up, its `<style>` uses `@apply`, which needs `@reference "../styles/global.css";`
    at the top of the block under Tailwind 4.

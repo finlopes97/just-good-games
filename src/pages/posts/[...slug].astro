@@ -3,6 +3,8 @@ import { getCollection, render } from 'astro:content';
 import getReadingTime from 'reading-time';
 import MarkdownPostLayout from '../../layouts/MarkdownPostLayout.astro';
 import Prose from '../../components/Prose.astro';
+import GameFacts from '../../components/GameFacts.astro';
+import StoreLinks from '../../components/StoreLinks.astro';
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('posts');
@@ -17,13 +19,21 @@ const { Content } = await render(entry);
 // the raw markdown body instead of the old remark-reading-time plugin.
 const minutesRead = getReadingTime(entry.body ?? "").text;
 
+// A post about one game leads with its facts; a roundup gets the same data as a compact
+// summary underneath, so four games' worth of credits don't sit between the reader and the
+// first paragraph.
+const games = entry.data.games ?? [];
+const isSingleGame = games.length === 1;
 ---
 
 <MarkdownPostLayout frontmatter={entry.data}>
   <p class="font-subheading font-bold mb-2 inline-block uppercase underline underline-offset-4 decoration-2 rotate-1">
     {minutesRead}
   </p>
+  {isSingleGame && <GameFacts games={games} variant="detail" />}
   <Prose>
     <Content />
   </Prose>
+  {!isSingleGame && <GameFacts games={games} variant="summary" />}
+  <StoreLinks games={games} />
 </MarkdownPostLayout>

@@ -98,3 +98,34 @@
   --color-body-800: #666600;
   --color-body-900: #333300;
 }
+
+/*
+  The "press" interaction from CLAUDE.md §2.4: an element translates toward its own hard
+  shadow while the shadow shrinks by the same amount, so it reads as physically depressed.
+  `steps()` easing keeps the snap — no smooth curve, no fade, no scale.
+*/
+@layer components {
+  .jgg-press {
+    box-shadow: 4px 4px 0 #000;
+    transition:
+      transform 80ms steps(2),
+      box-shadow 80ms steps(2);
+  }
+
+  .jgg-press:hover,
+  .jgg-press:focus-visible {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 #000;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .jgg-press {
+      transition: none;
+    }
+
+    .jgg-press:hover,
+    .jgg-press:focus-visible {
+      transform: none;
+    }
+  }
+}

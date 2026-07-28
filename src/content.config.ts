@@ -12,6 +12,42 @@ const postsCollection = defineCollection({
     // Normalise each tag (trim + lowercase) so casing can't spawn duplicate tag pages.
     tags: z.array(z.string().transform((tag) => tag.trim().toLowerCase())),
     gameTitle: z.string().optional(),
+    // Structured facts about the game(s) a post covers. Optional and additive: posts
+    // without it render exactly as before. Single-game posts get a detail panel above the
+    // article; multi-game roundups get a summary block below it (see GameFacts.astro).
+    games: z
+      .array(
+        z.object({
+          name: z.string(),
+          developers: z.array(z.string()).optional(),
+          publishers: z.array(z.string()).optional(),
+          // Free text, not a date: has to hold "TBA", "2024", or "Early Access since May 2023".
+          releaseDate: z.string().optional(),
+          status: z
+            .enum(["full-release", "early-access", "demo", "free", "mod"])
+            .optional(),
+          links: z
+            .array(
+              z.object({
+                store: z.enum([
+                  "steam",
+                  "itch",
+                  "gog",
+                  "epic",
+                  "playstation",
+                  "xbox",
+                  "nintendo",
+                  "other",
+                ]),
+                url: z.string().url(),
+                // Overrides the default store name on the button.
+                label: z.string().optional(),
+              }),
+            )
+            .optional(),
+        }),
+      )
+      .optional(),
     image: z
       .object({
         url: z.string(),

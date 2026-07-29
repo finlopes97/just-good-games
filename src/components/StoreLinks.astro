@@ -31,6 +31,10 @@ const STORES: Record<string, { label: string; icon: string }> = {
   playstation: { label: "PlayStation", icon: "mdi:sony-playstation" },
   xbox: { label: "Xbox", icon: "mdi:microsoft-xbox" },
   nintendo: { label: "Nintendo", icon: "mdi:nintendo-switch" },
+  // IsThereAnyDeal is a price tracker, not a storefront. Labelling it by function rather
+  // than brand stops it reading as somewhere you can buy the game; `label` still overrides
+  // per-link if a post wants the name.
+  itad: { label: "Price history", icon: "mdi:tag-search" },
   other: { label: "Official site", icon: "mdi:open-in-new" },
 };
 
@@ -40,6 +44,13 @@ const store = (name: string) => STORES[name] ?? STORES.other;
 // something delisted) without leaving an empty heading behind.
 const linked = games.filter((game) => game.links?.length);
 const multiple = linked.length > 1;
+
+// Keep the price tracker trailing the actual buy links regardless of frontmatter order, so
+// the storefronts stay grouped. Sort is stable, so everything else keeps its authored order.
+const orderedLinks = (game: Game) =>
+  [...(game.links ?? [])].sort(
+    (a, b) => Number(a.store === "itad") - Number(b.store === "itad"),
+  );
 ---
 
 {
@@ -58,7 +69,7 @@ const multiple = linked.length > 1;
               </h3>
             )}
             <ul class="flex flex-wrap gap-3">
-              {game.links?.map((link) => (
+              {orderedLinks(game).map((link) => (
                 <li>
                   <a
                     href={link.url}

@@ -19,6 +19,10 @@ const postsCollection = defineCollection({
       .array(
         z.object({
           name: z.string(),
+          // Elevator pitch, 1-2 sentences, rendered as the "What is it" row of GameFacts.
+          // The cap is a build-time guardrail: it fails the build rather than let the row
+          // grow into a paragraph and wreck the panel's proportions.
+          pitch: z.string().max(300).optional(),
           developers: z.array(z.string()).optional(),
           publishers: z.array(z.string()).optional(),
           // Free text, not a date: has to hold "TBA", "2024", or "Early Access since May 2023".
@@ -37,6 +41,9 @@ const postsCollection = defineCollection({
                   "playstation",
                   "xbox",
                   "nintendo",
+                  // Not a storefront — a price tracker. StoreLinks labels it accordingly
+                  // and always renders it after the real buy links.
+                  "itad",
                   "other",
                 ]),
                 url: z.string().url(),

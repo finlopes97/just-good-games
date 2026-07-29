@@ -1,12 +1,15 @@
 ---
 /*
-  Facts panel for the game(s) a post covers — developer(s), publisher(s), release date and
-  release status. Driven entirely by the optional `games` frontmatter array, so a post
-  without it renders nothing at all.
+  Facts panel for the game(s) a post covers — pitch, release date, credits and release
+  status. Driven entirely by the optional `games` frontmatter array, so a post without it
+  renders nothing at all.
 
   Two variants:
-    "detail"  — single-game posts. Sits above the article body, one block per field.
-    "summary" — multi-game roundups. Sits below the article body as a compact row per game,
+    "detail"  — single-game posts. Sits above the article body under a "The gist" heading as
+                a two-column label/value list, every value aligned to a common column. It
+                does not repeat the game's name: the post's <h1> has just said it.
+    "summary" — multi-game roundups. Sits below the article body under "The games" as a
+                compact wrapped row per game (named, since there are several to tell apart),
                 because a four-game spec dump ahead of the intro buries the writing.
 */
 interface GameLink {
@@ -17,6 +20,7 @@ interface GameLink {
 
 interface Game {
   name: string;
+  pitch?: string;
   developers?: string[];
   publishers?: string[];
   releaseDate?: string;
@@ -49,98 +53,133 @@ const sameParty = (game: Game) =>
   !!game.publishers?.length &&
   game.developers.join("|") === game.publishers.join("|");
 
-// Keep heading levels in order under the page's single <h1>: the detail panel is the first
-// section on the page, the summary sits under its own "The games" <h2>.
-const NameHeading = variant === "detail" ? "h2" : "h3";
+// Build the label/value rows once so both variants render the same facts in the same order
+// and only the wrapper markup differs. Status is handled separately — its value is a chip,
+// not a string. The pitch leads: it answers "what is it" before the credits, which is the
+// order a cold reader needs.
+const factRows = (game: Game) => {
+  const rows: { label: string; value: string }[] = [];
+
+  if (game.releaseDate)
+    rows.push({ label: "Released", value: game.releaseDate });
+
+  if (game.developers?.length)
+    rows.push({
+      label: sameParty(game)
+        ? "Dev / Pub"
+        : game.developers.length > 1
+          ? "Developers"
+          : "Developer",
+      value: game.developers.join(", "),
+    });
+
+  if (game.publishers?.length && !sameParty(game))
+    rows.push({
+      label: game.publishers.length > 1 ? "Publishers" : "Publisher",
+      value: game.publishers.join(", "),
+    });
+
+  return rows;
+};
+
+// Bebas Neue (labels) and Ysabeau (values) have different ascents, so the rows must align
+// on the baseline — the flex/grid default of `stretch` leaves the value sitting visibly
+// lower than its label.
+const DT = "font-heading tracking-wide uppercase";
+const DD = "font-body";
+
+// The panel names itself rather than repeating the game's name, which the post's <h1> has
+// already said directly above it. (Bebas Neue is caps-only, so this renders as "THE GIST".)
+const heading = variant === "detail" ? "The gist" : "The games";
+const HEADING_ID = "game-facts-heading";
+
+// A per-game name is only worth a heading when there's more than one game to tell apart:
+// always in a roundup, and defensively in a detail panel handed multiple games (the post
+// page only does that for a single game, but the component shouldn't render nameless rows
+// if that ever changes).
+const showGameNames = variant === "summary" || games.length > 1;
 ---
 
 {
   games.length > 0 && (
     <section
       class:list={[
-        "border-[3px] border-foreground-500 bg-body-300 p-4 shadow-[4px_4px_0px_#000] md:shadow-[8px_8px_0px_#000]",
+        "border-[3px] border-foreground-500 bg-body-300 p-3 shadow-[4px_4px_0px_#000] md:shadow-[8px_8px_0px_#000]",
         variant === "detail" ? "mb-6" : "mt-8",
       ]}
-      aria-label={variant === "detail" ? "Game details" : "Games covered"}
+      aria-labelledby={HEADING_ID}
     >
-      {variant === "summary" && (
-        <h2 class="mb-3 border-b-[3px] border-foreground-500 pb-2 font-heading text-2xl md:text-3xl">
-          The games
-        </h2>
-      )}
+      <h2
+        id={HEADING_ID}
+        class="mb-2 border-b-[3px] border-foreground-500 pb-1.5 font-heading text-2xl md:text-3xl"
+      >
+        {heading}
+      </h2>
 
-      <ul class="flex flex-col gap-4">
+      <ul class="flex flex-col gap-3">
         {games.map((game, index) => (
           <li
             class:list={[
-              index > 0 && "border-t-[3px] border-foreground-500 pt-4",
+              index > 0 && "border-t-[3px] border-foreground-500 pt-3",
             ]}
           >
-            <div class="mb-2 flex flex-wrap items-baseline gap-x-3 gap-y-2">
-              <NameHeading class="font-heading text-2xl leading-none md:text-3xl">
+            {showGameNames && (
+              <h3 class="mb-1.5 font-heading text-2xl leading-none md:text-3xl">
                 {game.name}
-              </NameHeading>
-              {statusLabel(game.status) && (
-                <span class="border-[3px] border-foreground-500 bg-secondary-500 px-2 py-1 font-heading text-base leading-none uppercase shadow-[2px_2px_0px_#000]">
-                  {statusLabel(game.status)}
-                </span>
-              )}
-            </div>
+              </h3>
+            )}
 
-            <dl
-              class:list={[
-                "text-base",
-                variant === "detail"
-                  ? "flex flex-col gap-1 md:text-lg"
-                  : "flex flex-wrap gap-x-6 gap-y-1",
-              ]}
-            >
-              {!!game.developers?.length && (
-                <div class="flex flex-wrap gap-x-2">
-                  <dt
-                    class:list={[
-                      "font-heading tracking-wide uppercase",
-                      variant === "detail" && "min-w-[6.5rem]",
-                    ]}
-                  >
-                    {sameParty(game)
-                      ? "Dev / Pub"
-                      : game.developers.length > 1
-                        ? "Developers"
-                        : "Developer"}
-                  </dt>
-                  <dd class="font-body">{game.developers.join(", ")}</dd>
-                </div>
-              )}
+            {variant === "detail" ? (
+              <dl class="grid grid-cols-[auto_1fr] items-baseline gap-x-4 gap-y-1.5 text-base md:text-lg">
+                {game.pitch && (
+                  <>
+                    <dt class={DT}>What is it</dt>
+                    <dd class={DD}>{game.pitch}</dd>
+                  </>
+                )}
 
-              {!!game.publishers?.length && !sameParty(game) && (
-                <div class="flex flex-wrap gap-x-2">
-                  <dt
-                    class:list={[
-                      "font-heading tracking-wide uppercase",
-                      variant === "detail" && "min-w-[6.5rem]",
-                    ]}
-                  >
-                    {game.publishers.length > 1 ? "Publishers" : "Publisher"}
-                  </dt>
-                  <dd class="font-body">{game.publishers.join(", ")}</dd>
-                </div>
-              )}
+                {factRows(game).map((row) => (
+                  <>
+                    <dt class={DT}>{row.label}</dt>
+                    <dd class={DD}>{row.value}</dd>
+                  </>
+                ))}
 
-              {game.releaseDate && (
-                <div class="flex flex-wrap gap-x-2">
-                  <dt
-                    class:list={[
-                      "font-heading tracking-wide uppercase",
-                      variant === "detail" && "min-w-[6.5rem]",
-                    ]}
-                  >
-                    Released
-                  </dt>
-                  <dd class="font-body">{game.releaseDate}</dd>
-                </div>
-              )}
-            </dl>
+                {statusLabel(game.status) && (
+                  <>
+                    <dt class={DT}>Status</dt>
+                    <dd>
+                      <span class={DD}>{statusLabel(game.status)}</span>
+                    </dd>
+                  </>
+                )}
+              </dl>
+            ) : (
+              <dl class="flex flex-wrap items-baseline gap-x-6 gap-y-1.5 text-base">
+                {game.pitch && (
+                  <div class="flex w-full flex-wrap items-baseline gap-x-2">
+                    <dt class={DT}>What is it</dt>
+                    <dd class={DD}>{game.pitch}</dd>
+                  </div>
+                )}
+
+                {factRows(game).map((row) => (
+                  <div class="flex flex-wrap items-baseline gap-x-2">
+                    <dt class={DT}>{row.label}</dt>
+                    <dd class={DD}>{row.value}</dd>
+                  </div>
+                ))}
+
+                {statusLabel(game.status) && (
+                  <div class="flex flex-wrap items-baseline gap-x-2">
+                    <dt class={DT}>Status</dt>
+                    <dd>
+                      <span class={DD}>{statusLabel(game.status)}</span>
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            )}
           </li>
         ))}
       </ul>

@@ -202,6 +202,7 @@ with a `glob()` loader and a Zod schema.
   gameTitle?: string,
   games?: Array<{               // see below
     name: string,
+    pitch?: string,             // max 300 chars — the "What is it" row of GameFacts
     developers?: string[],
     publishers?: string[],
     releaseDate?: string,       // free text: "18 July 2024" | "2024" | "TBA"
@@ -212,15 +213,24 @@ with a `glob()` loader and a Zod schema.
 }
 ```
 
-`StoreId` is `steam | itch | gog | epic | playstation | xbox | nintendo | other`.
+`StoreId` is `steam | itch | gog | epic | playstation | xbox | nintendo | itad | other`.
+`itad` is an IsThereAnyDeal price-tracker link, not a storefront: it renders with the label
+**"Price history"** and is always sorted after the real buy links. URLs are entered by hand —
+ITAD slugs aren't derivable from a title, and guessing one produces a confident 404.
 
 **`games[]` drives two components**, both of which render nothing when the field is absent
 (so older posts are unaffected):
 
-- `GameFacts.astro` — developer(s), publisher(s), release date and a status chip. Posts
-  covering **one** game get `variant="detail"` above the article body; **multi-game
-  roundups** get `variant="summary"` below it, because a four-game spec dump ahead of the
-  intro buries the writing. Wired up in `src/pages/posts/[...slug].astro`.
+- `GameFacts.astro` — a PC Gamer "Need to Know"-style label/value list: pitch, release date,
+  developer(s), publisher(s) and status. Posts covering **one** game get `variant="detail"`
+  above the article body, headed **"The gist"** (a two-column grid, values aligned to a common
+  column); **multi-game roundups** get `variant="summary"` below it headed "The games", as a
+  compact wrapped row, because a four-game spec dump ahead of the intro buries the writing.
+  Wired up in `src/pages/posts/[...slug].astro`. Rows are built once by `factRows()` so both
+  variants stay in the same order. The detail panel **deliberately omits the game's name** —
+  the post `<h1>` has just said it. Per-game names only appear when there's more than one game.
+  **Labels are Bebas Neue, values are Ysabeau** — the two faces have different ascents, so
+  every row needs `items-baseline`. Without it the value sits visibly below its label.
 - `StoreLinks.astro` — a "Where to get it" block of pressable store chips at the foot of
   the article. Store links already written inline in post bodies were left in place.
 
@@ -292,7 +302,7 @@ Load-bearing for the project's actual goal. Treat as features, not polish. Curre
 
 The original first-session audit and the Astro 4→7 migration are **complete**. What's
 verified now: Astro 7.1.3, Tailwind 4, Content Layer, Sätteri; `npm run build` green
-(40 pages); `npm audit` 0 vulnerabilities; all published URLs preserved via `netlify.toml`
+(38 pages); `npm audit` 0 vulnerabilities; all published URLs preserved via `netlify.toml`
 redirects; `npx astro check` reports ~47 pre-existing type errors (implicit-`any`, React-ism
 `key` props, a `Tag` import-name collision) that **do not block the build**.
 
@@ -319,7 +329,7 @@ Prefix with the PATH fix if `npm` isn't found (see §3 environment quirk):
 ```bash
 npm install       # deps; audit is clean
 npm run dev       # dev server at http://localhost:4321/
-npm run build     # static build -> ./dist/ (40 pages, incl. sitemap)
+npm run build     # static build -> ./dist/ (38 pages, incl. sitemap)
 npm run preview   # preview the built ./dist/ locally
 npx astro check   # type check — ~47 pre-existing errors, does NOT block the build
 ```

@@ -1,6 +1,6 @@
 # ISSUES.md — Open items
 
-**Status (2026-07-26):** build green (Astro 7, 40 pages), `npm audit` clean, all published
+**Status (2026-07-29):** build green (Astro 7, 38 pages), `npm audit` clean, all published
 URLs preserved. The original first-session audit and the Astro 4→7 migration are done — that
 history lives in git. This file now tracks only what's **still open**. None are urgent.
 
@@ -16,6 +16,11 @@ history lives in git. This file now tracks only what's **still open**. None are 
    `VideoGame` (this is how obscure-title queries get won). Built in `src/components/Head.astro`.
    The `games[]` frontmatter added 2026-07-28 (name, developers, publishers, releaseDate,
    status, store links) is the data source for this — it just isn't read by `Head.astro` yet.
+   `games[].pitch` (added 2026-07-29) maps cleanly onto `VideoGame.description`.
+   **This is rising above item 1 in priority.** The blog is shifting from roundups to shorter
+   single-game posts, which means less body copy per page for search to rank on — so the
+   structured data carries proportionally more of the weight, and one post now maps to exactly
+   one game, which is precisely the shape `Review`/`VideoGame` wants.
 3. **RSS not linked from `<head>`.** The feed works at `/rss.xml`, but add
    `<link rel="alternate" type="application/rss+xml" href="/rss.xml">` in `Head.astro` so
    readers can auto-discover it.
@@ -35,11 +40,15 @@ history lives in git. This file now tracks only what's **still open**. None are 
    `Tag` import-name collision in `src/pages/tags/[tag].astro`. Clear by typing params and
    renaming the `Tag` import.
 7. **Content schema is lighter than SEO-ideal** — no `updatedDate`, `draft` or `steamAppId`
-   in `src/content.config.ts`. Add deliberately if/when needed. (`games[]` landed 2026-07-28.)
+   in `src/content.config.ts`. Add deliberately if/when needed. (`games[]` landed 2026-07-28;
+   `games[].pitch` and the `itad` store id followed 2026-07-29.)
    **Backfill outstanding:** only `dungeons-of-hinterberg-review.md` carries `games` so far,
    and only with facts verifiable from the repo (developer Microbird Games, its Steam URL,
    full release). Publishers and release dates for every post are a data-entry pass via
-   `/admin` — don't guess them.
+   `/admin` — don't guess them. Same rule for the two new fields: `pitch` is owner-written
+   copy (capped at 300 chars, so an over-long one fails the build), and `itad` URLs must be
+   pasted from the real ITAD page — the slug isn't derivable from a title, and a guess
+   produces a confident 404 in the "Where to get it" block.
 8. **`Score.astro` is unused** — a review-score component kept as future scaffolding. If you
    wire it up, its `<style>` uses `@apply`, which needs `@reference "../styles/global.css";`
    at the top of the block under Tailwind 4.

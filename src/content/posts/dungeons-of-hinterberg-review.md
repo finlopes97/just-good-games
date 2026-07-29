@@ -16,6 +16,7 @@ tags:
 gameTitle: Dungeons of Hinterberg
 games:
   - name: Dungeons of Hinterberg
+    pitch: A Zelda-like action adventure game filled with charming puzzles and a laid-back atmosphere.
     developers:
       - Microbird Games
     publishers:
@@ -25,6 +26,8 @@ games:
     links:
       - store: steam
         url: https://store.steampowered.com/app/1983260/Dungeons_of_Hinterberg/
+      - store: itad
+        url: https://isthereanydeal.com/game/dungeons-of-hinterberg/info/
 image:
   url: /images/posts/thumbnails/2024_09/DOH_Review.jpg
   alt: Character in a green vest with a sword looking into the mountains, a red ski lift is to their right. 

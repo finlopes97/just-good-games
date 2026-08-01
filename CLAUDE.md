@@ -2,10 +2,11 @@
 
 Project instructions for Claude Code. Read this before touching anything.
 
-> **Status (2026-07-26):** the codebase is current and healthy — Astro 7, Tailwind 4,
-> `npm audit` clean, builds green. The big migration and first-audit cleanup are done; see
-> `ISSUES.md` for the short list of *remaining* open items. This document describes the
-> **actual current state**, not an aspirational target.
+> **Status (2026-08-01):** the codebase is current and healthy — Astro 7, Tailwind 4,
+> `npm audit` clean, builds green, `npx astro check` clean. The big migration, the
+> first-audit cleanup and the SEO/sharing pass are done; see `ISSUES.md` for the short list
+> of *remaining* open items. This document describes the **actual current state**, not an
+> aspirational target.
 
 ---
 
@@ -161,6 +162,9 @@ Brutalism is a visual style, not an excuse. These are non-negotiable:
   at the top of that block or the theme utilities won't resolve.
 - **Integrations:** `astro-icon`, `@astrojs/sitemap`, `@astrojs/rss`, `astro-navbar`.
   No `@astrojs/mdx` (content is `.md`, no MDX features used).
+- **OG card rendering:** `satori` (SVG layout, glyphs baked to paths) + `sharp` (SVG→PNG).
+  `sharp` comes free with Astro; `satori` is the only dependency added for this. Both run at
+  **build time only** — nothing ships to the browser. See `src/utils/og.ts`.
 - **Fonts:** self-hosted `@fontsource` / `@fontsource-variable` (see §2.3).
 - **Hosting:** free tier on **Netlify**. `netlify.toml` pins `NODE_VERSION = "22"` and
   holds all URL redirects.
@@ -262,20 +266,31 @@ the unpkg CDN, git-gateway backend). It writes `.md` — keep `extension: "md"` 
 
 Load-bearing for the project's actual goal. Treat as features, not polish. Current state:
 
-- **Per-page meta** ✅ — unique `<title>` + description on every route (`Head.astro`).
+**Everything here funnels through `src/components/Head.astro`.** It takes a `pageType` prop
+(`website` | `collection` | `page` | `article`) that decides `og:type` and the JSON-LD node
+type. `Layout.astro` passes it through for ordinary pages; `MarkdownPostLayout.astro` hard-sets
+`article`. **A new page must pass a `title`, a `description` and the right `pageType`** — the
+default is `page`, which is right for standalone pages and wrong for listings.
+
+- **Per-page meta** ✅ — unique `<title>` + description on every route. Titles are suffixed
+  with the site name (`"<page> — Just Good Games"`); the homepage leads with it instead.
   Titles should read as the query someone types.
 - **Canonical URLs** ✅ on every page.
-- **Open Graph / Twitter** ✅ — absolute `og:image`/`twitter:image`, ISO `published_time`.
-  *Open item:* images currently reuse the post thumbnail; the aspiration is **build-time
-  branded OG cards** in the site's visual language (yellow field, black border, Bebas
-  title, hard shadow) — high leverage, not yet built.
-- **JSON-LD** ✅ valid — but every page currently emits `BlogPosting`. *Open items:* the
-  homepage should be `WebSite`/`WebPage`, and article pages that review a specific game
-  should use `Review` / `VideoGame` (how obscure-title queries get won). Publisher logo
-  points at `/images/favicon.png`.
-- **RSS** ✅ installed and working — `src/pages/rss.xml.js` builds a full-content feed at
-  `/rss.xml` (sanitised via `sanitize-html` + `markdown-it`), XSL at `public/rss/styles.xsl`.
-  *Open item:* still not linked from `<head>` with `<link rel="alternate" type="application/rss+xml">`.
+- **Open Graph / Twitter** ✅ — **build-time branded OG cards** in the site's visual language
+  (yellow field, black border, Bebas title, pink tag chips, hard shadow, red wordmark).
+  `src/utils/og.ts` renders them; `src/pages/og/[...slug].png.ts` writes one per post to
+  `/og/<slug>.png`, and `/og/site.png` is the fallback for every non-post page. Cards are
+  1200×630 with declared dimensions and alt text.
+- **JSON-LD** ✅ — a `@graph` whose node type follows `pageType`: `WebSite` (home),
+  `CollectionPage` (`/archive`, `/tags`, `/tags/[tag]`), `WebPage` (`/about`), `BlogPosting`
+  (posts). A post covering **exactly one** game also emits a `VideoGame` node built from
+  `games[]` — name, pitch, developers, publishers, store URLs, derived platforms — linked
+  from the article via `about`. Publisher logo points at `/images/favicon.png`.
+  **No `Review` node, deliberately** — Google requires `reviewRating` and there is no rating
+  on this site. See `ISSUES.md` §3 before "fixing" that.
+- **RSS** ✅ — `src/pages/rss.xml.js` builds a full-content feed at `/rss.xml` (sanitised via
+  `sanitize-html` + `markdown-it`), XSL at `public/rss/styles.xsl`, and it's linked from
+  every page's `<head>` with `<link rel="alternate" type="application/rss+xml">`.
 - **Sitemap** ✅ — `@astrojs/sitemap` builds `sitemap-index.xml` into `dist/`.
 
 ---
@@ -300,19 +315,21 @@ Load-bearing for the project's actual goal. Treat as features, not polish. Curre
 
 ## 7. Current state & open items
 
-The original first-session audit and the Astro 4→7 migration are **complete**. What's
-verified now: Astro 7.1.3, Tailwind 4, Content Layer, Sätteri; `npm run build` green
-(38 pages); `npm audit` 0 vulnerabilities; all published URLs preserved via `netlify.toml`
-redirects; `npx astro check` reports ~47 pre-existing type errors (implicit-`any`, React-ism
-`key` props, a `Tag` import-name collision) that **do not block the build**.
+The original first-session audit, the Astro 4→7 migration and the SEO/sharing pass are
+**complete**. What's verified now: Astro 7.1.3, Tailwind 4, Content Layer, Sätteri;
+`npm run build` green (39 pages); `npm audit` 0 vulnerabilities; `npx astro check` **clean
+(0 errors, 0 warnings)**; all published URLs preserved via `netlify.toml` redirects; and
+**zero third-party requests** in the built output — the only external URLs left are
+outbound `<a href>` links in the footer.
 
-**Remaining open items live in `ISSUES.md`.** The short version: RSS `<head>` link,
-JSON-LD page-type refinement, branded OG cards, two third-party image hotlinks on the
-homepage RSS block, images not using `astro:assets`, the type-check errors, and minor
-housekeeping (stock `README.md`, favicon MIME type). None are urgent.
+**Remaining open items live in `ISSUES.md`.** The short version: `astro:assets` migration,
+schema additions (`updatedDate`, `draft`) plus the `games[]` backfill, some pre-design-system
+components still using raw Tailwind colours and smooth hovers, `Prose.astro` missing its
+`prose` class, and the `body` token rename. None are urgent.
 
-Pages that exist: `index`, `about`, `archive`, `posts/[...slug]`, `tags/[tag]`,
-`admin`, `rss.xml.js`. Nav links Home / Archive / About.
+Pages that exist: `index`, `about`, `archive`, `posts/[...slug]`, `tags/` (index),
+`tags/[tag]`, `og/[...slug].png`, `og/site.png`, `admin`, `rss.xml.js`. Nav links
+Home / Archive / About.
 
 The homepage hero is the **most recent post** (`HeroPost.astro`), showing a body excerpt
 (`src/utils/excerpt.js`) rather than the frontmatter description. The old `featured`
@@ -329,9 +346,20 @@ Prefix with the PATH fix if `npm` isn't found (see §3 environment quirk):
 ```bash
 npm install       # deps; audit is clean
 npm run dev       # dev server at http://localhost:4321/
-npm run build     # static build -> ./dist/ (38 pages, incl. sitemap)
+npm run build     # static build -> ./dist/ (39 pages, incl. sitemap and OG cards)
 npm run preview   # preview the built ./dist/ locally
-npx astro check   # type check — ~47 pre-existing errors, does NOT block the build
+npx astro check   # type check — currently clean; keep it that way
+```
+
+**Agents should use Astro 7's background dev server** rather than blocking a shell on
+`npm run dev`. It's a managed process with a lockfile, so it survives between tool calls and
+can't be started twice:
+
+```bash
+npx astro dev --background   # start detached (auto-enabled when an agent is detected)
+npx astro dev status         # is it up?
+npx astro dev logs           # what did it say?
+npx astro dev stop           # shut it down
 ```
 
 ---

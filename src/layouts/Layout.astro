@@ -2,11 +2,17 @@
 import Head from "../components/Head.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-const { title } = Astro.props;
+interface Props {
+  title: string;
+  description?: string;
+  pageType?: "website" | "collection" | "page";
+}
+
+const { title, description, pageType = "page" } = Astro.props;
 ---
 <html lang="en">
   <head>
-    <Head title={title} />
+    <Head title={title} description={description} pageType={pageType} />
     <script>
       // The Netlify Identity widget is a third-party script. It is only needed to
       // accept a CMS invite link, which arrives as `/#invite_token=...`. Load it
@@ -27,7 +33,7 @@ const { title } = Astro.props;
           window.netlifyIdentity.open("signup");
           window.netlifyIdentity.gotrue.acceptInvite(token, true)
             .then(() => console.log("Invite accepted"))
-            .catch(err => console.error("Error accepting invite", err));
+            .catch((err: unknown) => console.error("Error accepting invite", err));
         };
         document.head.appendChild(script);
       });

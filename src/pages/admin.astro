@@ -11,15 +11,18 @@
         const script = document.createElement("script");
         script.src = "https://identity.netlify.com/v1/netlify-identity-widget.js";
         script.onload = () => {
-          if (window.netlifyIdentity) {
-            window.netlifyIdentity.on("init", user => {
-              if (!user) {
-                window.netlifyIdentity.on("login", () => {
-                  document.location.href = "/admin/";
-                });
-              }
-            });
-          }
+          // Capture the widget once: referencing window.netlifyIdentity again from inside
+          // the nested callback loses the narrowing, since anything could have reassigned
+          // it by the time that callback runs.
+          const identity = window.netlifyIdentity;
+          if (!identity) return;
+          identity.on("init", user => {
+            if (!user) {
+              identity.on("login", () => {
+                document.location.href = "/admin/";
+              });
+            }
+          });
         };
         document.head.appendChild(script);
       });

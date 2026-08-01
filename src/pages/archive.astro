@@ -1,77 +1,85 @@
 ---
+import type { CollectionEntry } from "astro:content";
 import BlogPostListing from "../components/BlogPostListing.astro";
 import Layout from "../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 import { formatDate } from "../utils/dateFormatter";
 
+type Post = CollectionEntry<"posts">;
+
 const allPosts = await getCollection("posts");
 const title = "Archive";
+const description =
+  "Every article on Just Good Games, newest first, grouped by year and month.";
 
-// Function to group posts by year and month
-function groupPosts(posts) {
-  return posts.reduce((groups, post) => {
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+] as const;
+
+// Group posts into years -> months -> posts, sorted newest-first at every level, so the
+// template only has to iterate. Doing the sorting here (rather than inline in the markup)
+// keeps the comparisons on real numbers instead of the stringified object keys the old
+// version was subtracting.
+function groupPosts(posts: Post[]) {
+  const byYear = new Map<number, Map<number, Post[]>>();
+
+  for (const post of posts) {
     const date = new Date(post.data.pubDate);
     const year = date.getFullYear();
-    const month = date.toLocaleString("default", { month: "long" });
+    const month = date.getMonth();
 
-    if (!groups[year]) {
-      groups[year] = {};
-    }
+    const months = byYear.get(year) ?? new Map<number, Post[]>();
+    const bucket = months.get(month) ?? [];
 
-    if (!groups[year][month]) {
-      groups[year][month] = [];
-    }
+    bucket.push(post);
+    months.set(month, bucket);
+    byYear.set(year, months);
+  }
 
-    groups[year][month].push(post);
-
-    return groups;
-  }, {});
+  return [...byYear.entries()]
+    .sort((a, b) => b[0] - a[0])
+    .map(([year, months]) => ({
+      year,
+      months: [...months.entries()]
+        .sort((a, b) => b[0] - a[0])
+        .map(([month, posts]) => ({
+          month: MONTHS[month],
+          posts: posts.sort(
+            (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+          ),
+        })),
+    }));
 }
 
 const groupedPosts = groupPosts(allPosts);
 ---
 
-<Layout title={title}>
+<Layout title={title} description={description} pageType="collection">
   <div>
     <h1 class="text-2xl text-center md:text-5xl font-heading">Archive</h1>
     <div>
-      {Object.keys(groupedPosts)
-        .sort((a, b) => b - a) // Sort years in descending order
-        .map((year) => (
-          <div class="ml-8" key={year}>
-            <h2 class="text-xl font-subheading mb-4">{year}</h2>
-            {Object.keys(groupedPosts[year])
-              .sort((a, b) => {
-                // Parse month names into numbers for sorting
-                const monthOrder = [
-                  "January", "February", "March", "April", "May", "June",
-                  "July", "August", "September", "October", "November", "December"
-                ];
-                return (
-                  monthOrder.indexOf(b) - monthOrder.indexOf(a)
-                );
-              })
-              .map((month) => (
-                <div class="mb-2" key={month}>
-                  <h3 class="text-lg font-subheading bg-accent-400 rotate-1 max-w-fit p-1 m-4">
-                    {month}
-                  </h3>
-                  <ul class="flex flex-col ml-8 mr-12 gap-6">
-                    {groupedPosts[year][month]
-                      .sort((a, b) => new Date(b.data.pubDate) - new Date(a.data.pubDate))
-                      .map((post) => (
-                        <BlogPostListing
-                          url={`/posts/${post.id}/`}
-                          title={post.data.title}
-                          pubDate={formatDate(post.data.pubDate)}
-                          key={post.id}
-                        />
-                      ))}
-                  </ul>
-                </div>
-              ))}
-          </div>
-        ))}
+      {groupedPosts.map(({ year, months }) => (
+        <div class="ml-8">
+          <h2 class="text-xl font-subheading mb-4">{year}</h2>
+          {months.map(({ month, posts }) => (
+            <div class="mb-2">
+              <h3 class="text-lg font-subheading bg-accent-400 rotate-1 max-w-fit p-1 m-4">
+                {month}
+              </h3>
+              <ul class="flex flex-col ml-8 mr-12 gap-6">
+                {posts.map((post) => (
+                  <BlogPostListing
+                    url={`/posts/${post.id}/`}
+                    title={post.data.title}
+                    pubDate={formatDate(post.data.pubDate)}
+                  />
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   </div>
 </Layout>

@@ -10,6 +10,8 @@ import { getExcerpt } from "../utils/excerpt";
 import RSS from "@components/RSS.astro";
 
 const title = "Home";
+const description =
+  "Reviews and articles about lesser-known indie games — the kind with forty Steam reviews and one great idea.";
 
 // Get all posts and sort them by publication date (most recent first)
 const allPosts = await getCollection("posts");
@@ -29,7 +31,7 @@ const recentPosts = sortedPosts.slice(1, 7);
   }
 </style>
 
-<Layout title={title}>
+<Layout title={title} description={description} pageType="website">
   <div>
     <h1 class="text-4xl text-center md:text-5xl font-heading text-primary-600">
       Just Good Games.
@@ -84,12 +86,10 @@ const recentPosts = sortedPosts.slice(1, 7);
       >
         <RSSReaderLink
           target="https://www.inoreader.com/?add_feed="
-          target_img="https://www.inoreader.com/images/landing/v2/brand-portal/subscribe-btn-x2.png"
           target_name="Inoreader"
         />
         <RSSReaderLink
           target="https://feedly.com/i/subscription/feed/"
-          target_img="https://s1.feedly.com/legacy/feedly-follow-rectangle-flat-medium_2x.png"
           target_name="Feedly"
         />
         <RSS />

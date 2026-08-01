@@ -26,7 +26,7 @@ const games = entry.data.games ?? [];
 const isSingleGame = games.length === 1;
 ---
 
-<MarkdownPostLayout frontmatter={entry.data}>
+<MarkdownPostLayout frontmatter={entry.data} slug={entry.id}>
   <p class="font-subheading font-bold mb-2 inline-block uppercase underline underline-offset-4 decoration-2 rotate-1">
     {minutesRead}
   </p>

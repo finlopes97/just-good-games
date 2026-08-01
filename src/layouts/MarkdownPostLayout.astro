@@ -2,18 +2,29 @@
 import Head from "../components/Head.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import type { CollectionEntry } from "astro:content";
 import { formatDate } from "../utils/dateFormatter";
-const { frontmatter } = Astro.props;
+
+interface Props {
+  frontmatter: CollectionEntry<"posts">["data"];
+  /* The post's URL slug, used to point at its build-time OG card. */
+  slug: string;
+}
+
+const { frontmatter, slug } = Astro.props;
 ---
 
 <html lang="en">
   <head>
-    <Head 
-      title={frontmatter.title} 
+    <Head
+      title={frontmatter.title}
       description={frontmatter.description}
       pubDate={frontmatter.pubDate}
       author={frontmatter.author}
       image={frontmatter.image}
+      games={frontmatter.games}
+      pageType="article"
+      ogImage={`/og/${slug}.png`}
     />
   </head>
   <body class="bg-background-100 text-foreground-500 min-h-screen font-body">
@@ -44,10 +55,10 @@ const { frontmatter } = Astro.props;
           <h4 class="text-xl font-subheading mb-2">Tags:</h4>
           <ul class="flex flex-wrap gap-2 mb-6">
             {
-              frontmatter.tags.map((tag) => (
+              frontmatter.tags.map((tag: string) => (
                 <li class="bg-accent-200 px-2 py-1 transform -rotate-1">
                   <a
-                    href={`/tags/${tag}`}
+                    href={`/tags/${tag}/`}
                     class="hover:text-primary-600 hover:underline"
                   >
                     {tag}

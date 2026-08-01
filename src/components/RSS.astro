@@ -1,13 +1,15 @@
+---
+/*
+  The site's own feed link. Square corners and the press interaction, matching the reader
+  chips beside it — the previous version used `rounded-lg`, which CLAUDE.md §2.1 rules out
+  outright.
+*/
+---
+
 <a
-  href={`/rss.xml`}
-  class="flex flex-row align-middle gap-2 items-center transition-all
-  transform duration-300 hover:-translate-y-1 bg-white p-2 rounded-lg 
-  border-2 border-black text-sm md:text-base tracking-tight w-fit"
+  href="/rss.xml"
+  class="jgg-press inline-flex w-full items-center justify-center gap-2 border-[3px] border-foreground-500 bg-body-300 px-4 py-2 font-heading text-lg uppercase tracking-wide focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-secondary-600 md:w-auto md:text-xl"
 >
-  <img
-    style="border:0px; width:auto; height:auto; max-height:36px;"
-    src="/images/rss.png"
-    alt="Subscribe to our RSS feed"
-  />
-  Subscribe to our RSS feed
+  <img src="/images/rss.png" alt="" width="24" height="24" class="h-6 w-6" />
+  Raw RSS feed
 </a>

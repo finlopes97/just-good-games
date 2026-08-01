@@ -1,70 +1,95 @@
 # ISSUES.md — Open items
 
-**Status (2026-07-29):** build green (Astro 7, 38 pages), `npm audit` clean, all published
-URLs preserved. The original first-session audit and the Astro 4→7 migration are done — that
-history lives in git. This file now tracks only what's **still open**. None are urgent.
+**Status (2026-08-01):** build green (Astro 7, 39 pages), `npm audit` clean, `npx astro
+check` **clean (0 errors, 0 warnings)**, all published URLs preserved. History lives in git;
+this file tracks only what's **still open**. None are urgent.
 
 ---
 
-## SEO / sharing (highest leverage — these are the project's actual goal)
+## Content pipeline
 
-1. **Branded OG images.** `og:image` currently reuses each post's thumbnail. The goal
-   (`CLAUDE.md §5`) is build-time OG cards in the site's visual language — yellow field,
-   black border, Bebas title, hard shadow. Highest-leverage item in the repo.
-2. **JSON-LD page types.** Every page emits `BlogPosting`. The homepage should be
-   `WebSite`/`WebPage`; article pages reviewing a specific game should use `Review` /
-   `VideoGame` (this is how obscure-title queries get won). Built in `src/components/Head.astro`.
-   The `games[]` frontmatter added 2026-07-28 (name, developers, publishers, releaseDate,
-   status, store links) is the data source for this — it just isn't read by `Head.astro` yet.
-   `games[].pitch` (added 2026-07-29) maps cleanly onto `VideoGame.description`.
-   **This is rising above item 1 in priority.** The blog is shifting from roundups to shorter
-   single-game posts, which means less body copy per page for search to rank on — so the
-   structured data carries proportionally more of the weight, and one post now maps to exactly
-   one game, which is precisely the shape `Review`/`VideoGame` wants.
-3. **RSS not linked from `<head>`.** The feed works at `/rss.xml`, but add
-   `<link rel="alternate" type="application/rss+xml" href="/rss.xml">` in `Head.astro` so
-   readers can auto-discover it.
+1. **Images use raw `<img src={image.url}>`, not `astro:assets`.** Frontmatter `image` is
+   `{ url, alt }` strings, so there's no build-time optimisation or responsive sizing.
+   Migrating touches the content schema and every image reference (posts, cards, hero,
+   JSON-LD), which makes it the single largest remaining job — worth its own session rather
+   than being bundled into a cleanup pass.
 
-## Third-party requests (target is zero)
+2. **Content schema is lighter than SEO-ideal** — no `updatedDate`, `draft` or `steamAppId`
+   in `src/content.config.ts`. `updatedDate` is the most valuable of the three: it would
+   feed `dateModified` in the JSON-LD, which is a real freshness signal. Add deliberately.
 
-4. **Homepage RSS block hotlinks button images** from `inoreader.com` and `feedly.com`
-   (`src/pages/index.astro` via `RSSReaderLink`). Self-host the images or drop the buttons.
-
-## Content pipeline / code quality
-
-5. **Images use raw `<img src={image.url}>`, not `astro:assets`.** Frontmatter `image` is
-   `{ url, alt }` strings, so there's no build-time optimisation / responsive sizing.
-   Migrating is worthwhile but non-trivial (touches the schema and every image reference).
-6. **~47 `npx astro check` type errors** (non-blocking; build is fine). Mostly implicit-`any`
-   params in components, meaningless React-ism `key={}` props in `.astro` files, and a
-   `Tag` import-name collision in `src/pages/tags/[tag].astro`. Clear by typing params and
-   renaming the `Tag` import.
-7. **Content schema is lighter than SEO-ideal** — no `updatedDate`, `draft` or `steamAppId`
-   in `src/content.config.ts`. Add deliberately if/when needed. (`games[]` landed 2026-07-28;
-   `games[].pitch` and the `itad` store id followed 2026-07-29.)
    **Backfill outstanding:** only `dungeons-of-hinterberg-review.md` carries `games` so far,
-   and only with facts verifiable from the repo (developer Microbird Games, its Steam URL,
-   full release). Publishers and release dates for every post are a data-entry pass via
-   `/admin` — don't guess them. Same rule for the two new fields: `pitch` is owner-written
-   copy (capped at 300 chars, so an over-long one fails the build), and `itad` URLs must be
-   pasted from the real ITAD page — the slug isn't derivable from a title, and a guess
+   and only with facts verifiable from the repo (developer Microbird Games, publisher Curve
+   Games, its Steam URL, full release). Publishers and release dates for every other post
+   are a data-entry pass via `/admin` — don't guess them. Same rule for `pitch` (owner-written
+   copy, capped at 300 chars so an over-long one fails the build) and `itad` URLs, which must
+   be pasted from the real ITAD page — the slug isn't derivable from a title, and a guess
    produces a confident 404 in the "Where to get it" block.
-8. **`Score.astro` is unused** — a review-score component kept as future scaffolding. If you
-   wire it up, its `<style>` uses `@apply`, which needs `@reference "../styles/global.css";`
-   at the top of the block under Tailwind 4.
 
-## Housekeeping (cosmetic)
+   Note that `games[]` now feeds `VideoGame` structured data as well as the two panels, so
+   backfilling it has more leverage than it did.
 
-9. **`README.md`** is still the stock Astro "Minimal Starter" template — replace with
-   project-specific content.
-10. **Favicon `<link>`** in `Head.astro` uses `type="png"`; correct MIME is `image/png`.
-11. **`body` token naming collision** — `body` is both the yellow colour scale and a font
-    family. A rename (e.g. `canvas`) touches every template; needs sign-off.
-12. `caniuse-lite` occasionally prints a Browserslist "outdated" warning at build — clear
-    with `npx update-browserslist-db@latest`.
+## SEO
+
+3. **No `Review` structured data, deliberately.** Post pages emit `BlogPosting` + a
+   `VideoGame` node linked via `about` (see `src/components/Head.astro`). They do **not**
+   emit `Review`, because Google requires `reviewRating` on `Review` and this site has no
+   rating — the `Score` component was removed in `cbb84c4`. Emitting one without a rating
+   earns a "Missing field reviewRating" error in Search Console and produces no rich result.
+   If a rating ever returns to the schema, add the `Review` node in `Head.astro`; the
+   surrounding graph is already shaped for it.
+
+4. **OG cards are title-only.** `src/utils/og.ts` renders them in Bebas Neue alone, because
+   that's the only one of the three faces `@fontsource` ships as `.woff` — Piazzolla and
+   Ysabeau are variable fonts published as `.woff2` only, which satori can't read. A body
+   line under the title would need a static `.woff` for Ysabeau (or a woff2 decoder).
+   Not a problem, just the reason the cards look the way they do.
+
+## Design-system drift
+
+5. **Several components predate the design system and never got updated.** Found during the
+   2026-08-01 pass; the worst offenders (random tag colours, `rounded-lg`, hotlinked brand
+   buttons) are fixed, but these remain:
+   - `BlogPostCard.astro` uses `bg-red-400` — a raw Tailwind colour, not a token.
+   - `BlogPostCard.astro`, `BlogPostListing.astro`, `HeroPost.astro` and `Social.astro` use
+     smooth `transition … duration-300` hovers instead of the `jgg-press` step model
+     (CLAUDE.md §2.4). They also have no `prefers-reduced-motion` guard, which `jgg-press`
+     provides for free.
+   - `MarkdownPostLayout.astro` uses `bg-secondary-200` for the byline chip, which competes
+     with `secondary`'s one assigned job (the GameFacts status chip).
+
+6. **`Prose.astro` never applies the `prose` class.** It sets a long list of `prose-h2:`,
+   `prose-p:` etc. modifiers, but without `prose` on the element the typography plugin's
+   base styles never land — only the explicit overrides do. Article text currently looks
+   fine because those overrides cover the elements posts actually use, so this is latent
+   rather than broken: any element not explicitly listed (tables, `code`, nested lists) gets
+   no typographic styling at all. Adding `prose` would restyle every article, so it needs a
+   visual pass, not a one-line fix.
+
+7. **`Layout.astro` wraps every non-post page in `<article>`**, including the homepage's
+   list of post cards and the tag listings. A list of links isn't an article. Should be a
+   plain `<div>`; the real `<article>` elements are inside the cards.
+
+## Housekeeping
+
+8. **`body` token naming collision** — `body` is both the yellow colour scale and a font
+   family. A rename (e.g. `canvas`) touches every template; needs sign-off.
+
+9. **Zod 4 deprecation hints.** `npx astro check` reports 27 hints, all `'z' is deprecated`,
+   because Astro 7's `astro:content` re-exports the classic `z` namespace from Zod 4. They
+   are hints, not errors, and clearing them means importing `zod` directly — which makes
+   this repo own a zod version that Astro currently owns. Not worth it yet.
 
 ---
 
-*Resolved items (tag dedup, JSON-LD/OG fixes, self-hosted fonts, Netlify Identity guard,
+*Resolved and in git history: tag dedup, self-hosted fonts, Netlify Identity guard,
 dependency cleanup, the full Astro 4→7 + Tailwind 4 migration, Buttondown removal, post
-slug renames, the "dunegons" typo) are in the git history.*
+slug renames, the "dunegons" typo, the retired `featured` feature, and the `Score`
+component.*
+
+*Resolved 2026-08-01: branded build-time OG cards; JSON-LD page types (`WebSite` /
+`CollectionPage` / `WebPage` / `BlogPosting` + `VideoGame`); RSS `<link rel="alternate">`;
+missing meta descriptions and `og:type=article` on non-post pages; site-name title suffixes;
+all 34 `astro check` errors; the `/tags` 404 (a tags index now exists); the last three
+third-party image hotlinks (Inoreader, Feedly and — found in this pass, on every page —
+Ko-fi); favicon MIME type; `README.md`; `caniuse-lite`.*

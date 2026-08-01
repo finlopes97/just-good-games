@@ -11,65 +11,241 @@ import "@fontsource-variable/piazzolla/wght-italic.css";
 import "@fontsource-variable/ysabeau/wght.css"; // body copy
 import "@fontsource-variable/ysabeau/wght-italic.css";
 
-const { title, description, pubDate, author, image } = Astro.props;
-const siteUrl = "https://justgood.games";
+interface GameLink {
+  store: string;
+  url: string;
+  label?: string;
+}
 
-// Build the structured data as a real object here (frontmatter), then inject it with
-// `set:html` below. Astro does NOT evaluate `{...}` expressions inside <script>/<style>
-// raw-text elements, so the previous inline `{{...}}` shipped as literal source text and
-// was inert. JSON.stringify also drops any `undefined` fields, so non-article pages (which
-// only pass `title`) emit a clean object.
+interface Game {
+  name: string;
+  pitch?: string;
+  developers?: string[];
+  publishers?: string[];
+  releaseDate?: string;
+  status?: string;
+  links?: GameLink[];
+}
+
+interface Props {
+  title: string;
+  description?: string;
+  pubDate?: Date | string;
+  author?: string;
+  image?: { url: string; alt: string };
+  /*
+    What kind of page this is, which decides og:type and the JSON-LD node type. Every page
+    used to claim `BlogPosting` + `og:type=article`, which told search engines the homepage
+    was an article (ISSUES.md §2).
+      website    — the homepage only
+      collection — listings: /archive, /tags, /tags/[tag]
+      page       — standalone pages: /about
+      article    — a post
+  */
+  pageType?: "website" | "collection" | "page" | "article";
+  /* Post frontmatter `games`, the data source for the VideoGame node. */
+  games?: Game[];
+  /* Site-relative path to the branded OG card for this page. */
+  ogImage?: string;
+}
+
+const {
+  title,
+  description,
+  pubDate,
+  author,
+  image,
+  pageType = "page",
+  games = [],
+  ogImage = "/og/site.png",
+} = Astro.props;
+
+const SITE_URL = "https://justgood.games";
+const SITE_NAME = "Just Good Games";
+const SITE_TAGLINE = "Indie games worth your time";
+const SITE_DESCRIPTION =
+  "Reviews and articles about lesser-known indie games — the kind with forty Steam reviews and one great idea.";
+
+const abs = (path: string) => new URL(path, SITE_URL).href;
+
+// Titles should read as the query someone types (CLAUDE.md §5), so every page is suffixed
+// with the site name; only the homepage leads with it.
+const pageTitle =
+  pageType === "website"
+    ? `${SITE_NAME} — ${SITE_TAGLINE}`
+    : `${title} — ${SITE_NAME}`;
+
+// Listing and standalone pages passed no description at all, so they shipped with no
+// meta description and no og:description. Fall back to the site's.
+const pageDescription = description ?? SITE_DESCRIPTION;
+
+const canonical = abs(Astro.url.pathname);
+const ogImageUrl = abs(ogImage);
+const isoDate = (value: Date | string) =>
+  value instanceof Date ? value.toISOString() : value;
+
+const publisher = {
+  "@type": "Organization",
+  "@id": `${SITE_URL}/#organization`,
+  name: SITE_NAME,
+  url: `${SITE_URL}/`,
+  logo: {
+    "@type": "ImageObject",
+    url: abs("/images/favicon.png"),
+  },
+};
+
+/*
+  A post about exactly one game gets a VideoGame node describing that game, linked from the
+  BlogPosting via `about`. One post now maps to exactly one game (ISSUES.md §2), which is
+  precisely the shape this wants; roundups stay a plain BlogPosting because there is no
+  single subject to point at.
+
+  Deliberately NOT emitting a `Review` node: Google requires `reviewRating` on Review, and
+  this site has no rating (the Score component was removed). A Review without it earns a
+  "Missing field reviewRating" error in Search Console and produces no rich result — so the
+  entity association is claimed via `about` instead, which is honest and still readable by
+  search engines. Add the Review node if a rating field ever lands in the schema.
+*/
+const game = pageType === "article" && games.length === 1 ? games[0] : null;
+
+// schema.org wants an ISO 8601 date; `releaseDate` is free text that can hold "TBA".
+// Emit it only when it genuinely resolves, rather than inventing a day.
+const releaseDate = (value?: string) => {
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  if (/^\d{4}$/.test(trimmed)) return trimmed; // year-precision ISO 8601 is valid
+  const parsed = new Date(trimmed);
+  return Number.isNaN(parsed.valueOf())
+    ? undefined
+    : parsed.toISOString().slice(0, 10);
+};
+
+// A storefront link is evidence of a platform: a Steam page means the game runs on PC.
+// itad is a price tracker, not a store, so it says nothing about platforms.
+const PLATFORMS: Record<string, string> = {
+  steam: "PC",
+  itch: "PC",
+  gog: "PC",
+  epic: "PC",
+  playstation: "PlayStation",
+  xbox: "Xbox",
+  nintendo: "Nintendo Switch",
+};
+
+const org = (name: string) => ({ "@type": "Organization", name });
+
+const storeUrls = (game?.links ?? [])
+  .filter((link) => link.store !== "itad")
+  .map((link) => link.url);
+
+const platforms = [
+  ...new Set(
+    (game?.links ?? [])
+      .map((link) => PLATFORMS[link.store])
+      .filter((platform): platform is string => Boolean(platform)),
+  ),
+];
+
+const gameNode = game && {
+  "@type": "VideoGame",
+  "@id": `${canonical}#game`,
+  name: game.name,
+  ...(game.pitch && { description: game.pitch }),
+  ...(storeUrls.length && { url: storeUrls[0], sameAs: storeUrls }),
+  ...(game.developers?.length && { author: game.developers.map(org) }),
+  ...(game.publishers?.length && { publisher: game.publishers.map(org) }),
+  ...(releaseDate(game.releaseDate) && {
+    datePublished: releaseDate(game.releaseDate),
+  }),
+  ...(platforms.length && { gamePlatform: platforms }),
+};
+
+const PAGE_TYPES = {
+  website: "WebSite",
+  collection: "CollectionPage",
+  page: "WebPage",
+  article: "BlogPosting",
+} as const;
+
+const mainNode =
+  pageType === "article"
+    ? {
+        "@type": "BlogPosting",
+        "@id": `${canonical}#article`,
+        headline: title,
+        description: pageDescription,
+        image: image?.url ? abs(image.url) : ogImageUrl,
+        ...(author && { author: { "@type": "Person", name: author } }),
+        ...(pubDate && { datePublished: isoDate(pubDate) }),
+        mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+        inLanguage: "en",
+        publisher,
+        ...(gameNode && { about: { "@id": `${canonical}#game` } }),
+      }
+    : {
+        "@type": PAGE_TYPES[pageType],
+        "@id": canonical,
+        name: pageType === "website" ? SITE_NAME : title,
+        url: canonical,
+        description: pageDescription,
+        inLanguage: "en",
+        ...(pageType === "website"
+          ? { publisher }
+          : { isPartOf: { "@id": `${SITE_URL}/` } }),
+      };
+
 const structuredData = {
   "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  headline: title,
-  description,
-  ...(image?.url && { image: siteUrl + image.url }),
-  ...(author && { author: { "@type": "Person", name: author } }),
-  ...(pubDate && {
-    datePublished: pubDate instanceof Date ? pubDate.toISOString() : pubDate,
-  }),
-  publisher: {
-    "@type": "Organization",
-    name: "Just Good Games",
-    logo: {
-      "@type": "ImageObject",
-      url: siteUrl + "/images/favicon.png",
-    },
-  },
+  "@graph": [mainNode, ...(gameNode ? [gameNode] : [])],
 };
 ---
 
 <meta charset="utf-8" />
-<link rel="icon" type="png" href="/images/favicon.png" />
+<link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+<link rel="icon" type="image/png" href="/images/favicon.png" />
 <meta name="viewport" content="width=device-width" />
 <meta name="generator" content={Astro.generator} />
-<title>{title}</title>
+<title>{pageTitle}</title>
 
 <!-- SEO Meta Tags -->
-<meta name="description" content={description} />
-<link rel="canonical" href={Astro.url} />
+<meta name="description" content={pageDescription} />
+<link rel="canonical" href={canonical} />
+
+<!-- Feed auto-discovery: lets readers find /rss.xml from any page. -->
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={`${SITE_NAME} — RSS`}
+  href={abs("/rss.xml")}
+/>
 
 <!-- Open Graph / Facebook -->
-<meta property="og:type" content="article" />
-<meta property="og:url" content={siteUrl + Astro.url.pathname} />
-<meta property="og:title" content={title} />
-<meta property="og:description" content={description} />
-{image && <meta property="og:image" content={siteUrl + image.url} />}
+<meta property="og:type" content={pageType === "article" ? "article" : "website"} />
+<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:url" content={canonical} />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={pageDescription} />
+<meta property="og:image" content={ogImageUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={`${title} — ${SITE_NAME}`} />
 {pubDate && (
-  <meta
-    property="article:published_time"
-    content={pubDate instanceof Date ? pubDate.toISOString() : pubDate}
-  />
+  <meta property="article:published_time" content={isoDate(pubDate)} />
 )}
-<meta property="article:author" content={author} />
+{author && <meta property="article:author" content={author} />}
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:url" content={siteUrl + Astro.url.pathname} />
-<meta name="twitter:title" content={title} />
-<meta name="twitter:description" content={description} />
-{image && <meta name="twitter:image" content={siteUrl + image.url} />}
+<meta name="twitter:url" content={canonical} />
+<meta name="twitter:title" content={pageTitle} />
+<meta name="twitter:description" content={pageDescription} />
+<meta name="twitter:image" content={ogImageUrl} />
+<meta name="twitter:image:alt" content={`${title} — ${SITE_NAME}`} />
 
-<!-- Structured Data -->
-<script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+<!--
+  Structured Data. Built as a real object in the frontmatter, then injected with `set:html`
+  — Astro does NOT evaluate `{...}` expressions inside <script>/<style> raw-text elements,
+  so an inline `{{...}}` would ship as literal source text and be inert.
+-->
+<script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />

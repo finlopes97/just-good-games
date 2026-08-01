@@ -2,17 +2,69 @@
 
 **Status (2026-08-01):** build green (Astro 7, 39 pages), `npm audit` clean, `npx astro
 check` **clean (0 errors, 0 warnings)**, all published URLs preserved. History lives in git;
-this file tracks only what's **still open**. None are urgent.
+this file tracks only what's **still open**.
+
+**Start with §1.** Page weight is now the worst problem on the site by a wide margin, and
+it attacks the same goal as the SEO work — a reader arriving cold on mobile from a Reddit
+link (CLAUDE.md §1) never reaches the first paragraph of a 65 MB page. LCP and CLS are
+Core Web Vitals, so this is a ranking signal too, not just a courtesy.
+
+---
+
+## 1. Page weight — do this next
+
+Measured 2026-08-01. `public/images/posts/` holds **67 files, 112 MB**; 55 distinct images
+are referenced from posts. Per-post payload, counting the thumbnail and every inline image:
+
+| Post | Images | Payload |
+|---|---|---|
+| `january-2025-cruel-for-me-mule` | 13 | **65.1 MB** |
+| `the-top-ten-games-of-2024` | 23 | 18.0 MB |
+| `september-2024-path-of-achra-is-perfect` | 6 | 11.5 MB |
+| `august-2024-clickolding-is-a-fever-dream` | 7 | 7.9 MB |
+| `dungeons-of-hinterberg-review` | 5 | 7.3 MB |
+| `october-2024-you-should-play-arco` | 7 | 2.5 MB |
+
+By format: **gif — 3 files, 60.2 MB**; png — 27 files, 28.9 MB; jpg — 22 files, 17.8 MB.
+
+### 1a. Convert the three animated GIFs to video — highest value, lowest risk
+
+| GIF | Size | Post |
+|---|---|---|
+| `2025_01/BladeChimera_3_ClobberingTime.gif` | **44.5 MB** | `january-2025-cruel-for-me-mule` |
+| `2025_01/CRUEL_7_Window-Shopping.gif` | 15.1 MB | `january-2025-cruel-for-me-mule` |
+| `2024_12/ACHRA_1_Ogre.gif` | 0.7 MB | `the-top-ten-games-of-2024` |
+
+Replace with `<video autoplay loop muted playsinline>` and an MP4/WebM pair. Expect
+44.5 MB → roughly 1–2 MB, i.e. **about 58 MB off one post**. No schema change, no risk to
+any published URL, one small component.
+
+- **Needs ffmpeg**, which is not on PATH on the dev machine (`winget install ffmpeg`).
+  Without it the fallback is sharp's animated-WebP support (already installed), but that's
+  roughly a 50% cut rather than 97% — clearly second best.
+- Autoplaying video **must** carry a `prefers-reduced-motion` guard (CLAUDE.md §2.5). A GIF
+  offers no such control, so this is an accessibility win as well as a payload one.
+- Sätteri can't run components inside markdown, so the posts reference these images with
+  plain `![alt](/path "title")` syntax. Swapping in a `<video>` means either raw HTML in the
+  markdown body or a frontmatter-driven approach — decide which before starting.
+
+### 1b. Migrate static images to `astro:assets`
+
+**This does NOT solve 1a** — Astro's default sharp-backed image service doesn't re-encode
+animated content, so the GIFs stay untouched by the migration. Do 1a first; it's independent,
+and with the 44 MB elephant gone this becomes a normal-sized job.
+
+Frontmatter `image` is `{ url, alt }` strings, so there's no build-time optimisation,
+no responsive `srcset`, no `width`/`height` (hence layout shift) and no `loading="lazy"`.
+Migrating touches the content schema and every image reference (posts, cards, hero,
+JSON-LD) — worth its own session.
+
+Worth a content pass alongside it: 27 screenshots are PNGs that should be JPEG or WebP,
+including one at 8.2 MB (`2024_09/roundup_2/BREAK-THE-LOOP_1_Cannon-Fodder.png`).
 
 ---
 
 ## Content pipeline
-
-1. **Images use raw `<img src={image.url}>`, not `astro:assets`.** Frontmatter `image` is
-   `{ url, alt }` strings, so there's no build-time optimisation or responsive sizing.
-   Migrating touches the content schema and every image reference (posts, cards, hero,
-   JSON-LD), which makes it the single largest remaining job — worth its own session rather
-   than being bundled into a cleanup pass.
 
 2. **Content schema is lighter than SEO-ideal** — no `updatedDate`, `draft` or `steamAppId`
    in `src/content.config.ts`. `updatedDate` is the most valuable of the three: it would

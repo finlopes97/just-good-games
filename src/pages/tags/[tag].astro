@@ -31,9 +31,11 @@ export async function getStaticPaths() {
 
 const { tag } = Astro.params;
 const { posts, allTags, allPosts } = Astro.props;
+const pageTitle = `Posts tagged "${tag}"`;
+const description = `${posts.length} Just Good Games ${posts.length === 1 ? "post" : "posts"} tagged "${tag}", covering lesser-known indie games.`;
 ---
 
-<Layout title={tag}>
+<Layout title={pageTitle} description={description}>
   <div class="">
     <h1
       class="text-4xl md:text-5xl p-2 md:p-4 font-bold mb-8 transform -rotate-2 inline-block bg-black text-white"

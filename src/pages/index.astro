@@ -10,6 +10,8 @@ import { getExcerpt } from "../utils/excerpt";
 import RSS from "@components/RSS.astro";
 
 const title = "Home";
+const description =
+  "Just Good Games is an indie gaming blog focusing on hidden gems.";
 
 // Get all posts and sort them by publication date (most recent first)
 const allPosts = await getCollection("posts");
@@ -29,7 +31,7 @@ const recentPosts = sortedPosts.slice(1, 7);
   }
 </style>
 
-<Layout title={title}>
+<Layout title={title} description={description}>
   <div>
     <h1 class="text-4xl text-center md:text-5xl font-heading text-primary-600">
       Just Good Games.

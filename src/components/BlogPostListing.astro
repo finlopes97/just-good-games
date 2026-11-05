@@ -1,7 +1,13 @@
 ---
+interface Props {
+  title: string;
+  url: string;
+  pubDate: string;
+}
+
 const { title, url, pubDate } = Astro.props;
 // Function to truncate text
-const truncateText = (text, maxLength) => {
+const truncateText = (text: string, maxLength: number) => {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength) + "...";
 };

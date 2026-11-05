@@ -46,7 +46,9 @@ const postsCollection = defineCollection({
                   "itad",
                   "other",
                 ]),
-                url: z.string().url(),
+                // z.url(), not z.string().url() — the chained form is deprecated in Zod 4,
+                // which is what Astro 7's `astro:content` re-exports.
+                url: z.url(),
                 // Overrides the default store name on the button.
                 label: z.string().optional(),
               }),

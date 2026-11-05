@@ -1,0 +1,42 @@
+---
+/*
+  Browse-all-tags page. It exists because /tags/[tag] has always linked here from its
+  "View all tags" escape hatch, and the route didn't exist — a published 404 (CLAUDE.md §1).
+*/
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Tag from "../../components/Tag.astro";
+import { countTags } from "../../utils/tags";
+
+const allPosts = await getCollection("posts");
+const tags = countTags(allPosts);
+
+const title = "All tags";
+const description =
+  "Every tag on Just Good Games — browse indie game articles by genre, storefront and mood.";
+---
+
+<Layout title={title} description={description} pageType="collection">
+  <div>
+    <h1
+      class="mb-8 inline-block -rotate-2 bg-foreground-500 p-2 font-heading text-4xl text-background-100 md:p-4 md:text-5xl"
+    >
+      All tags
+    </h1>
+
+    <p class="mb-8 max-w-post-70 font-body text-lg">
+      {tags.length} tags across {allPosts.length} articles. The number on each chip is how
+      many articles carry it.
+    </p>
+
+    <ul class="flex flex-wrap gap-1">
+      {
+        tags.map(({ tag, count }) => (
+          <li>
+            <Tag name={tag} count={count} />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Layout>

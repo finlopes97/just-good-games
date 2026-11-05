@@ -1,12 +1,21 @@
 ---
+interface Props {
+  title: string;
+  url: string;
+  pubDate: string;
+  description: string;
+  image?: { url: string; alt: string };
+  tags: string[];
+}
+
 const { title, url, pubDate, description, image, tags } = Astro.props;
 // Function to truncate text
-const truncateText = (text, maxLength) => {
+const truncateText = (text: string, maxLength: number) => {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength) + "...";
 };
 // Function to return just the first three tags
-const getTags = (tags) => {
+const getTags = (tags: string[]) => {
   if (tags.length <= 3) return tags;
   return tags.slice(0, 3);
 };

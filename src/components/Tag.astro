@@ -1,24 +1,29 @@
 ---
+/*
+  A tag chip: the small pink block with a black border from CLAUDE.md §2.4, which is the
+  documented treatment for tags. It replaces an earlier version that picked a random
+  non-token colour (bg-red-500 … bg-indigo-500) on every build and rounded its count pill —
+  both straight violations of the design grammar, and the randomness meant the same tag
+  looked different on every page.
+*/
 interface Props {
   name: string;
-  count: number;
+  count?: number;
 }
 
 const { name, count } = Astro.props;
-
-const colors = [
-  'bg-red-500',
-  'bg-blue-500',
-  'bg-green-500',
-  'bg-yellow-500',
-  'bg-purple-500',
-  'bg-pink-500',
-  'bg-indigo-500',
-];
-
-const randomColor = colors[Math.floor(Math.random() * colors.length)];
 ---
 
-<a href={`/tags/${name}`} class={`inline-block ${randomColor} text-white font-bold py-2 px-4 m-2 transform rotate-1 hover:rotate-0 transition-transform duration-200 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}>
-  {name} <span class="ml-2 bg-white text-black px-2 py-1 rounded-full text-sm">{count}</span>
+<a
+  href={`/tags/${name}/`}
+  class="jgg-press m-1 inline-flex items-baseline gap-2 border-[3px] border-foreground-500 bg-accent-300 px-3 py-1.5 font-heading text-lg uppercase tracking-wide focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-secondary-600"
+>
+  <span>{name}</span>
+  {
+    count !== undefined && (
+      <span class="border-l-[3px] border-foreground-500 pl-2 font-body text-base">
+        {count}
+      </span>
+    )
+  }
 </a>

@@ -1,11 +1,28 @@
 ---
+import { Icon } from "astro-icon/components";
+
+/*
+  Ko-fi link in the footer.
+
+  It used to hotlink Ko-fi's own button image from storage.ko-fi.com — a third-party
+  request on EVERY page of the site, not just one (the target is zero, CLAUDE.md §3). It
+  was also the last rounded, gradient-y image in a design that allows neither. This is the
+  same treatment the RSS reader buttons got: a native chip, using the mdi icon set that's
+  already bundled by astro-icon, so nothing leaves the origin.
+*/
+interface Props {
+  kofiCode: string;
+}
+
 const { kofiCode } = Astro.props;
 ---
-<a href={`https://ko-fi.com/${kofiCode}`} target="_blank" class="mt-2 sm:mt-0">
-	<img
-		class="transform duration-300 hover:-translate-y-1"
-		style="border:0px; width:auto; height:auto; max-height:36px;"
-		src="https://storage.ko-fi.com/cdn/kofi2.png?v=3"
-		alt="Buy Me a Coffee at ko-fi.com"
-	/>
+
+<a
+  href={`https://ko-fi.com/${kofiCode}`}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="jgg-press mt-2 inline-flex items-center gap-2 border-[3px] border-foreground-500 bg-body-300 px-3 py-1.5 font-heading text-base uppercase tracking-wide focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-secondary-600 sm:mt-0 md:text-lg"
+>
+  <Icon name="mdi:coffee" class="h-5 w-5" />
+  Buy me a coffee
 </a>

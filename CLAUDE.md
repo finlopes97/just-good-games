@@ -2,10 +2,14 @@
 
 Project instructions for Claude Code. Read this before touching anything.
 
-> **Status (2026-07-26):** the codebase is current and healthy — Astro 7, Tailwind 4,
-> `npm audit` clean, builds green. The big migration and first-audit cleanup are done; see
-> `ISSUES.md` for the short list of *remaining* open items. This document describes the
-> **actual current state**, not an aspirational target.
+> **Status (2026-11-06):** the codebase is current and healthy — Astro 7, Tailwind 4,
+> builds green. The big migration and first-audit cleanup are done; see `ISSUES.md` for
+> the *remaining* open items. This document describes the **actual current state**, not an
+> aspirational target.
+>
+> **Editorial direction:** the blog is pivoting to **multi-game list posts** (ascending,
+> descending-countdown, or unnumbered) as the main format. Full-length articles stay
+> supported but are secondary. The list layout is designed but not built (`ISSUES.md` #1).
 
 ---
 
@@ -255,6 +259,10 @@ since Sätteri won't run one) and shown in a chip on the article header.
 
 **Authoring:** a Decap CMS admin lives at `/admin` (`public/admin/config.yml`, loaded from
 the unpkg CDN, git-gateway backend). It writes `.md` — keep `extension: "md"` there.
+**Whenever the schema in `src/content.config.ts` changes, update `config.yml` in the same
+change.** It fell behind once (missing `pitch` and `itad`), which made those fields
+impossible to enter through the CMS. The CMS reads the *deployed* config, so a fix only
+takes effect after a push.
 
 ---
 
@@ -263,19 +271,22 @@ the unpkg CDN, git-gateway backend). It writes `.md` — keep `extension: "md"` 
 Load-bearing for the project's actual goal. Treat as features, not polish. Current state:
 
 - **Per-page meta** ✅ — unique `<title>` + description on every route (`Head.astro`).
-  Titles should read as the query someone types.
+  Posts pass theirs via `MarkdownPostLayout`; other pages pass `title` + `description`
+  props to `Layout`. `<title>` is `"{title} | Just Good Games"` (bare site name on the
+  homepage); `og:title` stays bare alongside `og:site_name`. Non-post pages get
+  `og:type="website"`. Titles should read as the query someone types.
 - **Canonical URLs** ✅ on every page.
 - **Open Graph / Twitter** ✅ — absolute `og:image`/`twitter:image`, ISO `published_time`.
   *Open item:* images currently reuse the post thumbnail; the aspiration is **build-time
   branded OG cards** in the site's visual language (yellow field, black border, Bebas
   title, hard shadow) — high leverage, not yet built.
-- **JSON-LD** ✅ valid — but every page currently emits `BlogPosting`. *Open items:* the
-  homepage should be `WebSite`/`WebPage`, and article pages that review a specific game
-  should use `Review` / `VideoGame` (how obscure-title queries get won). Publisher logo
-  points at `/images/favicon.png`.
-- **RSS** ✅ installed and working — `src/pages/rss.xml.js` builds a full-content feed at
-  `/rss.xml` (sanitised via `sanitize-html` + `markdown-it`), XSL at `public/rss/styles.xsl`.
-  *Open item:* still not linked from `<head>` with `<link rel="alternate" type="application/rss+xml">`.
+- **JSON-LD** ✅ valid — posts emit `BlogPosting`, the homepage `WebSite`, other pages
+  `WebPage`. *Open item:* add `VideoGame` entities from `games[]` (`ItemList` for list
+  posts, `about` for single-game posts). Not `Review`, since there are no scores. Publisher
+  logo points at `/images/favicon.png`.
+- **RSS** ✅ — `src/pages/rss.xml.js` builds a full-content feed at `/rss.xml` (sanitised
+  via `sanitize-html` + `markdown-it`), XSL at `public/rss/styles.xsl`, and pages link to
+  it from `<head>` for auto-discovery.
 - **Sitemap** ✅ — `@astrojs/sitemap` builds `sitemap-index.xml` into `dist/`.
 
 ---
@@ -306,10 +317,10 @@ verified now: Astro 7.1.3, Tailwind 4, Content Layer, Sätteri; `npm run build` 
 redirects; `npx astro check` reports ~47 pre-existing type errors (implicit-`any`, React-ism
 `key` props, a `Tag` import-name collision) that **do not block the build**.
 
-**Remaining open items live in `ISSUES.md`.** The short version: RSS `<head>` link,
-JSON-LD page-type refinement, branded OG cards, two third-party image hotlinks on the
-homepage RSS block, images not using `astro:assets`, the type-check errors, and minor
-housekeeping (stock `README.md`, favicon MIME type). None are urgent.
+**Remaining open items live in `ISSUES.md`.** The short version: the list-post layout
+(next up), `astro:assets` for images, `VideoGame` JSON-LD, branded OG cards, third-party
+image hotlinks (Ko-fi footer on every page, Inoreader/Feedly on the homepage), the
+type-check errors, and housekeeping.
 
 Pages that exist: `index`, `about`, `archive`, `posts/[...slug]`, `tags/[tag]`,
 `admin`, `rss.xml.js`. Nav links Home / Archive / About.

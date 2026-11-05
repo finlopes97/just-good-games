@@ -2,6 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 
 const title = "About";
+const description =
+  "What Just Good Games is all about.";
 ---
 
 <style>
@@ -11,47 +13,46 @@ const title = "About";
   }
 </style>
 
-<Layout title={title}>
+<Layout title={title} description={description}>
   <div>
     <h1 class="text-2xl text-center md:text-5xl font-heading">About.</h1>
     <hr class="bg-accent-400 h-1 border-0 my-4 shadow-[2px_2px_0px_rgba(0,0,0,1)]" />
-    <div class="flex flex-col items-center max-w-post-100 mx-auto">
-      <h2 class="text-3xl text-left font-heading mt-4">What is Just Good Games?</h2>
-      <p>
-        Well, it's pretty simple actually. I wanted to create a space where I can gush about games I like.
-        Not to lean too heavily into the "not like the other girls" vibes, but the games I like also tend to
-        be more on the niche side. Giving these games more time in the spotlight is one of the core goals of 
-        this blog. From time to time I may stray from the path and talk about more popular games too if I find
-        one that I really, really love. Ostenstibly, the posts on this blog are "reviews" but I think of them 
-        more like discussions. The name of the website is "Just Good Games" so it would be weird if I was 
-        writing about a game I really don't like, if you see an article about a game on here, expect a largely 
-        positive take on it. 
-      </p>
-      <h2 class="text-3xl text-left font-heading mt-4">Okay, but what makes a game "just good?"</h2>
-      <p>
-        That's the billion dollar question isn't it. I'm sure I don't know, and I play a fucktonne of games.
-        I also make my own games. I'm also sure what makes a game "just good" varies from person to person, and 
-        will depend on a thousand and one different factors. What makes a good game to me might be different to
-        someone else, because they don't like Sonic Unleashed and I do.
-      </p>
-      <h2 class="text-3xl text-left font-heading mt-4">
-        You did a swear in the last section, is this a family friendly blog?
-      </h2>
-      <p>
-        I'm gonna swear a lot. There will also be references to drugs, sex and alcohol, and sometimes I'll swear while
-        making references to drugs, sex and alcohol. Sometimes I'll also reference really old movies or games, which
-        is kinda scary on its own if you're more used to Skibidi Toilet than pretentious arguments about Cassavetes' filmography.
-      </p>
-      <h2 class="text-3xl text-left font-heading mt-4">
-        Wait, who are you?
-      </h2>
-      <p>
-        I'm Kyle, or Finlopes, or just Lopes. I work a full-time job to pay the bills and support a lavish lifestyle of 
-        just barely having time to engage in truly meaningful hobbies which include: writing, making games, playing games and
-        music. I didn't get many chances to play games as a kid so I had to play catch up on a lot of the classics. As for the
-        games I love the most now, well you'll just have to wait for me to inevitably make a list of my top 50 games like
-        every other video game blogger or content creator on the internet. 
-      </p>
+    <div class="flex flex-col max-w-post-100 mx-auto">
+      <h2 class="text-3xl text-center font-heading mt-4">What is Just Good Games?</h2>
+      <div class="font-body font-semibold">
+        <p>
+          I love video games. I grew up playing mostly PC games in the 2000s and 2010s, reading gaming magazines like PC PowerPlay and grappling with a young, wild internet. Some of my favourite games are:
+        </p>
+        <ul class="italic text-xl list-inside list-disc mb-4">
+          <li>Deus Ex</li>
+          <li>Planescape: Torment</li>
+          <li>Vampire: The Masquerade - Bloodlines</li>
+          <li>Fallout: New Vegas</li>
+          <li>Resident Evil</li>
+        </ul>
+        <p>
+          Over the years, I've become increasingly interested in the indie gaming scene. I am regularly on the frontlines, scouring Steam's new releases page, looking for hidden gems like a crack addict. 
+          With more and more games being released with every passing month, curation has become a major problem for online storefronts like Steam and Itch.io. 
+          The goal of Just Good Games is to be an informative, highly opinionated outlet that promotes and escalates lesser-known games that are worth playing. Fighting back against the tidal wave of low-effort asset flips and AI slop.
+        </p>
+      </div>
+      <h2 class="text-3xl text-center font-heading">Artifical Intelligence (AI) Policy</h2>
+      <div class="font-body font-semibold">
+        <p>
+          AI is a powerful tool that, like most powerful tools, can be seriously misused. I prefer to take a nuanced approach rather than be firmly anti-AI or pro-AI. 
+          Just Good Games will consider every game by its own merits on a case by case basis, taking into account:
+        </p>
+        <ol class="italic text-xl list-inside list-decimal mb-4">
+          <li>Originality - was AI used to blatantly clone an existing game or its assets</li>
+          <li>Human Impact - was AI used to uplift human created work or did it replace humans</li>
+          <li>Implementation - was AI used to generate artwork, code, music, promotional material, voice lines and/or dynamic content</li>
+        </ol>
+        <p>
+          In the spirit of disclosure, the AI tool Claude Code was used to assist with the backend functionality of this blog. 
+          The agent completed tasks such as bug fixing, migrating/upgrading the tech stack, fixing schema and optimising SEO. 
+          Reviews, round-ups and articles are typed out by hand and edited by eye. So there will probably be a lot of mistakes, and that's a good thing.
+        </p>
+      </div>
     </div>
   </div>
 </Layout>

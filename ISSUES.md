@@ -33,7 +33,14 @@ are referenced from posts. Per-post payload, counting the thumbnail and every in
 
 By format: **gif — 3 files, 60.2 MB**; png — 27 files, 28.9 MB; jpg — 22 files, 17.8 MB.
 
-### 1a. Convert the three animated GIFs to video — highest value, lowest risk
+### 1a. The three animated GIFs: decided 2026-11-06, replace with stills during the list-format rework
+
+**Decision (owner, 2026-11-06):** don't convert these to video. The posts that use them will be
+reworked into the new list format, and at that point each GIF gets replaced with a
+still image. Going forward, posts don't use animated GIFs at all (see CLAUDE.md §4,
+"Images"). The video analysis below is kept for reference only. Until the rework, the Cruel post
+stays at about 65 MB. If the rework slips, a still frame can be pulled with ffmpeg
+(`C:\Programs\ffmpeg\bin`) in minutes as a stopgap.
 
 | GIF | Size | Post |
 |---|---|---|
@@ -54,11 +61,22 @@ any published URL, one small component.
   plain `![alt](/path "title")` syntax. Swapping in a `<video>` means either raw HTML in the
   markdown body or a frontmatter-driven approach — decide which before starting.
 
-### 1b. Migrate static images to `astro:assets`
+### 1b. Migrate static images to `astro:assets`, which is now the next job
 
-**This does NOT solve 1a** — Astro's default sharp-backed image service doesn't re-encode
-animated content, so the GIFs stay untouched by the migration. Do 1a first; it's independent,
-and with the 44 MB elephant gone this becomes a normal-sized job.
+This doesn't touch the GIFs: Astro's sharp-backed image service doesn't re-encode
+animated content. Those wait for the rework (1a). Leave the three GIF references as they are.
+
+**Spike first:** Astro's old markdown pipeline optimised images in post bodies through a
+plugin, and Sätteri doesn't run plugins. Confirm with a throwaway post whether Sätteri
+optimises *relative* image paths in markdown before planning the migration:
+- **If it does:** full migration. Images move into `src/`, references are rewritten,
+  frontmatter uses `image()`, and Decap's media folders are updated.
+- **If not:** thumbnails (frontmatter) still go through `image()`, and post-body images get
+  a one-off re-encode where they sit (resize, PNG → JPEG/WebP).
+
+(Checked 2026-11-06: Sätteri *does* pass raw HTML in markdown through unchanged, but
+`rss.xml.js` builds markdown-it without `html: true`, so raw HTML shows up in the feed as
+escaped text. Fix that before any post uses raw HTML.)
 
 Frontmatter `image` is `{ url, alt }` strings, so there's no build-time optimisation,
 no responsive `srcset`, no `width`/`height` (hence layout shift) and no `loading="lazy"`.

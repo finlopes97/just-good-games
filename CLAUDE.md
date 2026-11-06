@@ -266,6 +266,16 @@ a deliberate owner choice). URLs are permanent: if a slug changes, add a 301 in
 (`getReadingTime(entry.body ?? "")` via the `reading-time` package — *not* a remark plugin,
 since Sätteri won't run one) and shown in a chip on the article header.
 
+**Images (rules for new content, from 2026-11-06):**
+
+- **No animated GIFs.** Use a still screenshot. The three legacy GIFs (Cruel post, top ten
+  2024) are replaced with stills when those posts are reworked into the list format
+  (`ISSUES.md` §1a). Don't convert them to video in the meantime; that's the owner's decision.
+- **Screenshots as JPEG or WebP, not PNG,** at most **1920px wide** (the article column
+  is about 900px wide). PNG only for pixel art or images where a crisp edge matters.
+- Aim for a **few hundred KB per image**. Anything over 1 MB needs a reason.
+- Alt text describes what's in the frame, so it can't be dropped.
+
 **Authoring:** a Decap CMS admin lives at `/admin` (`public/admin/config.yml`, loaded from
 the unpkg CDN, git-gateway backend). It writes `.md` — keep `extension: "md"` there.
 **Whenever the schema in `src/content.config.ts` changes, update `config.yml` in the same

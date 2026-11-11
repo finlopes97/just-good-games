@@ -5,7 +5,7 @@ description: Not unlike a digital cowboy, I like to round up a herd of games at
   the end of the month and write about them, here's some of the highlights from
   January. From kicking cultists in CRUEL to crying over another six-slot
   inventory in Dead of Darkness, there's a lot to like.
-author: Kyle Lopez-Finlayson
+author: Kyle
 tags:
   - indie
   - steam

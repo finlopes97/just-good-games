@@ -66,13 +66,30 @@ any published URL, one small component.
 This doesn't touch the GIFs: Astro's sharp-backed image service doesn't re-encode
 animated content. Those wait for the rework (1a). Leave the three GIF references as they are.
 
-**Spike first:** Astro's old markdown pipeline optimised images in post bodies through a
-plugin, and Sätteri doesn't run plugins. Confirm with a throwaway post whether Sätteri
-optimises *relative* image paths in markdown before planning the migration:
-- **If it does:** full migration. Images move into `src/`, references are rewritten,
-  frontmatter uses `image()`, and Decap's media folders are updated.
-- **If not:** thumbnails (frontmatter) still go through `image()`, and post-body images get
-  a one-off re-encode where they sit (resize, PNG → JPEG/WebP).
+**Spike done 2026-11-12: Sätteri *does* optimise relative image paths in markdown.** That
+means the **full migration** path: images move into `src/` next to their posts, references are
+rewritten, frontmatter uses `image()`, and Decap's media folders are updated.
+
+What the spike showed. It used a throwaway post under `src/content/posts/` with
+`![alt](./shot.png)`, built with Astro 7.1.3, then deleted:
+
+- **Default config:** the `<img>` comes out as WebP under `/_astro/`, with `width`/`height`
+  (no layout shift), `loading="lazy"` and `decoding="async"`. It is **not resized** (a
+  3440px source stays 3440px), and `srcset` is emitted **empty**.
+- **With `image: { layout: 'constrained' }` in `astro.config.mjs`:** a full `srcset` from
+  640w up to the source width, plus `sizes`. Turn this on as part of the migration.
+- **Numbers:** `BREAK-THE-LOOP_1_Cannon-Fodder.png` (8.2 MB, 3440×1440) became a 103 KB
+  full-size WebP, and the variants used on phones are 13 to 24 KB. Visual quality checked by
+  eye and fine. One caveat: a very flat 30 KB PNG (`ARCO_1_Jungle-Ruins.png`) **grew** to
+  158 KB as WebP. Re-encoding isn't always a win for tiny PNGs, so spot-check output sizes
+  after migrating.
+- **RSS breaks on relative paths.** `rss.xml.js` renders the raw body with markdown-it, so
+  the feed contains `./shot.png` verbatim, which a feed reader can't resolve. The migration
+  must rewrite image `src` in the feed to absolute `/_astro/...` URLs, or emit absolute
+  URLs another way. Same session as the raw-HTML fix below.
+- **Not tested:** frontmatter `image()` (standard Astro, low risk), and Decap's relative
+  per-collection `media_folder` / `public_folder`, which needs checking against Decap's docs
+  before rewiring `/admin`.
 
 (Checked 2026-11-06: Sätteri *does* pass raw HTML in markdown through unchanged, but
 `rss.xml.js` builds markdown-it without `html: true`, so raw HTML shows up in the feed as

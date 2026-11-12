@@ -10,8 +10,10 @@ Project instructions for Claude Code. Read this before touching anything.
 >
 > **Editorial direction (2026-11-06):** the blog is pivoting to **multi-game list posts**
 > (ascending, descending countdown, or unnumbered) as the main format. Full-length articles
-> stay supported but are secondary. The list layout is proposed but not built; see
-> `ISSUES.md`, "Next feature".
+> stay supported but are secondary. **List posts are freeform (decided 2026-11-12):** one
+> markdown body, no per-item schema. The one convention is that a bullet list of store
+> links renders as chips. **`LAYOUT.md` is the reference** for post structure, that
+> convention and the stack limits. Read it before touching post layout or the content schema.
 >
 > **Before starting work, `git fetch` and check `main` against `origin/main`.** Work has
 > happened on more than one machine, and a stale local `main` once caused a whole session
@@ -163,7 +165,17 @@ Brutalism is a visual style, not an excuse. These are non-negotiable:
 - **Astro 7** (`astro@7.x`), static output, `site: 'https://justgood.games'`.
 - **Markdown engine: Sätteri** (Astro 7's default Rust processor). It does **not** run
   remark/rehype plugins — don't add any expecting them to run. CommonMark + GFM + YAML
-  frontmatter are native.
+  frontmatter are native. Three things verified by spike on 2026-11-12:
+  - It **does optimise relative image paths** in a markdown body (`![alt](./shot.png)` →
+    WebP with `width`/`height` and lazy loading). `srcset` is only filled when
+    `image: { layout: 'constrained' }` is set in `astro.config.mjs` (not set yet).
+  - **Only the body gets this.** Markdown held in a frontmatter string is not run through
+    the image pipeline, so don't design features around markdown-in-frontmatter.
+  - It can't run components inside markdown. Anything component-shaped in a post body is
+    done as a **CSS convention on plain markdown** (see the store-link chips in §4). If a
+    structured layout is ever needed, a wrapper component can call
+    `await Astro.slots.render("default")` on `<Content />` to get the final HTML and split
+    it at `<h2 id="...">` headings (`LAYOUT.md` §4).
 - **Tailwind v4, CSS-first.** `@tailwindcss/vite` (registered in `astro.config.mjs`
   under `vite.plugins`), theme in `src/styles/global.css` (`@import "tailwindcss"` +
   `@theme` + `@plugin "@tailwindcss/typography"`). **There is no `tailwind.config.mjs`.**
@@ -255,6 +267,24 @@ future `Review`/`VideoGame` JSON-LD upgrade will read from.
 *Richer fields that would help SEO but aren't implemented yet* (nice-to-have, not present):
 `updatedDate`, `draft`, `steamAppId`. Add deliberately if needed.
 
+**Store-link chips in post bodies (built 2026-11-12).** List posts are freeform, so store
+links for each game are written in the body as a plain bullet list:
+
+```markdown
+- [Steam](https://store.steampowered.com/app/2366970/Arco/)
+- [Price history](https://isthereanydeal.com/game/arco/info/)
+```
+
+A list becomes a row of chips (the same look as `StoreLinks.astro`) when every bullet is a
+single link and at least one goes to a known store or IsThereAnyDeal. Any other list is
+untouched. It is CSS only: the rule is at the end of `src/styles/global.css`, **unlayered
+on purpose** (the `prose-*` utilities in `Prose.astro` would beat `@layer components`), and
+scoped to the `jgg-prose` class on `Prose.astro`. **Don't nest `:has()` inside `:has()`
+when editing it** — browsers drop the whole rule. The chip label is the author's link text,
+ITAD goes last by hand, and the bullets must have no blank lines between them. Full rules
+and limits: `LAYOUT.md` §3. There is no `listOrder` field and no `games[].writeup`; both
+were considered and dropped.
+
 **URL policy:** `/posts/[slug]/` — flat, lowercase, hyphenated. **The filename IS the slug**
 (the `glob()` loader derives `entry.id` from it), so renaming a file changes its URL. Posts
 currently follow a **`Month Year - Title`** naming scheme (dates in the slug are allowed —
@@ -345,7 +375,9 @@ The original first-session audit, the Astro 4→7 migration and the SEO/sharing 
 **zero third-party requests** in the built output — the only external URLs left are
 outbound `<a href>` links in the footer.
 
-**Remaining open items live in `ISSUES.md`.** The short version: `astro:assets` migration,
+**Remaining open items live in `ISSUES.md`**, and post structure is documented in
+`LAYOUT.md`. The short version: `astro:assets` migration (next), converting the other
+posts' store links to chip lists, a recent-posts strip,
 schema additions (`updatedDate`, `draft`) plus the `games[]` backfill, some pre-design-system
 components still using raw Tailwind colours and smooth hovers, `Prose.astro` missing its
 `prose` class, and the `body` token rename. None are urgent.

@@ -13,7 +13,7 @@ Core Web Vitals, so this is a ranking signal too, not just a courtesy.
 main format. This **reverses** the earlier note that the blog was moving to single-game
 posts, which some comments still assume (e.g. the `VideoGame` comment in `Head.astro`). Full-length
 articles stay supported but are secondary, and may not be about a specific game at all
-(e.g. industry observations). See "Next feature" below.
+(e.g. industry observations). See "List posts" below and `LAYOUT.md`.
 
 ---
 
@@ -108,31 +108,37 @@ image entry gets written as a string and then rewritten for `astro:assets`.
 
 ---
 
-## Next feature: list-post layout (proposed, needs sign-off)
+## List posts: freeform, with store-link chips (decided 2026-11-12)
 
-Post type comes from the data: no `games[]` = article, one game = the current single-game
-layout, two or more = list layout.
+**`LAYOUT.md` is the reference.** Summary:
 
-Today a roundup's facts render as one `GameFacts` summary block *below* the article, and
-each game's writing lives in the markdown body. Sätteri can't put components inside
-markdown, so the facts and store links can't sit next to each game's writing.
+The owner supplied the target post structure on 2026-11-12 and then chose a **freeform
+writing environment** over structured per-game fields. A list post is one markdown body:
+item headings, ranks, header images and details are typed by hand, in whatever order the
+post wants (ascending, countdown or unnumbered). There is no `listOrder` field, no
+`games[].writeup` and no item components. Both structured designs considered are recorded
+in `LAYOUT.md` §4 with the reasons they were dropped.
 
-**Proposal (schema change):** add a `games[].writeup` markdown field so each game renders as
-its own block (anchored heading, image, compact facts, writeup, store links), with the
-markdown body as intro and outro. Decap handles this well (a list widget with a markdown
-editor per item). Knock-on work:
+**Built 2026-11-12: store-link chips in post bodies.** A bullet list where every bullet is
+a single link, and at least one goes to a known store or IsThereAnyDeal, renders as a row
+of pressable chips matching `StoreLinks.astro`. CSS only (end of `src/styles/global.css`,
+scoped to `jgg-prose` on `Prose.astro`). Piloted on `october-2024-you-should-play-arco`.
 
-- **Three orderings, set per post:** **ascending** (1 → 10), **descending** (a 10 → 1
-  countdown, e.g. top tens) and **unnumbered** (roundups). Frontmatter order is reading
-  order; the setting only controls the numbers shown. This is a hard requirement from the owner.
-- **JSON-LD:** `Head.astro` only emits a `VideoGame` node for exactly one game. List posts
-  should add an `ItemList` of `VideoGame`s, each linking to its block on the page. As far
-  as I know, Google doesn't show carousels for video-game lists, so the value is telling
-  search engines which games the page covers. Check with the Rich Results Test.
-- **RSS** (`src/pages/rss.xml.js`) renders only `post.body`, so it must render the entries too.
-- **OG cards** could show the game names as chips.
-- **Decap config** (`public/admin/config.yml`) must gain the same fields.
-- Pilot on `the-top-ten-games-of-2024.md`.
+Still open:
+
+- **Owner to check the Arco post on a phone.** The chips were checked locally at about
+  500px and desktop width, not at a true phone width.
+- **Convert store links in the other posts to bullet lists** (about 11 lines across the
+  Clickolding, Cruel and Achra posts). It drops the "or"/"and" between links, so it needs
+  the owner's sign-off on wording.
+- **Recent posts strip** at the foot of every post. Not built. No client-side JavaScript,
+  so it's a CSS scroll-snap row or a grid of three; owner to choose.
+- **`ItemList` structured data** for list posts is now optional. It would need `games[]`
+  filled in, and `games[]` is no longer required for anything on a list post.
+- **OG cards** could show game names as chips, but only from `games[]`.
+
+`games[]` stays in the schema and stays optional: it still drives the facts panel, the
+"Where to get it" block and `VideoGame` structured data on posts that fill it in.
 
 ---
 

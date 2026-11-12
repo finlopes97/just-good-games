@@ -4,9 +4,8 @@
 check` **clean (0 errors, 0 warnings)**, all published URLs preserved. History lives in git;
 this file tracks only what's **still open**.
 
-**Page weight is fixed for every post except the two that carry GIFs (§1).** Static images
-now go through `astro:assets` (2026-11-12). What's left of §1 is the three GIFs, which wait
-for the owner's rework of those posts.
+**Page weight is fixed (§1).** Static images go through `astro:assets` (2026-11-12) and the
+three animated GIFs are now tap-to-play video clips (2026-11-13).
 
 **Editorial direction (2026-11-06):** the blog is pivoting to **multi-game list posts** as the
 main format. This **reverses** the earlier note that the blog was moving to single-game
@@ -18,23 +17,36 @@ articles stay supported but are secondary, and may not be about a specific game 
 
 ## 1. Page weight
 
-### 1a. The three animated GIFs: replace with stills during the rework (owner decision, 2026-11-06)
+### 1a. Animated GIFs replaced with video clips — done 2026-11-13
 
-Don't convert these to video. The posts that use them will be reworked by the owner, and
-at that point each GIF gets replaced with a still image. New posts don't use animated GIFs
-at all (CLAUDE.md §4, "Images"). If the rework slips, a still frame can be pulled with
-ffmpeg (`C:\Programs\ffmpeg\bin`) in minutes as a stopgap.
+The owner decided to keep animated examples, as video. The three GIFs were converted with
+`npm run clip` (`scripts/clip.mjs`) and deleted; how clips work is in CLAUDE.md §4, "Clips".
 
-| GIF | Size | Post |
-|---|---|---|
-| `2025_01/BladeChimera_3_ClobberingTime.gif` | **44.5 MB** | `january-2025-cruel-for-me-mule` |
-| `2025_01/CRUEL_7_Window-Shopping.gif` | 15.1 MB | `january-2025-cruel-for-me-mule` |
-| `2024_12/ACHRA_1_Ogre.gif` | 0.7 MB | `the-top-ten-games-of-2024` |
+| Clip | GIF | MP4 | Poster | Post |
+|---|---|---|---|---|
+| `2025_01/BladeChimera_3_ClobberingTime` | 44.5 MB | 0.6 MB | 56 KB | `january-2025-cruel-for-me-mule` |
+| `2025_01/CRUEL_7_Window-Shopping` | 15.1 MB | 0.4 MB | 33 KB | `january-2025-cruel-for-me-mule` |
+| `2024_12/ACHRA_1_Ogre` | 0.7 MB | 0.3 MB | 36 KB | `the-top-ten-games-of-2024` |
 
-These are the **only files left in `public/images/posts/`**, still referenced by absolute
-path. They can't move to `src/assets/`: Astro's sharp service reads animated input
-(`pages: -1`) and would try to re-encode a 44 MB GIF on every cold build. When a GIF is
-replaced, put the still in `src/assets/posts/` and delete the GIF.
+Clips are tap-to-play (`preload="none"`), so a reader downloads only the poster until they
+press play. The Cruel post now loads about 0.6 MB of images instead of 62.9 MB.
+
+What was tested (ffmpeg 8.1, the Blade Chimera GIF at 1280px wide): re-optimised GIF
+23.2 MB, animated WebP 2.6 MB, animated AVIF 0.4 MB, H.264 0.5 MB, AV1 0.4 MB, VP9 0.5 MB.
+H.264 was chosen because every phone hardware-decodes it; AV1 saves too little to justify
+a second file, and animated AVIF/WebP decode like a GIF and can't be paused.
+
+Left over:
+
+- **Check the clips on a real phone.** Checked in headless Edge at about 500px and desktop
+  width (poster, badge and controls render); actual playback on iOS and Android is
+  unverified.
+- **Adding a clip through `/admin` is unverified.** The line of raw HTML may need the
+  editor's markdown mode, and Decap's media library is set up for images. Owner is
+  researching.
+- **Old GIF URLs are dead**, the same as the old image URLs (§1b).
+- The Achra clip came from a 428px-wide GIF and was doubled with nearest-neighbour scaling
+  to stay crisp, which is why it is 0.3 MB rather than 0.1 MB.
 
 ### 1b. `astro:assets` migration — done 2026-11-12
 
@@ -49,8 +61,8 @@ Image payload per post page, before and after. "After" is what a phone downloads
 
 | Post | Before | After |
 |---|---|---|
-| `january-2025-cruel-for-me-mule` | 65.1 MB | **62.9 MB** (62.4 MB is the two GIFs) |
-| `the-top-ten-games-of-2024` | 18.0 MB | 1.8 MB (0.7 MB is the GIF) |
+| `january-2025-cruel-for-me-mule` | 65.1 MB | 0.6 MB (after §1a; 62.9 MB while the GIFs remained) |
+| `the-top-ten-games-of-2024` | 18.0 MB | 1.1 MB (after §1a) |
 | `september-2024-path-of-achra-is-perfect` | 11.5 MB | 0.3 MB |
 | `august-2024-clickolding-is-a-fever-dream` | 7.9 MB | 0.5 MB |
 | `dungeons-of-hinterberg-review` | 7.3 MB | 0.7 MB |
@@ -67,8 +79,7 @@ Left over from this work:
   could not be tested locally (Decap needs the deployed git-gateway). Upload one image
   through `/admin` and confirm the path it writes and that the build passes. Also check
   whether the editor still previews existing thumbnails.
-- **Old image URLs are dead by design.** `/images/posts/...` addresses (other than the
-  three GIFs) now 404. Owner accepted this on 2026-11-12. It affects posts already fetched
+- **Old image URLs are dead by design.** `/images/posts/...` addresses now 404. Owner accepted this on 2026-11-12. It affects posts already fetched
   by feed readers and image-search results, not post pages.
 - **Four images come out slightly larger as WebP** than their source at full size, because
   the sources were already tiny: `POA_1_Leeches.png` (98 → 160 KB), `POA_2_God-of-Blood.png`

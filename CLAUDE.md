@@ -313,8 +313,8 @@ since Sätteri won't run one) and shown in a chip on the article header.
 - **Raw HTML `<img>` is not optimised and can't point into `src/assets/`.** A post written
   in raw HTML must put its images in `public/images/posts/` and use an absolute
   `/images/posts/...` path. Prefer markdown image syntax wherever possible.
-- **`public/images/posts/` now holds only the three legacy GIFs** (`ISSUES.md` §1a). Don't
-  move a GIF into `src/assets/`: Astro would try to re-encode the animation.
+- **`public/images/posts/` is now empty** and exists only for images a raw-HTML post needs.
+  Never put an animated GIF in `src/assets/`: Astro would try to re-encode the animation.
 - **The RSS feed** renders the raw body, so `rss.xml.js` swaps each relative image path for
   the absolute URL of an optimised copy. A path it can't resolve fails the build.
 - **`/admin` uploads** from the post editor go to `src/assets/posts/` (collection-level
@@ -323,14 +323,35 @@ since Sätteri won't run one) and shown in a chip on the article header.
 
 **Images — rules for new content (from 2026-11-06):**
 
-- **No animated GIFs.** Use a still screenshot. The three legacy GIFs (Cruel post, top ten
-  2024) are replaced with stills when those posts are reworked into the list format
-  (`ISSUES.md` §1a). Don't convert them to video in the meantime; that's the owner's decision.
+- **No animated GIFs. Animation is a video clip** (owner decision, 2026-11-13, reversing
+  the earlier "stills only" rule). See "Clips" below.
 - **Screenshots as JPEG or WebP, not PNG,** at most **1920px wide** (the article column
   is about 900px wide). PNG only for pixel art or images where a crisp edge matters.
 - Aim for a **few hundred KB per image**. Anything over 1 MB needs a reason. Readers get
   optimised WebP either way, so this is now about keeping the repo and the build small.
 - Alt text describes what's in the frame, so it can't be dropped.
+
+**Clips — animated examples (built 2026-11-13):**
+
+- **Make one with `npm run clip -- <gif or recording> --dir 2025_01`** (`scripts/clip.mjs`,
+  needs ffmpeg on PATH; runs on the author's machine, not in the build). It writes a silent
+  H.264 `.mp4` (at most 1280px wide) and a `.webp` poster to `public/video/posts/<dir>/`,
+  and prints the line to paste. Record video directly where possible; a GIF source caps
+  quality at 256 colours.
+- **In the post it is one line of raw HTML:**
+  `<video controls loop muted playsinline preload="none" src="/video/posts/…/clip.mp4" poster="/video/posts/…/clip.webp" width="1280" height="720" aria-label="what happens" title="caption"></video>`.
+  `aria-label` is the clip's alt text and can't be dropped.
+- **Clips are tap-to-play, never autoplay** (owner decision): `preload="none"` means only
+  the poster downloads until the reader presses play, and nothing moves unasked. Don't add
+  `autoplay`.
+- **The poster has a "PLAY CLIP" chip baked into its corner** so it reads as a video. It is
+  baked in because, with no client-side JavaScript, a CSS overlay couldn't disappear on play.
+- Styling is the `.jgg-prose video` rule at the end of `global.css`, which gives a clip the
+  same box as an image.
+- **The RSS feed** replaces each clip with its poster, linked to the post (feed readers and
+  `sanitize-html` strip `<video>`).
+- Keep clips to a few seconds and under about 1 MB. Adding one through `/admin` is
+  unverified.
 
 **Authoring:** a Decap CMS admin lives at `/admin` (`public/admin/config.yml`, loaded from
 the unpkg CDN, git-gateway backend). It writes `.md` — keep `extension: "md"` there.
@@ -402,8 +423,8 @@ The original first-session audit, the Astro 4→7 migration and the SEO/sharing 
 outbound `<a href>` links in the footer.
 
 **Remaining open items live in `ISSUES.md`**, and post structure is documented in
-`LAYOUT.md`. The short version: the three legacy GIFs (the Cruel post is still about 63 MB
-because of them), checking `/admin` image uploads after the `astro:assets` migration,
+`LAYOUT.md`. The short version: checking `/admin` image uploads after the `astro:assets`
+migration and whether clips can be added through `/admin`,
 converting the other posts' store links to chip lists, a recent-posts strip,
 schema additions (`updatedDate`, `draft`) plus the `games[]` backfill, some pre-design-system
 components still using raw Tailwind colours and smooth hovers, `Prose.astro` missing its

@@ -142,6 +142,8 @@ constraints on how a post is written.
 4. **Images** live in `src/assets/posts/` and are referenced by relative path in markdown
    syntax (`CLAUDE.md` §4, "Images"). A raw HTML `<img>` is not optimised and must point at
    a file in `public/images/posts/`.
+5. **Animation** is a tap-to-play `<video>` clip written as one line of raw HTML, made with
+   `npm run clip` (`CLAUDE.md` §4, "Clips"). No GIFs, no autoplay.
 
 ---
 
@@ -153,5 +155,5 @@ constraints on how a post is written.
 | 2 | Convert store links in the other posts to bullet lists | About 11 lines across the Clickolding, Cruel and Achra posts. Changes the owner's wording slightly ("or"/"and" between links goes), so do it with sign-off. |
 | 3 | ~~`astro:assets` migration~~ | Done 2026-11-12 (`ISSUES.md` §1b). Left over: check `/admin` uploads on the live site. |
 | 4 | Recent posts strip | Scroll-snap row or grid of three: owner to choose. Sits outside the `<article>`, excludes the current post. |
-| 5 | Rework the top ten and Cruel posts | Replaces the three GIFs with stills (`ISSUES.md` §1a). |
+| 5 | ~~Replace the three GIFs~~ | Done 2026-11-13: converted to tap-to-play video clips (`ISSUES.md` §1a, `CLAUDE.md` §4 "Clips"). |
 | 6 | Optional: `ItemList` structured data | Would need `games[]` filled in on list posts. Only worth it if the facts are being entered anyway. |

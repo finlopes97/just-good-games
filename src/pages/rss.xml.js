@@ -21,8 +21,26 @@ const assets = import.meta.glob('/src/assets/posts/**/*.{png,jpg,jpeg,webp,avif}
   import: 'default',
 });
 const ASSET_PATH = /\.\.\/\.\.\/assets\/posts\/[^\s)"'>]+/g;
-// Images still served from public/ (the legacy GIFs, anything referenced from raw HTML).
+// Images served from public/ (anything referenced from a raw HTML <img>).
 const PUBLIC_PATH = /(?<=\]\(|src=["'])\/images\/[^\s)"'>]+/g;
+
+/*
+  Clips are raw <video> tags (scripts/clip.mjs). Most feed readers strip video, and
+  sanitize-html does too, so in the feed each clip becomes its poster still, linked to the
+  post. The poster already carries a "PLAY CLIP" badge, so it reads as something to open.
+*/
+const VIDEO = /<video\b([^>]*)>(?:[\s\S]*?<\/video>)?/g;
+const POSTER = /\sposter="([^"]*)"/;
+const LABEL = /\saria-label="([^"]*)"/;
+
+function videosToPosters(body, postUrl) {
+  return body.replace(VIDEO, (_, attrs) => {
+    const poster = attrs.match(POSTER)?.[1];
+    const label = attrs.match(LABEL)?.[1] ?? 'Video clip';
+    if (!poster) return `<a href="${postUrl}">Video: ${label}</a>`;
+    return `<a href="${postUrl}"><img src="${new URL(poster, SITE).href}" alt="Video, plays on the site: ${label}"></a>`;
+  });
+}
 
 async function absoluteImages(body, postId) {
   const urls = new Map();
@@ -50,7 +68,7 @@ export async function GET() {
       description: post.data.description,
       link: `${SITE}/posts/${post.id}`,
       guid: `${SITE}/posts/${post.id}`,
-      content: sanitizeHtml(parser.render(await absoluteImages(post.body ?? '', post.id)), {
+      content: sanitizeHtml(parser.render(await absoluteImages(videosToPosters(post.body ?? '', `${SITE}/posts/${post.id}`), post.id)), {
         allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img'])
       }),
       custom_elements: [

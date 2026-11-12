@@ -245,3 +245,18 @@
     }
   }
 }
+
+/*
+  Clips in a post body. A raw <video> tag gets the same box as a markdown image (the
+  prose-img utilities in Prose.astro), so a clip and a screenshot line up. `height: auto`
+  with the tag's width/height attributes reserves the space before the poster loads.
+  Clips are made with `npm run clip` (scripts/clip.mjs).
+*/
+.jgg-prose video {
+  display: block;
+  width: 100%;
+  max-width: var(--container-post-100);
+  height: auto;
+  margin: 0 auto 1rem;
+  background: #000;
+}

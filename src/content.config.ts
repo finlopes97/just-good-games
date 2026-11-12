@@ -4,7 +4,9 @@ import { glob } from "astro/loaders";
 const postsCollection = defineCollection({
   // Content Layer API (Astro 5+). Replaces the legacy `type: 'content'` collection.
   loader: glob({ pattern: "**/*.md", base: "./src/content/posts" }),
-  schema: z.object({
+  // A function, not a plain object, so the schema can use the `image()` helper: it resolves
+  // a relative path in frontmatter to an imported asset that astro:assets can optimise.
+  schema: ({ image }) => z.object({
     title: z.string(),
     pubDate: z.date(),
     description: z.string(),
@@ -57,9 +59,13 @@ const postsCollection = defineCollection({
         }),
       )
       .optional(),
+    // The post thumbnail. `url` is a path relative to the post file, pointing into
+    // src/assets/posts/ (e.g. ../../assets/posts/thumbnails/2024_12/top_ten.jpg). The key
+    // keeps its old name so existing posts and the CMS config didn't need renaming, but
+    // the value is now image metadata, not a string. A path that doesn't exist fails the build.
     image: z
       .object({
-        url: z.string(),
+        url: image(),
         alt: z.string(),
       })
       .optional(),

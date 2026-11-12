@@ -1,10 +1,12 @@
 ---
+import { Image } from "astro:assets";
+
 interface Props {
   title: string;
   url: string;
   pubDate: string;
   preview: string;
-  image?: { url: string; alt: string };
+  image?: { url: ImageMetadata; alt: string };
 }
 
 const { title, url, pubDate, preview, image } = Astro.props;
@@ -26,9 +28,14 @@ const truncateText = (text: string, maxLength: number) => {
       >
         {
           image ? (
-            <img
+            <Image
               src={image.url}
               alt={image.alt}
+              layout="none"
+              widths={[480, 768, 960, 1280]}
+              sizes="(min-width: 768px) 448px, 100vw"
+              loading="eager"
+              fetchpriority="high"
               class="w-full h-full object-cover"
             />
           ) : (

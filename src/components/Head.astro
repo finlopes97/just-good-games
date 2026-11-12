@@ -1,4 +1,5 @@
 ---
+import { getImage } from "astro:assets";
 import "../styles/global.css"; // Tailwind v4 entry (@import "tailwindcss" + @theme)
 
 // Self-hosted fonts via @fontsource (replaces the old render-blocking Google Fonts CDN
@@ -32,7 +33,8 @@ interface Props {
   description?: string;
   pubDate?: Date | string;
   author?: string;
-  image?: { url: string; alt: string };
+  /* The post thumbnail: `url` is astro:assets image metadata, not a string. */
+  image?: { url: ImageMetadata; alt: string };
   /*
     What kind of page this is, which decides og:type and the JSON-LD node type. Every page
     used to claim `BlogPosting` + `og:type=article`, which told search engines the homepage
@@ -81,6 +83,13 @@ const pageDescription = description ?? SITE_DESCRIPTION;
 
 const canonical = abs(Astro.url.pathname);
 const ogImageUrl = abs(ogImage);
+
+// The post thumbnail for the BlogPosting node, run through the image service so the URL
+// points at an optimised file under /_astro/ (the source lives in src/, not public/).
+const articleImageUrl = image?.url
+  ? abs((await getImage({ src: image.url, width: 1200 })).src)
+  : undefined;
+
 const isoDate = (value: Date | string) =>
   value instanceof Date ? value.toISOString() : value;
 
@@ -175,7 +184,7 @@ const mainNode =
         "@id": `${canonical}#article`,
         headline: title,
         description: pageDescription,
-        image: image?.url ? abs(image.url) : ogImageUrl,
+        image: articleImageUrl ?? ogImageUrl,
         ...(author && { author: { "@type": "Person", name: author } }),
         ...(pubDate && { datePublished: isoDate(pubDate) }),
         mainEntityOfPage: { "@type": "WebPage", "@id": canonical },

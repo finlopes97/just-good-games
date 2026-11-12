@@ -7,7 +7,7 @@ tags:
   - list
   - top10
 image:
-  url: /images/posts/thumbnails/2024_12/top_ten.jpg
+  url: ../../assets/posts/thumbnails/2024_12/top_ten.jpg
   alt: ""
   filename: goty-banner
 ---
@@ -19,7 +19,7 @@ But fuck all that. We're here to talk about good games—no, the best games—of
 
 ## The Honourable Mentions...
 
-![Screenshots of three games parallel to eachother horizontally.](/images/posts/art/2024_12/honors.png "Honourable Mentions")
+![Screenshots of three games parallel to eachother horizontally.](../../assets/posts/art/2024_12/honors.png "Honourable Mentions")
 
 ### Fallout London
 
@@ -35,31 +35,31 @@ One of the biggest surprises of the year, for me at least, was when the Among Us
 
 ## The Countdown...
 
-![The back of a red headed woman's head who is staring into a purple portal with the text "TEN." overlayed.](/images/posts/art/2024_12/hinterberg-banner.png "Dungeons of Hinterberg")
+![The back of a red headed woman's head who is staring into a purple portal with the text "TEN." overlayed.](../../assets/posts/art/2024_12/hinterberg-banner.png "Dungeons of Hinterberg")
 
 ### 10. Dungeons of Hinterberg
 
 A supremely relaxing jaunt around some Austrian mountains. Dungeons of Hinterberg is part Persona, part Zelda and part Diablo. Why not wander around the town and build up your relationships with a crew of dungeon-delving thrill seekers and the mild-mannered townsfolk. Or you see the sights and explore the world uncover hidden loot, tough enemies to battle, awe-inspiring perches to drink in the view, or portals to the eponymous dungeons which are always filled with danger and mystery.
 
-![A woman with red hair standing on a snowy ledge looking out over a vista of snow capped cliffs](/images/posts/screenshots/2024_08/DOH_4_Winter-Wonderland.jpg "A Snowy Paradise")
+![A woman with red hair standing on a snowy ledge looking out over a vista of snow capped cliffs](../../assets/posts/screenshots/2024_08/DOH_4_Winter-Wonderland.jpg "A Snowy Paradise")
 
 Those dungeons are the meat of the game, with each area offering a unique mechanic. It could be a whirlwind you can use to propel yourself over hazards or a magical hoverboard you can grind sick rails on. Each area and dungeon is designed around these bespoke abilities which creates this focus on fun and inventive level design. The environments are gorgeous, full of little details like leaves being swept away in a gust of wind or grand set-pieces like a snowy descent. The game makes fun a priority at every step of the way, I've even come to appreciate the character moments a bit more, even if I found them lacklustre when I first played through the game. I've written about Dungeons of Hinterberg more extensively in my actual review which is available [here.](/posts/dungeons-of-hinterberg-review/)
 
 ***
 
-![Four soldiers in futuristic armour stand in front of yellow smoke celebrating a victory, with the text "NINE." overlayed.](/images/posts/art/2024_12/helldivers-banner.png "Helldivers 2")
+![Four soldiers in futuristic armour stand in front of yellow smoke celebrating a victory, with the text "NINE." overlayed.](../../assets/posts/art/2024_12/helldivers-banner.png "Helldivers 2")
 
 ### 9. Helldivers 2
 
 Come on you apes! You wanna live forever? It might have taken yonks but we've actually got a game that does some justice to its inspiration, with the over-the-top, hyper-cinematic, tall glass of Liber-tea that is Helldivers 2. So many moments from this game feel like they could be the best moments from a more tightly scripted, expertly directed experience. Precise airstrikes clobbering towering behemoths while you and three of your fellow Helldivers scramble to hold off a horde of bugs long enough for an extraction ship to pick you up; a thermonuclear device detonating in the distance while you rampage around in a mech suit; diving away from so, so many explosions. This is the Starship Troopers game I always wanted.
 
-![A soldier in futuristic armour coated in yellow and green alien blood shoots up at a staggeringly tall behemoth.](/images/posts/screenshots/2024_12/HELLDIVERS_1_Behemoth.jpg "I'm from Buenos Aires and I say kill 'em all!")
+![A soldier in futuristic armour coated in yellow and green alien blood shoots up at a staggeringly tall behemoth.](../../assets/posts/screenshots/2024_12/HELLDIVERS_1_Behemoth.jpg "I'm from Buenos Aires and I say kill 'em all!")
 
 Once things ramp up, and they always do, Helldivers 2 delivers pure adrenaline. Thankfully too, progression wasn't bogged down by microtransactions even though it easily could have been, given the game's structure. It even makes good use of its nature as a live service game to create ongoing in-universe events that bring thousands of players together to fight for a common goal which created [one of my favourite moments of the year](https://www.polygon.com/24180189/helldivers-2-save-the-children-trolley-problem-major-order). Helldivers 2 is better than it has any right to be and managed to grab my attention even as someone who doesn't really play a lot of multiplayer (and especially live service) games.
 
 ***
 
-![A hooded wizard with a staff faces off against a knight with a flaming sword, with the text "EIGHT." overlayed.](/images/posts/art/2024_12/achra-banner.png "Path of Achra")
+![A hooded wizard with a staff faces off against a knight with a flaming sword, with the text "EIGHT." overlayed.](../../assets/posts/art/2024_12/achra-banner.png "Path of Achra")
 
 ### 8. Path of Achra
 
@@ -71,89 +71,89 @@ In my last run, any action I took whether it was moving, attacking, praying or e
 
 ***
 
-![A handicam screen shows two people in diving suits exploring a ruin with an ominous red glow, with the text "SEVEN." overlayed](/images/posts/art/2024_12/cw-banner.png "Content Warning")
+![A handicam screen shows two people in diving suits exploring a ruin with an ominous red glow, with the text "SEVEN." overlayed](../../assets/posts/art/2024_12/cw-banner.png "Content Warning")
 
 ### 7. Content Warning
 
 It takes a lot for me to get sucked into a multiplayer game. Helldivers 2 had the juice, it's an excellent sandbox of chaotic explosions, murder and mayhem; but one game this year did something really weird. I don't know if you know this about me, but weird stands out and me likey weird. Content Warning presents as a vision into humanity's future as emotionally starved psychopaths who will do anything for social media clout. In other words, *2024*. 
 
-![A gray world with a hideous monster being filmed on camcorder, a giant wheel spins in the background powering something unknown.](/images/posts/screenshots/2024_12/CW_1_Spook.png "FUCKFUCKSHIT")
+![A gray world with a hideous monster being filmed on camcorder, a giant wheel spins in the background powering something unknown.](../../assets/posts/screenshots/2024_12/CW_1_Spook.png "FUCKFUCKSHIT")
 
 You're armed with a video camera and a growing selection of other gadgets that can assist you in your journey to internet stardom. With three friends (or strangers), you delve into the horrific ruins of the old world. Here you'll find traps, monsters and rare artifacts. Your goal? To film these things, especially when your friends are screaming in terror or are being eaten by horrible creatures. Then you return home, upload it to the internet and watch the views roll in. This game makes you into a monster; when you see your friend strung up by a ceiling trap about to be killed, instead of helping them you instinctively reach for your camera. It's good content, after all. The other genius feature of this game is that you can save the clips you capture in-game. At its peak, Content Warning's Discord had hundreds of these clips shared in it, a lot of them were absolute gold. It's unfortunately not as active as it was earlier in the year, but it's a game I'll be thinking about for a long time.
 
 ***
 
-![A colourful knight in front of a castle and some mushrooms, with the text "SIX." overlayed.](/images/posts/art/2024_12/delusion-banner.png "Dread DelusionBanner ")
+![A colourful knight in front of a castle and some mushrooms, with the text "SIX." overlayed.](../../assets/posts/art/2024_12/delusion-banner.png "Dread DelusionBanner ")
 
 ### 6. Dread Delusion
 
 If you take Warhammer 40k and Morrowind, you get Dread Delusion. This game is a trip, an enigmatic one at that. It's not as difficult as some classic RPGs like Morrowind but it doesn't hold your hand either in the best and worst ways. Some almost essential items, like the compass, can be easily missed. The combat is very basic and with a limited variety of weapons, it can turn stale fast. Like a lot of my favourite games, there's something greater underneath despite these flaws. Dread Delusion has a remarkable world, an inventive levelling system that doubles down on exploration, good and often witty writing; it's a game you can get lost in. 
 
-![Another hideous monster, this time a hunchback with a demon mask, covered in shaggy black fur. A castle and red sky in the background, with the player seeming to hold a sword in first person.](/images/posts/screenshots/2024_12/DREAD_1_Hunch.jpg "Hunchback")
+![Another hideous monster, this time a hunchback with a demon mask, covered in shaggy black fur. A castle and red sky in the background, with the player seeming to hold a sword in first person.](../../assets/posts/screenshots/2024_12/DREAD_1_Hunch.jpg "Hunchback")
 
 Its retro-style graphics are surreal and dreamlike, your imagination fills in the blanks and it manages to get me more invested than a lot of games with hyper-realistic graphics. This is a world that yearns to be explored, and every inch of it deserves your attention. I am unabashedly thankful for its measure as well, this isn't a long game by any means. It's a condensed open-world experience that respects your time, rewards curiosity, and doesn't overstay its welcome. An excellent indie adventure RPG.
 
 ***
 
-![Two people on camels riding in a desert, rendered as pixel art, with a cactus and some rocks in the distance, with the text "FIVE." overlayed.](/images/posts/art/2024_12/arco-banner.png "Arco")
+![Two people on camels riding in a desert, rendered as pixel art, with a cactus and some rocks in the distance, with the text "FIVE." overlayed.](../../assets/posts/art/2024_12/arco-banner.png "Arco")
 
 ### 5. Arco
 
 Set in a fantastical version of Mesoamerica rife with magic, cowboys, ancient temples and monsters, Arco is a straightforward revenge story with a satisfying and smart tactical combat system. The combat and RPG mechanics are streamlined and encounters feel frenetic and rhythmic; quick restarts encourage players to experiment. Creativity is rewarded and the approach taken to the quasi-turn-based combat makes everything feel fluid. Turns play out over a few seconds, and you can usually take your time deciding what to do next, whether it's dodging, using a weapon or some other ability. It manages to make it feel different from other turn-based tactical games, especially since you're usually just controlling one or two characters. 
 
-![An overgrown Aztec style village carved into a mountain at a river's edge.](/images/posts/screenshots/2024_09/roundup_3/ARCO_1_Jungle-Ruins.png "Down by the river.")
+![An overgrown Aztec style village carved into a mountain at a river's edge.](../../assets/posts/screenshots/2024_09/roundup_3/ARCO_1_Jungle-Ruins.png "Down by the river.")
 
 And that's without even touching on the art; Arco has some of the best pixel art I've ever seen, with stunning vistas, bustling towns, hideous monsters and machines, all beautifully designed and lovingly crafted. Almost every screen in Arco made me stop for a moment to just stare and appreciate how gorgeous it is, while they also tell a story all on their own. The music fits the mood, with a few standout tracks that hit at just the right moment as you're exploring an overgrown tomb or fending off a dozen bandits. A remarkable adventure through an unforgettable world. 
 
 ***
 
-![A floating body is suspended in the air with a strange entity on the left, a red glow in the background illuminates them, with the text "FOUR." overlayed](/images/posts/art/2024_12/resist-banner.png "1000xRESIST")
+![A floating body is suspended in the air with a strange entity on the left, a red glow in the background illuminates them, with the text "FOUR." overlayed](../../assets/posts/art/2024_12/resist-banner.png "1000xRESIST")
 
 ### 4. 1000xRESIST
 
 Sometimes a story can only be told through a video game. I have a special place in my heart for games that use the medium to its fullest potential to tell a story. Without giving too much away, 1000xRESIST spins a sprawling yarn about belonging, culture, ego, family and so much more. It is a saga, and it is executed extraordinarily well. The writing feels deeply personal, you can tell there's genuine experience behind the words on the screen and the voice acting conveys this consistently and memorably. 
 
-![A woman in blue neon clothing, wearing glasses, angrily looks forward with a text box hovering near her that says "I gave up everything to walk beside you."](/images/posts/screenshots/2024_12/1000xRESIST_1_Blue.png "You're not you when you're hungry.")
+![A woman in blue neon clothing, wearing glasses, angrily looks forward with a text box hovering near her that says "I gave up everything to walk beside you."](../../assets/posts/screenshots/2024_12/1000xRESIST_1_Blue.png "You're not you when you're hungry.")
 
 1000xRESIST could reasonably be called *just* a walking simulator or *just* a visual novel but to reduce it down to just these things diminishes the complexity with which it delivers its story. It's a game that puts on a play and invites you to participate on its stage. To be curious and explore, ask questions. To feel happy, sad or even bitter. It does all this in a way that respects the player's intelligence without being overly complicated. A modern masterclass of storytelling in gaming, proving that there is still room for innovative narrative design in this medium.
 
 ***
 
-![A man and woman in traditional Japanese clothing face forward, the man in front appears to be protecting the woman, with the text "THREE." overlayed.](/images/posts/art/2024_12/gami-banner.png "Kunitsu-Gami: Path of the Goddess")
+![A man and woman in traditional Japanese clothing face forward, the man in front appears to be protecting the woman, with the text "THREE." overlayed.](../../assets/posts/art/2024_12/gami-banner.png "Kunitsu-Gami: Path of the Goddess")
 
 ### 3. Kunitsu-Gami: Path of the Goddess
 
 I slept on this game for far too long. It really didn't sound like my cup of tea; a hack-and-slash, tower defence, village management game all rolled into one. I am always happy to be proven wrong though, if you can believe it. Kunitsu-Gami is a game that somehow manages to tie all these different elements together in a cohesive way. Capcom didn't stop there though, they also gave the game a distinctive visual style with traditional Japanese influences and beautiful animation. 
 
-![A celebration with a group of people in traditional Japanese clothing cleansing a cursed torii gate. Fireworks are shooting out in the background, and everyone is dancing. A woman in a white robe is in the centre of them all.](/images/posts/screenshots/2024_12/KUNITSU_1_Celebration.jpg "Celebrate good times")
+![A celebration with a group of people in traditional Japanese clothing cleansing a cursed torii gate. Fireworks are shooting out in the background, and everyone is dancing. A woman in a white robe is in the centre of them all.](../../assets/posts/screenshots/2024_12/KUNITSU_1_Celebration.jpg "Celebrate good times")
 
 Combat is a dance, each move and ability is delivered with a flourish and everything feels punchy and satisfying. This game would still be *great* if it was just combat but you also have villagers to manage. You can assign roles to rescued villagers; a melee woodcutter, a ranged marksman, or a sumo wrestler, these units can then be positioned on a map for when night falls and "Seethe" pour out of a defiled Torii game to attempt to halt your advance. Once you liberate an area, you can assign those villagers to repairs in each area which will be carried out while you're on the next stage. It all comes together to make a really fun, in-depth and satisfying game. Plus, you can pet the dogs, cats, cows, pigs, deer-...I could go on, but it's for the best if you just check it out yourself. Capcom should be lauded for taking a risk on Kunitsu-Gami when they easily could have just dedicated their resources to another guaranteed success like Resident Evil.
 
 ***
 
-![A pixellated little brown creature amongst some reeds and ruins with the text "TWO." overlayed.](/images/posts/art/2024_12/animal-banner.png "Animal Well")
+![A pixellated little brown creature amongst some reeds and ruins with the text "TWO." overlayed.](../../assets/posts/art/2024_12/animal-banner.png "Animal Well")
 
 ### 2. Animal Well
 
 They put kangaroos in this one, and that appeals to my sense of national pride. So then, it is very impressive that even if there were no kangaroos in Animal Well it would still take the number two spot. Animal Well is a super tight platformer/metroidvania with more secrets than the KGB (what a timely reference - Editor Kyle). Almost every screen in Animal Well has some puzzle or challenge to overcome, and each solution leads to yet another delightful problem to solve, like a nesting doll of pure intrigue. Tools and items are drip-fed to players, they're all remarkably unique in a genre that all too often falls back on double jumps and dashes. What other metroidvania, or game even, lets you use a frisbee as a mode of transport and as a solution to puzzles. 
 
-![A dim, dank place with glowing green vines hanging from suspended platforms over water. A little creature uses a YoYo on the right hand side.](/images/posts/screenshots/2024_12/ANIMAL-WELL_1_YoYo.png "More games need to incorporate yo-yo's.")
+![A dim, dank place with glowing green vines hanging from suspended platforms over water. A little creature uses a YoYo on the right hand side.](../../assets/posts/screenshots/2024_12/ANIMAL-WELL_1_YoYo.png "More games need to incorporate yo-yo's.")
 
 Another standout to me was the audio design; there is no "music," rather, the game utilises background noise to build this dynamic, player-driven symphony when you hop across floating bubbles with expert timing or use a slinky to activate a series of buttons. These moments feel like magic and they stand out so much more than a conventional soundtrack would have done. It doesn't hurt that the game looks gorgeous too, with bright neon colours against its moody deep blue background. Exploring this world and unravelling its secrets was an absolute pleasure and I'm excited to see what the developer does next and I'm just as excited for future projects coming out of its publisher Big Mode.
 
 ***
 
-![A themed garbage can in the shape of a crow with some light posts next to it, with the text "ONE." overlayed](/images/posts/art/2024_12/crow-banner.png "Crow Country")
+![A themed garbage can in the shape of a crow with some light posts next to it, with the text "ONE." overlayed](../../assets/posts/art/2024_12/crow-banner.png "Crow Country")
 
 ### 1. Crow Country
 
 Survival horror has seen something of a renaissance since the release of Resident Evil VII in 2017. That's not to say the genre was dead before then, but compared to the consistent stream of excellent survival horror games we have now, it was undoubtedly waning. Crow Country is a return to form for survival horror, it touches up the classic formula with modern design choices that make it an absolute pleasure to play. 
 
-![A woman with purple hair and a white dress walks next to an old 80s car towards a locked gate to an abandoned amusement park.](/images/posts/screenshots/2024_12/CROW-COUNTRY_1_Gated.jpg "The first puzzle is shooting this lock and I did fail the first time.")
+![A woman with purple hair and a white dress walks next to an old 80s car towards a locked gate to an abandoned amusement park.](../../assets/posts/screenshots/2024_12/CROW-COUNTRY_1_Gated.jpg "The first puzzle is shooting this lock and I did fail the first time.")
 
 With a moody yet adorable PS1-era-styled aesthetic, each area feels like a small diorama and has its own distinguishing theme. Whether it's an underwater wonderland or a haunted village, each area is a microcosm, chock full of puzzles and tense boss fights. The game leans into its puzzles, feeling more like an adventure game at times, the puzzles are brain ticklers but aren't half as hard as some of the worst the genre has produced. Crow Country even has an emphasis on replayability and speedrunning which I adore, with unlockable weapons and optimal paths to discover. The people you meet along the way are charming and build on top of the lore of the world, sharing tidbits of history that unfold the mystery of what happened at Crow Country. 
 
-![A woman with purple hair sits on an antique couch, watching a fireplace roar in a cozy room filled with trinkets.](/images/posts/screenshots/2024_12/CROW-COUNTRY_2_Cozy.jpg "So damn relaxing.")
+![A woman with purple hair sits on an antique couch, watching a fireplace roar in a cozy room filled with trinkets.](../../assets/posts/screenshots/2024_12/CROW-COUNTRY_2_Cozy.jpg "So damn relaxing.")
 
 The music hits and I am happy to share that the save room music is an all-time soothing melody (as is tradition); the rest of the music captures the melancholy dread that the environments so often inspire. Of all the games I played this year, Crow Country had the most elegant core gameplay and the most striking visual design and it managed to build on top of its survival horror roots to deliver something new. I might just be a sucker for survival horror but for my money, Crow Country takes the cake.
 

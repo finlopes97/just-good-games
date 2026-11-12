@@ -11,6 +11,11 @@ collections:
     format: "frontmatter"
     slug: "{{slug}}"
     extension: "md"
+    # Uploads from the post editor go into src/assets/posts/ so astro:assets can optimise
+    # them. The leading slash on media_folder means "from the repo root"; public_folder is
+    # the path written into the post, relative to the post file in src/content/posts/.
+    media_folder: "/src/assets/posts"
+    public_folder: "../../assets/posts"
     fields:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Publish Date", name: "pubDate", widget: "datetime" }

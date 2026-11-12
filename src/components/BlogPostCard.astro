@@ -1,10 +1,12 @@
 ---
+import { Image } from "astro:assets";
+
 interface Props {
   title: string;
   url: string;
   pubDate: string;
   description: string;
-  image?: { url: string; alt: string };
+  image?: { url: ImageMetadata; alt: string };
   tags: string[];
 }
 
@@ -37,9 +39,12 @@ const getTags = (tags: string[]) => {
       <figure class="w-full h-40 border-black border-b-2 overflow-hidden mb-3">
         {
           image ? (
-            <img
+            <Image
               src={image.url}
               alt={image.alt}
+              layout="none"
+              widths={[320, 640]}
+              sizes="320px"
               class="w-full h-full object-cover"
             />
           ) : (

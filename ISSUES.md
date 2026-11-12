@@ -4,10 +4,9 @@
 check` **clean (0 errors, 0 warnings)**, all published URLs preserved. History lives in git;
 this file tracks only what's **still open**.
 
-**Start with §1.** Page weight is now the worst problem on the site by a wide margin, and
-it attacks the same goal as the SEO work — a reader arriving cold on mobile from a Reddit
-link (CLAUDE.md §1) never reaches the first paragraph of a 65 MB page. LCP and CLS are
-Core Web Vitals, so this is a ranking signal too, not just a courtesy.
+**Page weight is fixed for every post except the two that carry GIFs (§1).** Static images
+now go through `astro:assets` (2026-11-12). What's left of §1 is the three GIFs, which wait
+for the owner's rework of those posts.
 
 **Editorial direction (2026-11-06):** the blog is pivoting to **multi-game list posts** as the
 main format. This **reverses** the earlier note that the blog was moving to single-game
@@ -17,30 +16,14 @@ articles stay supported but are secondary, and may not be about a specific game 
 
 ---
 
-## 1. Page weight — do this next
+## 1. Page weight
 
-Measured 2026-08-01. `public/images/posts/` holds **67 files, 112 MB**; 55 distinct images
-are referenced from posts. Per-post payload, counting the thumbnail and every inline image:
+### 1a. The three animated GIFs: replace with stills during the rework (owner decision, 2026-11-06)
 
-| Post | Images | Payload |
-|---|---|---|
-| `january-2025-cruel-for-me-mule` | 13 | **65.1 MB** |
-| `the-top-ten-games-of-2024` | 23 | 18.0 MB |
-| `september-2024-path-of-achra-is-perfect` | 6 | 11.5 MB |
-| `august-2024-clickolding-is-a-fever-dream` | 7 | 7.9 MB |
-| `dungeons-of-hinterberg-review` | 5 | 7.3 MB |
-| `october-2024-you-should-play-arco` | 7 | 2.5 MB |
-
-By format: **gif — 3 files, 60.2 MB**; png — 27 files, 28.9 MB; jpg — 22 files, 17.8 MB.
-
-### 1a. The three animated GIFs: decided 2026-11-06, replace with stills during the list-format rework
-
-**Decision (owner, 2026-11-06):** don't convert these to video. The posts that use them will be
-reworked into the new list format, and at that point each GIF gets replaced with a
-still image. Going forward, posts don't use animated GIFs at all (see CLAUDE.md §4,
-"Images"). The video analysis below is kept for reference only. Until the rework, the Cruel post
-stays at about 65 MB. If the rework slips, a still frame can be pulled with ffmpeg
-(`C:\Programs\ffmpeg\bin`) in minutes as a stopgap.
+Don't convert these to video. The posts that use them will be reworked by the owner, and
+at that point each GIF gets replaced with a still image. New posts don't use animated GIFs
+at all (CLAUDE.md §4, "Images"). If the rework slips, a still frame can be pulled with
+ffmpeg (`C:\Programs\ffmpeg\bin`) in minutes as a stopgap.
 
 | GIF | Size | Post |
 |---|---|---|
@@ -48,63 +31,58 @@ stays at about 65 MB. If the rework slips, a still frame can be pulled with ffmp
 | `2025_01/CRUEL_7_Window-Shopping.gif` | 15.1 MB | `january-2025-cruel-for-me-mule` |
 | `2024_12/ACHRA_1_Ogre.gif` | 0.7 MB | `the-top-ten-games-of-2024` |
 
-Replace with `<video autoplay loop muted playsinline>` and an MP4/WebM pair. Expect
-44.5 MB → roughly 1–2 MB, i.e. **about 58 MB off one post**. No schema change, no risk to
-any published URL, one small component.
+These are the **only files left in `public/images/posts/`**, still referenced by absolute
+path. They can't move to `src/assets/`: Astro's sharp service reads animated input
+(`pages: -1`) and would try to re-encode a 44 MB GIF on every cold build. When a GIF is
+replaced, put the still in `src/assets/posts/` and delete the GIF.
 
-- **Needs ffmpeg**, which is not on PATH on the dev machine (`winget install ffmpeg`).
-  Without it the fallback is sharp's animated-WebP support (already installed), but that's
-  roughly a 50% cut rather than 97% — clearly second best.
-- Autoplaying video **must** carry a `prefers-reduced-motion` guard (CLAUDE.md §2.5). A GIF
-  offers no such control, so this is an accessibility win as well as a payload one.
-- Sätteri can't run components inside markdown, so the posts reference these images with
-  plain `![alt](/path "title")` syntax. Swapping in a `<video>` means either raw HTML in the
-  markdown body or a frontmatter-driven approach — decide which before starting.
+### 1b. `astro:assets` migration — done 2026-11-12
 
-### 1b. Migrate static images to `astro:assets`, which is now the next job
+Every static post image (64 files) moved from `public/images/posts/` to
+`src/assets/posts/`, same folder layout. Posts reference them by relative path
+(`../../assets/posts/...`), the thumbnail field uses `image()`, and
+`image: { layout: 'constrained' }` is set in `astro.config.mjs`. How it works day to day is
+in CLAUDE.md §4, "Images".
 
-This doesn't touch the GIFs: Astro's sharp-backed image service doesn't re-encode
-animated content. Those wait for the rework (1a). Leave the three GIF references as they are.
+Image payload per post page, before and after. "After" is what a phone downloads (the
+1280px-wide version of each image):
 
-**Spike done 2026-11-12: Sätteri *does* optimise relative image paths in markdown.** That
-means the **full migration** path: images move into `src/` next to their posts, references are
-rewritten, frontmatter uses `image()`, and Decap's media folders are updated.
+| Post | Before | After |
+|---|---|---|
+| `january-2025-cruel-for-me-mule` | 65.1 MB | **62.9 MB** (62.4 MB is the two GIFs) |
+| `the-top-ten-games-of-2024` | 18.0 MB | 1.8 MB (0.7 MB is the GIF) |
+| `september-2024-path-of-achra-is-perfect` | 11.5 MB | 0.3 MB |
+| `august-2024-clickolding-is-a-fever-dream` | 7.9 MB | 0.5 MB |
+| `dungeons-of-hinterberg-review` | 7.3 MB | 0.7 MB |
+| `october-2024-you-should-play-arco` | 2.5 MB | 0.5 MB |
 
-What the spike showed. It used a throwaway post under `src/content/posts/` with
-`![alt](./shot.png)`, built with Astro 7.1.3, then deleted:
+Every optimised `<img>` now has `width`/`height` (no layout shift), lazy loading and a
+`srcset`. A cold build takes about 10 seconds locally (was about 2) and writes roughly 500
+WebP files; warm builds reuse the cache.
 
-- **Default config:** the `<img>` comes out as WebP under `/_astro/`, with `width`/`height`
-  (no layout shift), `loading="lazy"` and `decoding="async"`. It is **not resized** (a
-  3440px source stays 3440px), and `srcset` is emitted **empty**.
-- **With `image: { layout: 'constrained' }` in `astro.config.mjs`:** a full `srcset` from
-  640w up to the source width, plus `sizes`. Turn this on as part of the migration.
-- **Numbers:** `BREAK-THE-LOOP_1_Cannon-Fodder.png` (8.2 MB, 3440×1440) became a 103 KB
-  full-size WebP, and the variants used on phones are 13 to 24 KB. Visual quality checked by
-  eye and fine. One caveat: a very flat 30 KB PNG (`ARCO_1_Jungle-Ruins.png`) **grew** to
-  158 KB as WebP. Re-encoding isn't always a win for tiny PNGs, so spot-check output sizes
-  after migrating.
-- **RSS breaks on relative paths.** `rss.xml.js` renders the raw body with markdown-it, so
-  the feed contains `./shot.png` verbatim, which a feed reader can't resolve. The migration
-  must rewrite image `src` in the feed to absolute `/_astro/...` URLs, or emit absolute
-  URLs another way. Same session as the raw-HTML fix below.
-- **Not tested:** frontmatter `image()` (standard Astro, low risk), and Decap's relative
-  per-collection `media_folder` / `public_folder`, which needs checking against Decap's docs
-  before rewiring `/admin`.
+Left over from this work:
 
-(Checked 2026-11-06: Sätteri *does* pass raw HTML in markdown through unchanged, but
-`rss.xml.js` builds markdown-it without `html: true`, so raw HTML shows up in the feed as
-escaped text. Fix that before any post uses raw HTML.)
-
-Frontmatter `image` is `{ url, alt }` strings, so there's no build-time optimisation,
-no responsive `srcset`, no `width`/`height` (hence layout shift) and no `loading="lazy"`.
-Migrating touches the content schema and every image reference (posts, cards, hero,
-JSON-LD) — worth its own session.
-
-Worth a content pass alongside it: 27 screenshots are PNGs that should be JPEG or WebP,
-including one at 8.2 MB (`2024_09/roundup_2/BREAK-THE-LOOP_1_Cannon-Fodder.png`).
-
-**Do this before adding `games[].image`** (see the next section), otherwise every per-game
-image entry gets written as a string and then rewritten for `astro:assets`.
+- **Check `/admin` uploads on the live site.** The posts collection now uploads to
+  `src/assets/posts/` and writes `../../assets/posts/<file>` into the post. That config
+  could not be tested locally (Decap needs the deployed git-gateway). Upload one image
+  through `/admin` and confirm the path it writes and that the build passes. Also check
+  whether the editor still previews existing thumbnails.
+- **Old image URLs are dead by design.** `/images/posts/...` addresses (other than the
+  three GIFs) now 404. Owner accepted this on 2026-11-12. It affects posts already fetched
+  by feed readers and image-search results, not post pages.
+- **Four images come out slightly larger as WebP** than their source at full size, because
+  the sources were already tiny: `POA_1_Leeches.png` (98 → 160 KB), `POA_2_God-of-Blood.png`
+  (104 → 142 KB), `ARCO_1_Jungle-Ruins.png` (30 → 158 KB), `DREAD_1_Hunch.jpg` (120 → 137 KB).
+  Phones get smaller variants, so the real cost is nil. Not worth special-casing.
+- **Markdown images get `sizes="100vw"`** below their own width, so a desktop browser picks
+  a version wider than the roughly 900px article column needs. Cheap at WebP sizes. Fixing
+  it means capping source widths at 1920px (30 sources are wider), which rewrites the
+  originals; left alone.
+- **Nine source images are unused by any post** (two Arco, four CRUEL and two FNV
+  screenshots, and `MORROWIND_1_Avatar.jpg`). They cost nothing in `src/` because unused
+  assets aren't published. Delete or keep at the owner's discretion.
+- `the-top-ten-games-of-2024.md` frontmatter carries an unused `image.filename` key, and
+  the Decap config still has the matching "Filename" field. Harmless; the schema ignores it.
 
 ---
 

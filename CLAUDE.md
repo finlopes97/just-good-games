@@ -168,9 +168,11 @@ Brutalism is a visual style, not an excuse. These are non-negotiable:
   frontmatter are native. Three things verified by spike on 2026-11-12:
   - It **does optimise relative image paths** in a markdown body (`![alt](./shot.png)` →
     WebP with `width`/`height` and lazy loading). `srcset` is only filled when
-    `image: { layout: 'constrained' }` is set in `astro.config.mjs` (not set yet).
-  - **Only the body gets this.** Markdown held in a frontmatter string is not run through
-    the image pipeline, so don't design features around markdown-in-frontmatter.
+    `image: { layout: 'constrained' }` is set in `astro.config.mjs` (it is, since 2026-11-12).
+  - **Only markdown image syntax in the body gets this.** Markdown held in a frontmatter
+    string is not run through the image pipeline, and neither is a raw HTML `<img>`: its
+    `src` is passed through untouched, so a relative path into `src/assets/` is a broken
+    image on the page.
   - It can't run components inside markdown. Anything component-shaped in a post body is
     done as a **CSS convention on plain markdown** (see the store-link chips in §4). If a
     structured layout is ever needed, a wrapper component can call
@@ -234,7 +236,7 @@ with a `glob()` loader and a Zod schema.
     status?: 'full-release' | 'early-access' | 'demo' | 'free' | 'mod',
     links?: Array<{ store: StoreId, url: string, label?: string }>,
   }>,
-  image?: { url: string, alt: string },
+  image?: { url: image(), alt: string },   // url: path relative to the post file
 }
 ```
 
@@ -296,14 +298,38 @@ a deliberate owner choice). URLs are permanent: if a slug changes, add a 301 in
 (`getReadingTime(entry.body ?? "")` via the `reading-time` package — *not* a remark plugin,
 since Sätteri won't run one) and shown in a chip on the article header.
 
-**Images (rules for new content, from 2026-11-06):**
+**Images — where they live (since the `astro:assets` migration, 2026-11-12):**
+
+- **Post images go in `src/assets/posts/`** (`art/`, `screenshots/`, `thumbnails/`, by
+  date), not `public/`. Astro optimises them at build time: WebP, a `srcset` from 640w up,
+  `width`/`height`, lazy loading.
+- **In a post body, use markdown syntax with a relative path:**
+  `![alt](../../assets/posts/screenshots/2024_09/shot.jpg "caption")`. The path is relative
+  to the post file in `src/content/posts/`.
+- **The thumbnail (`image.url` in frontmatter) is the same kind of relative path.** The
+  schema resolves it with `image()`, so the value in code is image metadata, not a string:
+  render it with `<Image>` (`BlogPostCard`, `HeroPost`) or `getImage()` (`Head.astro`). A
+  wrong path fails the build.
+- **Raw HTML `<img>` is not optimised and can't point into `src/assets/`.** A post written
+  in raw HTML must put its images in `public/images/posts/` and use an absolute
+  `/images/posts/...` path. Prefer markdown image syntax wherever possible.
+- **`public/images/posts/` now holds only the three legacy GIFs** (`ISSUES.md` §1a). Don't
+  move a GIF into `src/assets/`: Astro would try to re-encode the animation.
+- **The RSS feed** renders the raw body, so `rss.xml.js` swaps each relative image path for
+  the absolute URL of an optimised copy. A path it can't resolve fails the build.
+- **`/admin` uploads** from the post editor go to `src/assets/posts/` (collection-level
+  `media_folder` / `public_folder` in `config.yml`). Unverified on the live admin as of
+  2026-11-12; see `ISSUES.md` §1b.
+
+**Images — rules for new content (from 2026-11-06):**
 
 - **No animated GIFs.** Use a still screenshot. The three legacy GIFs (Cruel post, top ten
   2024) are replaced with stills when those posts are reworked into the list format
   (`ISSUES.md` §1a). Don't convert them to video in the meantime; that's the owner's decision.
 - **Screenshots as JPEG or WebP, not PNG,** at most **1920px wide** (the article column
   is about 900px wide). PNG only for pixel art or images where a crisp edge matters.
-- Aim for a **few hundred KB per image**. Anything over 1 MB needs a reason.
+- Aim for a **few hundred KB per image**. Anything over 1 MB needs a reason. Readers get
+  optimised WebP either way, so this is now about keeping the repo and the build small.
 - Alt text describes what's in the frame, so it can't be dropped.
 
 **Authoring:** a Decap CMS admin lives at `/admin` (`public/admin/config.yml`, loaded from
@@ -376,8 +402,9 @@ The original first-session audit, the Astro 4→7 migration and the SEO/sharing 
 outbound `<a href>` links in the footer.
 
 **Remaining open items live in `ISSUES.md`**, and post structure is documented in
-`LAYOUT.md`. The short version: `astro:assets` migration (next), converting the other
-posts' store links to chip lists, a recent-posts strip,
+`LAYOUT.md`. The short version: the three legacy GIFs (the Cruel post is still about 63 MB
+because of them), checking `/admin` image uploads after the `astro:assets` migration,
+converting the other posts' store links to chip lists, a recent-posts strip,
 schema additions (`updatedDate`, `draft`) plus the `games[]` backfill, some pre-design-system
 components still using raw Tailwind colours and smooth hovers, `Prose.astro` missing its
 `prose` class, and the `body` token rename. None are urgent.

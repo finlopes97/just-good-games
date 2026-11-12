@@ -38,9 +38,10 @@ a second file, and animated AVIF/WebP decode like a GIF and can't be paused.
 
 Left over:
 
-- **Check the clips on a real phone.** Checked in headless Edge at about 500px and desktop
-  width (poster, badge and controls render); actual playback on iOS and Android is
-  unverified.
+- **Clips checked.** Checked in headless Edge at about 500px and desktop
+  width (poster and controls render). Owner confirmed playback on a phone, 2026-11-13.
+- A "PLAY CLIP" chip was baked into the posters at first and removed the same day: it
+  looked tappable on a phone but wasn't. The native play button is enough.
 - **Adding a clip through `/admin` is unverified.** The line of raw HTML may need the
   editor's markdown mode, and Decap's media library is set up for images. Owner is
   researching.
@@ -74,11 +75,11 @@ WebP files; warm builds reuse the cache.
 
 Left over from this work:
 
-- **Check `/admin` uploads on the live site.** The posts collection now uploads to
-  `src/assets/posts/` and writes `../../assets/posts/<file>` into the post. That config
-  could not be tested locally (Decap needs the deployed git-gateway). Upload one image
-  through `/admin` and confirm the path it writes and that the build passes. Also check
-  whether the editor still previews existing thumbnails.
+- **`/admin` uploads verified 2026-11-13** with the owner's test post: the image landed in
+  `src/assets/posts/`, both the thumbnail and the body got `../../assets/posts/<file>`, and
+  the build optimised it. Uploads go to the root of that folder, not a dated subfolder.
+- **`test-post-delete-later` is live** (with new `test`, `blog` and `article` tag pages).
+  Owner to delete it and `src/assets/posts/4560.jpg`.
 - **Old image URLs are dead by design.** `/images/posts/...` addresses now 404. Owner accepted this on 2026-11-12. It affects posts already fetched
   by feed readers and image-search results, not post pages.
 - **Four images come out slightly larger as WebP** than their source at full size, because

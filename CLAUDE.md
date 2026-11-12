@@ -318,8 +318,8 @@ since Sätteri won't run one) and shown in a chip on the article header.
 - **The RSS feed** renders the raw body, so `rss.xml.js` swaps each relative image path for
   the absolute URL of an optimised copy. A path it can't resolve fails the build.
 - **`/admin` uploads** from the post editor go to `src/assets/posts/` (collection-level
-  `media_folder` / `public_folder` in `config.yml`). Unverified on the live admin as of
-  2026-11-12; see `ISSUES.md` §1b.
+  `media_folder` / `public_folder` in `config.yml`). Verified on the live admin 2026-11-13: an upload lands in
+  the root of `src/assets/posts/` and the post gets `../../assets/posts/<file>`.
 
 **Images — rules for new content (from 2026-11-06):**
 
@@ -344,8 +344,9 @@ since Sätteri won't run one) and shown in a chip on the article header.
 - **Clips are tap-to-play, never autoplay** (owner decision): `preload="none"` means only
   the poster downloads until the reader presses play, and nothing moves unasked. Don't add
   `autoplay`.
-- **The poster has a "PLAY CLIP" chip baked into its corner** so it reads as a video. It is
-  baked in because, with no client-side JavaScript, a CSS overlay couldn't disappear on play.
+- **The poster is a plain frame of the clip.** The browser's own play button marks it as a
+  video. A "PLAY CLIP" chip baked into the poster was tried and removed on 2026-11-13: on a
+  phone it looked like a button but wasn't one.
 - Styling is the `.jgg-prose video` rule at the end of `global.css`, which gives a clip the
   same box as an image.
 - **The RSS feed** replaces each clip with its poster, linked to the post (feed readers and
@@ -423,8 +424,7 @@ The original first-session audit, the Astro 4→7 migration and the SEO/sharing 
 outbound `<a href>` links in the footer.
 
 **Remaining open items live in `ISSUES.md`**, and post structure is documented in
-`LAYOUT.md`. The short version: checking `/admin` image uploads after the `astro:assets`
-migration and whether clips can be added through `/admin`,
+`LAYOUT.md`. The short version: whether clips can be added through `/admin`,
 converting the other posts' store links to chip lists, a recent-posts strip,
 schema additions (`updatedDate`, `draft`) plus the `games[]` backfill, some pre-design-system
 components still using raw Tailwind colours and smooth hovers, `Prose.astro` missing its

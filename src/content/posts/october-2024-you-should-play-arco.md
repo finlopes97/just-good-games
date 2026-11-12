@@ -38,7 +38,7 @@ The combat and RPG mechanics are streamlined, combat encounters feel frenetic an
 
 Is Arco worth a look? Hell yes!
 
-[Find Arco on Steam](https://store.steampowered.com/app/2366970/Arco/)
+- [Find Arco on Steam](https://store.steampowered.com/app/2366970/Arco/)
 
 ## Electric Fairyland
 
@@ -50,7 +50,8 @@ Electric Fairyland is a cute little 3D platformer inspired by 90s games of the s
 
 The art style is very cute, it's like something out of a storybook. The main character, Stix, is shrunk down by some mushroom magic (I think?) and has to find their Gameboy (I THINK?!) but this means that the levels are made up of big fruits, vegetables, flowers and bugs to jump around on. Every level feels like a little diorama, a bite sized piece of a person's garden. The music, by [BARCHboi](https://barchboi.neocities.org/) is excellent, and fits the vibe of the game very well. 
 
-[Find Electric Fairyland on Steam](https://store.steampowered.com/app/3101620/Electric_Fairyland/) or [Itch.io](https://livvy.itch.io/electric-fairyland)
+- [Find Electric Fairyland on Steam](https://store.steampowered.com/app/3101620/Electric_Fairyland/)
+- [Itch.io](https://livvy.itch.io/electric-fairyland)
 
 ## The Nameless City
 
@@ -62,7 +63,8 @@ The Nameless City is based on a novel by HP Lovecraft, whose work I am only fami
 
 The gameplay is very basic, you walk around and explore this long forgotten city. The game appears to be split into three "acts" with the first two having you explore some quite diverse and interesting locations. You even learn ancient words which are used to cast spells, dissolving magical barriers in your way. The third act lost me completely however. It feels intentional, but it's a mad descent into the crypts under the city but for me too much time was spent trekking down stairwells and hallways that all look the exact same. For the price I paid, I think it was a neat experience!
 
-[Find The Nameless City on Steam](https://store.steampowered.com/app/2987830/The_Nameless_City/) or [Itch.io](https://paradnight-studio.itch.io/the-nameless-city)
+- [Find The Nameless City on Steam](https://store.steampowered.com/app/2987830/The_Nameless_City/)
+- [Itch.io](https://paradnight-studio.itch.io/the-nameless-city)
 
 ## Swelter
 
@@ -78,8 +80,9 @@ Half Life 2 still has some of the best shooter gameplay ever, and Swelter happil
 
 The story is short, but for a free mod it's hardly worth complaining about since what is there is still good. The writing is a bit lacking but I think a lot of that comes down to translation. It's also entirely voice acted which is super rare for a mod. The music is all really high octane and is the kind of shit that gets me PUMPED to kill inter-dimensional fascists. Some puzzles can be a bit obtuse, with interactable objects not being very easy to find and objectives being unclear. Overall though, this is a fantastic ***FREE*** mod that you can play right away if you already own Half Life 2 and Half Life 2: Episode 2 (I believe it requires both) which can be bought for a pittance during a Steam sale. 
 
-[Find Swelter on Steam!](https://store.steampowered.com/app/1815330/Swelter/)
-[Get Half Life 2 here!](https://store.steampowered.com/app/220/HalfLife_2/) and [Episode 2 here!](https://store.steampowered.com/app/420/HalfLife_2_Episode_Two/)
+- [Find Swelter on Steam!](https://store.steampowered.com/app/1815330/Swelter/)
+- [Get Half Life 2 here!](https://store.steampowered.com/app/220/HalfLife_2/)
+- [Episode 2 here!](https://store.steampowered.com/app/420/HalfLife_2_Episode_Two/)
 
 - - -
 

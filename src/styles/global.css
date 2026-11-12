@@ -129,3 +129,119 @@
     }
   }
 }
+
+/*
+  Store-link chips, written as plain markdown (LAYOUT.md). Sätteri can't run components
+  inside a post body, so this is the CSS-only counterpart of StoreLinks.astro: a bullet list
+  in an article becomes a row of pressable chips when
+    1. every bullet is a single link (no other elements; the last bullet must be a link), and
+    2. at least one of those links points at a known store or at IsThereAnyDeal.
+  Any other list is left alone. The icon is picked from the link's domain; a link to an
+  unrecognised site in a qualifying list gets the generic "opens elsewhere" icon.
+
+  Unlayered on purpose: Prose.astro styles lists and links with `prose-*` utilities, and
+  the utilities layer beats `@layer components` whatever the specificity.
+
+  CSS can't see text nodes, so a bullet holding text *plus* one link still counts as "a
+  single link", and a text-only bullet in the middle of a chip list goes unnoticed. And
+  `:has()` can't be nested inside `:has()` (the whole rule is dropped), which is why the
+  conditions below are chained instead.
+  Icons are MDI paths (the same set StoreLinks.astro uses) inlined as masks — no requests.
+*/
+:root {
+  --jgg-icon-link: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2z'/%3E%3C/svg%3E");
+  --jgg-icon-steam: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M12 2a10 10 0 0 1 10 10a10 10 0 0 1-10 10c-4.6 0-8.45-3.08-9.64-7.27l3.83 1.58a2.84 2.84 0 0 0 2.78 2.27c1.56 0 2.83-1.27 2.83-2.83v-.13l3.4-2.43h.08c2.08 0 3.77-1.69 3.77-3.77s-1.69-3.77-3.77-3.77s-3.78 1.69-3.78 3.77v.05l-2.37 3.46l-.16-.01c-.59 0-1.14.18-1.59.49L2 11.2C2.43 6.05 6.73 2 12 2M8.28 17.17c.8.33 1.72-.04 2.05-.84s-.05-1.71-.83-2.04l-1.28-.53c.49-.18 1.04-.19 1.56.03c.53.21.94.62 1.15 1.15c.22.52.22 1.1 0 1.62c-.43 1.08-1.7 1.6-2.78 1.15c-.5-.21-.88-.59-1.09-1.04zm9.52-7.75c0 1.39-1.13 2.52-2.52 2.52a2.52 2.52 0 0 1-2.51-2.52a2.5 2.5 0 0 1 2.51-2.51a2.52 2.52 0 0 1 2.52 2.51m-4.4 0c0 1.04.84 1.89 1.89 1.89c1.04 0 1.88-.85 1.88-1.89s-.84-1.89-1.88-1.89c-1.05 0-1.89.85-1.89 1.89'/%3E%3C/svg%3E");
+  --jgg-icon-gog: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M4 3h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2m6.46 2.54c-.51 0-.92.41-.92.92v3.08a.92.92 0 0 0 .92.92h3.08a.92.92 0 0 0 .92-.92V6.46c0-.51-.41-.92-.92-.92zm.62 1.23h1.84a.31.31 0 0 1 .31.31v1.84a.31.31 0 0 1-.31.31h-1.84a.31.31 0 0 1-.31-.31V7.08a.31.31 0 0 1 .31-.31M4.92 5.54a.92.92 0 0 0-.92.92v3.08c0 .51.41.92.92.92h2.16V9.23H5.54c-.17 0-.31-.14-.31-.31V7.08c0-.17.14-.31.31-.31h1.84a.31.31 0 0 1 .31.31v3.69a.31.31 0 0 1-.31.31H4v1.23h4c.5 0 .92-.42.92-.93V6.46A.92.92 0 0 0 8 5.54zm11.08 0c-.5 0-.92.41-.92.92v3.08c0 .51.42.92.92.92h2.15V9.23h-1.53c-.17 0-.31-.14-.31-.31V7.08c0-.17.14-.31.31-.31h1.84c.17 0 .31.14.31.31v3.69c0 .17-.14.31-.31.31h-3.38v1.23h4c.51 0 .92-.42.92-.93V6.46c0-.51-.41-.92-.92-.92zm-6.15 8c-.51 0-.93.41-.93.92v3.08c0 .51.42.92.93.92h3.07c.51 0 .93-.41.93-.92v-3.08c0-.51-.42-.92-.93-.92zm.61 1.23h1.85a.3.3 0 0 1 .31.31v1.84a.31.31 0 0 1-.31.31h-1.85c-.17 0-.31-.14-.31-.31v-1.84a.31.31 0 0 1 .31-.31m-5.54-1.23c-.51 0-.92.41-.92.92v3.08c0 .51.41.92.92.92h3.39v-1.23H5.54c-.17 0-.31-.14-.31-.31v-1.84c0-.17.14-.31.31-.31h2.77v-1.23zm10.46 0c-.51 0-.92.41-.92.92v4h1.23v-3.38a.31.31 0 0 1 .31-.31h.62v3.69h1.23v-3.69h.92v3.69H20v-4.92z'/%3E%3C/svg%3E");
+  --jgg-icon-playstation: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M9.5 4.27c1.38.26 3.4.87 4.5 1.23c2.75.95 3.69 2.13 3.69 4.79c0 2.6-1.6 3.58-3.64 2.6V8.05c0-.55-.1-1.08-.64-1.23c-.41-.13-.65.25-.65.81v12.1L9.5 18.69zm3.87 13.35l5.25-1.87c.6-.21.69-.51.21-.67c-.49-.16-1.36-.11-1.96.1l-3.5 1.23v-1.96l.21-.07s1.01-.38 2.42-.51c1.43-.16 3.17.02 4.53.53c1.54.49 1.72 1.21 1.33 1.7c-.4.5-1.36.85-1.36.85l-7.13 2.55zm-9.87-.2C1.93 17 1.66 16.05 2.38 15.5c.67-.5 1.8-.85 1.8-.85L8.86 13v1.88L5.5 16.09c-.6.21-.69.51-.21.67s1.36.12 1.95-.1l1.62-.58v1.69l-.32.06c-1.62.26-3.34.17-5.04-.41'/%3E%3C/svg%3E");
+  --jgg-icon-xbox: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M6.43 3.72c.07-.06.14-.12.19-.16C8.18 2.55 10 2 12 2c1.88 0 3.64.5 5.14 1.42c.11.08.4.27.56.46C16.25 2.28 12 5.7 12 5.7c-1.5-1.13-2.83-1.9-3.84-2.2c-.85-.21-1.43 0-1.7.2m12.88 1.51c-.05-.05-.1-.1-.14-.15c-.36-.4-.82-.5-1.2-.47c-.39.12-2.1.73-4.2 2.72c0 0 2.37 2.3 3.82 4.65s2.31 4.2 1.78 6.77C21 16.95 22 14.59 22 12c0-2.62-1-5-2.66-6.79m-3.61 7.75c-.65-.72-1.6-1.75-2.87-3.01c-.27-.27-.56-.55-.86-.85c0 0-.47.46-1.07 1.07c-.77.77-1.76 1.78-2.32 2.37c-.98 1.05-3.8 4.35-3.96 6.2c0 0-.65-1.46.75-4.85c.9-2.21 3.6-5.53 4.75-6.61c0 0-1.03-1.14-2.33-1.93l-.05-.03c-.63-.37-1.31-.66-1.97-.7c-.67.05-1.09.54-1.09.54A9.95 9.95 0 0 0 2 12a10 10 0 0 0 10 10c2.93 0 5.57-1.26 7.4-3.27c0 0-.21-1.33-1.56-3.23c-.31-.43-1.47-1.81-2.11-2.54'/%3E%3C/svg%3E");
+  --jgg-icon-nintendo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M10.04 20.4H7.12c-.93 0-1.82-.4-2.48-1.04C4 18.7 3.6 17.81 3.6 16.88V7.12c0-.93.4-1.82 1.04-2.48C5.3 4 6.19 3.62 7.12 3.62h2.92zM7.12 2A5.12 5.12 0 0 0 2 7.12v9.76C2 19.71 4.29 22 7.12 22h4.53V2zM5.11 8c0 1.04.84 1.88 1.89 1.88c1.03 0 1.87-.84 1.87-1.88S8.03 6.12 7 6.12c-1.05 0-1.89.84-1.89 1.88m12.5 3c1.11 0 2.01.89 2.01 2c0 1.12-.9 2-2.01 2s-2.03-.88-2.03-2c0-1.11.92-2 2.03-2m-.73 11A5.12 5.12 0 0 0 22 16.88V7.12C22 4.29 19.71 2 16.88 2h-3.23v20z'/%3E%3C/svg%3E");
+  --jgg-icon-itad: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='m21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l.42-.41C11.6 20.9 9 18.26 9 15c0-3.31 2.69-6 6-6c3.26 0 5.9 2.6 6 5.83l.41-.42c.37-.36.59-.86.59-1.41c0-.56-.23-1.06-.59-1.42M5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4S7 4.67 7 5.5S6.33 7 5.5 7m9.61 3.61c2.5 0 4.5 2 4.5 4.5c0 .89-.25 1.71-.69 2.39L22 20.61L20.61 22l-3.11-3.07c-.7.43-1.5.68-2.39.68c-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5m0 2a2.5 2.5 0 1 0 2.5 2.5c0-1.39-1.11-2.5-2.5-2.5'/%3E%3C/svg%3E");
+}
+
+.jgg-prose
+  ul:has(
+    > li
+      > a:only-child:is(
+        [href*="store.steampowered.com"],
+        [href*=".itch.io"],
+        [href*="gog.com"],
+        [href*="epicgames.com"],
+        [href*="playstation.com"],
+        [href*="xbox.com"],
+        [href*="nintendo.com"],
+        [href*="isthereanydeal.com"]
+      )
+  ):has(> li:last-child > a:only-child):not(:has(> li > :not(a))):not(
+    :has(> li > a ~ a)
+  ) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-left: 0;
+  list-style: none;
+
+  > li > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 3px solid #000;
+    background-color: var(--color-accent-300);
+    padding: 0.5rem 0.75rem;
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+    font-weight: 400;
+    line-height: 1.2;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: var(--color-foreground-500);
+    box-shadow: 4px 4px 0 #000;
+    transition:
+      transform 80ms steps(2),
+      box-shadow 80ms steps(2);
+  }
+
+  > li > a::before {
+    content: "";
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    background-color: currentColor;
+    mask: var(--jgg-icon, var(--jgg-icon-link)) center / contain no-repeat;
+  }
+
+  > li > a:hover,
+  > li > a:focus-visible {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 #000;
+  }
+
+  > li > a:focus-visible {
+    outline: 3px solid var(--color-secondary-600);
+    outline-offset: 3px;
+  }
+
+  > li > a[href*="store.steampowered.com"] { --jgg-icon: var(--jgg-icon-steam); }
+  > li > a[href*="gog.com"] { --jgg-icon: var(--jgg-icon-gog); }
+  > li > a[href*="playstation.com"] { --jgg-icon: var(--jgg-icon-playstation); }
+  > li > a[href*="xbox.com"] { --jgg-icon: var(--jgg-icon-xbox); }
+  > li > a[href*="nintendo.com"] { --jgg-icon: var(--jgg-icon-nintendo); }
+  > li > a[href*="isthereanydeal.com"] { --jgg-icon: var(--jgg-icon-itad); }
+
+  @media (min-width: 48rem) {
+    > li > a {
+      font-size: var(--text-xl);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    > li > a {
+      transition: none;
+    }
+
+    > li > a:hover,
+    > li > a:focus-visible {
+      transform: none;
+    }
+  }
+}

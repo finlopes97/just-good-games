@@ -27,7 +27,7 @@ const PUBLIC_PATH = /(?<=\]\(|src=["'])\/images\/[^\s)"'>]+/g;
 /*
   Clips are raw <video> tags (scripts/clip.mjs). Most feed readers strip video, and
   sanitize-html does too, so in the feed each clip becomes its poster still, linked to the
-  post. The poster already carries a "PLAY CLIP" badge, so it reads as something to open.
+  post. The alt text says it is a video that plays on the site.
 */
 const VIDEO = /<video\b([^>]*)>(?:[\s\S]*?<\/video>)?/g;
 const POSTER = /\sposter="([^"]*)"/;

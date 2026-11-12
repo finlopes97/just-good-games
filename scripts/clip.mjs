@@ -5,27 +5,21 @@
 
   Writes two files to public/video/posts/<dir>/:
     <name>.mp4   H.264, no audio, at most --width pixels wide
-    <name>.webp  the poster still, with a "PLAY CLIP" badge baked into the corner
+    <name>.webp  the poster still shown before the reader presses play
   and prints the one line of HTML to paste into the post.
 
   Why it works this way:
   - A GIF of a few seconds of gameplay is tens of megabytes; the same clip as H.264 is a few
     hundred KB and is hardware-decoded on every phone (ISSUES.md §1a has the numbers).
   - Clips are tap-to-play (`controls preload="none"`): the reader downloads only the poster
-    until they press play, and nothing moves unless they ask it to. The badge is baked into
-    the poster because, with no client-side JavaScript, that is the only way to show a label
-    that disappears once the clip is playing.
+    until they press play, and nothing moves unless they ask it to.
   - Clips live in public/ because astro:assets only handles images, and Sätteri passes a raw
     <video> tag through untouched.
   - This runs on the author's machine and needs ffmpeg on PATH. It is not part of the build.
 */
 import { execFileSync } from "node:child_process";
-import { mkdirSync, readFileSync, rmSync, statSync } from "node:fs";
+import { mkdirSync, statSync } from "node:fs";
 import { basename, extname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-import { tmpdir } from "node:os";
-import satori from "satori";
-import sharp from "sharp";
 
 const args = process.argv.slice(2);
 const input = args.find((a, i) => !a.startsWith("--") && !args[i - 1]?.startsWith("--"));
@@ -79,41 +73,9 @@ run("ffmpeg", [
 ]);
 const { width, height } = probe(mp4);
 
-// Poster: one frame of the finished clip, plus the badge.
-const frame = join(tmpdir(), `jgg-clip-${process.pid}.png`);
-run("ffmpeg", ["-v", "error", "-y", "-ss", posterAt, "-i", mp4, "-frames:v", "1", frame]);
-
-// The badge is the site's chip (CLAUDE.md §2.4): pink block, black border, hard shadow,
-// Bebas Neue. satori converts the lettering to paths, so no font needs to be installed.
-const k = Math.max(0.6, width / 1280);
-const px = (n) => Math.round(n * k);
-const font = readFileSync(
-  fileURLToPath(import.meta.resolve("@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.woff")),
-);
-const labelSvg = await satori(
-  { type: "div", props: { style: { display: "flex", fontFamily: "Bebas Neue", fontSize: px(44), lineHeight: 1, color: "#000" }, children: "PLAY CLIP" } },
-  { width: px(260), height: px(60), fonts: [{ name: "Bebas Neue", data: font, weight: 400, style: "normal" }] },
-);
-const label = await sharp(Buffer.from(labelSvg)).trim().png().toBuffer({ resolveWithObject: true });
-
-const pad = px(16), tri = px(30), gap = px(12), border = px(4), shadow = px(6), margin = px(24);
-const blockW = pad + tri + gap + label.info.width + pad;
-const blockH = pad + Math.max(tri, label.info.height) + pad;
-const midY = blockH / 2;
-const badgeSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="${blockW + shadow}" height="${blockH + shadow}">
-  <rect x="${shadow}" y="${shadow}" width="${blockW}" height="${blockH}" fill="#000"/>
-  <rect x="${border / 2}" y="${border / 2}" width="${blockW - border}" height="${blockH - border}" fill="#ff98f3" stroke="#000" stroke-width="${border}"/>
-  <polygon points="${pad},${midY - tri / 2} ${pad + tri},${midY} ${pad},${midY + tri / 2}" fill="#000"/>
-</svg>`;
-
-await sharp(frame)
-  .composite([
-    { input: Buffer.from(badgeSvg), left: margin, top: margin },
-    { input: label.data, left: margin + pad + tri + gap, top: margin + Math.round((blockH - label.info.height) / 2) },
-  ])
-  .webp({ quality: 80 })
-  .toFile(poster);
-rmSync(frame, { force: true });
+// Poster: one frame of the finished clip. No play badge is drawn on it: the browser's own
+// play button already marks it as a video, and a baked-in badge looks tappable but isn't.
+run("ffmpeg", ["-v", "error", "-y", "-ss", posterAt, "-i", mp4, "-frames:v", "1", "-c:v", "libwebp", "-quality", "80", poster]);
 
 const kb = (file) => `${Math.round(statSync(file).size / 1024)} KB`;
 const url = (file) => "/" + file.split(/[\\/]/).slice(1).join("/");

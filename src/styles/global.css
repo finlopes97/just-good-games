@@ -132,7 +132,7 @@
 
 /*
   Store-link chips, written as plain markdown (LAYOUT.md). Sätteri can't run components
-  inside a post body, so this is the CSS-only counterpart of StoreLinks.astro: a bullet list
+  inside a post body, so this is done in CSS alone: a bullet list
   in an article becomes a row of pressable chips when
     1. every bullet is a single link (no other elements; the last bullet must be a link), and
     2. at least one of those links points at a known store or at IsThereAnyDeal.
@@ -146,7 +146,7 @@
   single link", and a text-only bullet in the middle of a chip list goes unnoticed. And
   `:has()` can't be nested inside `:has()` (the whole rule is dropped), which is why the
   conditions below are chained instead.
-  Icons are MDI paths (the same set StoreLinks.astro uses) inlined as masks — no requests.
+  Icons are MDI paths inlined as masks — no requests.
 */
 :root {
   --jgg-icon-link: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2z'/%3E%3C/svg%3E");
@@ -259,4 +259,47 @@
   height: auto;
   margin: 0 auto 1rem;
   background: #000;
+}
+
+/*
+  Fact cards in a post body. A blockquote that holds nothing but one bullet list renders as
+  a small card with no bullet points:
+
+    > - Developed by LOREM STUDIO
+    > - Published by LOREM PUBLISHER
+    > - Released on 01/01/2026
+
+  The rows are whatever the author types, so it works for any short fact sheet. An ordinary
+  quote (a blockquote of paragraphs) keeps its purple rule and italics. A chip list of store
+  links inside the blockquote still renders as chips, inside the card. Unlayered for the
+  same reason as the chips above: it has to beat the prose-blockquote utilities. LAYOUT.md §3.
+*/
+.jgg-prose blockquote:has(> ul:only-child) {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 1.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 3px solid #000;
+  background: var(--color-body-300);
+  box-shadow: 4px 4px 0 #000;
+  font-style: normal;
+}
+
+.jgg-prose blockquote:has(> ul:only-child) > ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+}
+
+/* A chip list inside a card: the chip rule's bottom margin would leave a gap under the row.
+   !important because that rule's selector is far more specific than anything sane here. */
+.jgg-prose blockquote:has(> ul:only-child) > ul:only-child {
+  margin-bottom: 0 !important;
+}
+
+.jgg-prose blockquote:has(> ul:only-child) > ul > li + li {
+  margin-top: 0.25rem;
 }

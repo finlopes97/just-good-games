@@ -48,7 +48,7 @@ some tool shells. Prefix with
 
 ```
 src/
-  components/     Head, cards, GameFacts, StoreLinks, chips
+  components/     Head, cards, chips
   content/posts/  the articles — the filename IS the URL slug
   layouts/        Layout (pages) and MarkdownPostLayout (posts)
   pages/          index, about, archive, posts/[...slug], tags/, tags/[tag], og/, rss.xml
@@ -63,9 +63,8 @@ Drop a `.md` file into `src/content/posts/`. The filename becomes the URL, so it
 permanent — see below. Frontmatter is validated by `src/content.config.ts`; the build fails
 on anything that doesn't match.
 
-The optional `games[]` array drives three things automatically: the "The gist" facts panel
-above the article, the "Where to get it" store links below it, and the `VideoGame`
-structured data in `<head>`. Never guess a developer, publisher, release date or store URL
+The optional `games[]` array is metadata for search engines: a post with exactly one game
+gets `VideoGame` structured data in `<head>`. Nothing on the page renders from it. Never guess a developer, publisher, release date or store URL
 to populate it — leave the field out instead.
 
 ## Two hard rules

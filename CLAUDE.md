@@ -227,47 +227,48 @@ with a `glob()` loader and a Zod schema.
   author: string,
   tags: string[],               // normalised to lowercase + trimmed by the schema
   gameTitle?: string,
-  games?: Array<{               // see below
+  games?: Array<{               // search-engine metadata only, see below
     name: string,
-    pitch?: string,             // max 300 chars — the "What is it" row of GameFacts
+    pitch?: string,             // max 300 chars — the VideoGame description
     developers?: string[],
     publishers?: string[],
     releaseDate?: string,       // free text: "18 July 2024" | "2024" | "TBA"
-    status?: 'full-release' | 'early-access' | 'demo' | 'free' | 'mod',
-    links?: Array<{ store: StoreId, url: string, label?: string }>,
+    links?: Array<{ store: StoreId, url: string }>,
   }>,
   image?: { url: image(), alt: string },   // url: path relative to the post file
 }
 ```
 
 `StoreId` is `steam | itch | gog | epic | playstation | xbox | nintendo | itad | other`.
-`itad` is an IsThereAnyDeal price-tracker link, not a storefront: it renders with the label
-**"Price history"** and is always sorted after the real buy links. URLs are entered by hand —
-ITAD slugs aren't derivable from a title, and guessing one produces a confident 404.
+`itad` is an IsThereAnyDeal price-tracker link, not a storefront, so it is left out of the
+structured data. URLs are entered by hand — ITAD slugs aren't derivable from a title, and
+guessing one produces a confident 404.
 
-**`games[]` drives two components**, both of which render nothing when the field is absent
-(so older posts are unaffected):
-
-- `GameFacts.astro` — a PC Gamer "Need to Know"-style label/value list: pitch, release date,
-  developer(s), publisher(s) and status. Posts covering **one** game get `variant="detail"`
-  above the article body, headed **"The gist"** (a two-column grid, values aligned to a common
-  column); **multi-game roundups** get `variant="summary"` below it headed "The games", as a
-  compact wrapped row, because a four-game spec dump ahead of the intro buries the writing.
-  Wired up in `src/pages/posts/[...slug].astro`. Rows are built once by `factRows()` so both
-  variants stay in the same order. The detail panel **deliberately omits the game's name** —
-  the post `<h1>` has just said it. Per-game names only appear when there's more than one game.
-  **Labels are Bebas Neue, values are Ysabeau** — the two faces have different ascents, so
-  every row needs `items-baseline`. Without it the value sits visibly below its label.
-- `StoreLinks.astro` — a "Where to get it" block of pressable store chips at the foot of
-  the article. Store links already written inline in post bodies were left in place.
-
-Both are yellow (`body-300`) panels with 3px black borders and hard shadows; the status chip
-is purple (`secondary-500`), which is `secondary`'s one job. Since Sätteri can't run
-components inside markdown, frontmatter is the only structured route — and it's what a
-future `Review`/`VideoGame` JSON-LD upgrade will read from.
+**`games[]` is metadata for search engines only (owner decision, 2026-11-13).** Nothing on
+the page renders from it. Its one job: a post with **exactly one** entry gets a `VideoGame`
+node in its JSON-LD (`Head.astro`). The `GameFacts.astro` ("The gist") and `StoreLinks.astro`
+("Where to get it") components that used to render it were deleted, along with the
+`status` and link `label` fields that only they used. Anything a reader should see (credits,
+release date, store links) is written in the post body, using the fact card and chip
+conventions below. Don't rebuild a visual component on top of `games[]`.
 
 *Richer fields that would help SEO but aren't implemented yet* (nice-to-have, not present):
 `updatedDate`, `draft`, `steamAppId`. Add deliberately if needed.
+
+**Fact cards in post bodies (built 2026-11-13).** A blockquote that contains only a bullet
+list renders as a small yellow card with a black border and hard shadow, with no bullet
+points:
+
+```markdown
+> - Developed by LOREM STUDIO
+> - Published by LOREM PUBLISHER
+> - Released on 01/01/2026
+```
+
+The rows are whatever the author types, so the card suits any short fact sheet, not only
+game credits. There is no heading. An ordinary quote (a blockquote of text) is unaffected,
+and a store-link list written inside a blockquote becomes chips inside a card. CSS only,
+unlayered, at the end of `src/styles/global.css`. Full rules: `LAYOUT.md` §3.
 
 **Store-link chips in post bodies (built 2026-11-12).** List posts are freeform, so store
 links for each game are written in the body as a plain bullet list:
@@ -277,7 +278,7 @@ links for each game are written in the body as a plain bullet list:
 - [Price history](https://isthereanydeal.com/game/arco/info/)
 ```
 
-A list becomes a row of chips (the same look as `StoreLinks.astro`) when every bullet is a
+A list becomes a row of pink pressable chips when every bullet is a
 single link and at least one goes to a known store or IsThereAnyDeal. Any other list is
 untouched. It is CSS only: the rule is at the end of `src/styles/global.css`, **unlayered
 on purpose** (the `prose-*` utilities in `Prose.astro` would beat `@layer components`), and

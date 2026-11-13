@@ -111,7 +111,7 @@ in `LAYOUT.md` §4 with the reasons they were dropped.
 
 **Built 2026-11-12: store-link chips in post bodies.** A bullet list where every bullet is
 a single link, and at least one goes to a known store or IsThereAnyDeal, renders as a row
-of pressable chips matching `StoreLinks.astro`. CSS only (end of `src/styles/global.css`,
+of pressable chips. CSS only (end of `src/styles/global.css`,
 scoped to `jgg-prose` on `Prose.astro`). Piloted on `october-2024-you-should-play-arco`.
 
 Still open:
@@ -127,8 +127,14 @@ Still open:
   filled in, and `games[]` is no longer required for anything on a list post.
 - **OG cards** could show game names as chips, but only from `games[]`.
 
-`games[]` stays in the schema and stays optional: it still drives the facts panel, the
-"Where to get it" block and `VideoGame` structured data on posts that fill it in.
+**Built 2026-11-13: fact cards.** A blockquote holding only a bullet list renders as a small
+card with no bullet points (`LAYOUT.md` §3). It replaces the "The gist" panel.
+
+**`games[]` is metadata only since 2026-11-13.** It stays in the schema, optional, and feeds
+`VideoGame` structured data on single-game posts. `GameFacts.astro` and `StoreLinks.astro`
+were deleted, with the `status` and link `label` fields. The Hinterberg post was the only
+one using them: it lost its "The gist" panel and "Where to get it" block, and its body was
+left as written. Owner to add a fact card and chip list there if wanted.
 
 ---
 
@@ -140,14 +146,13 @@ Still open:
 
    **Backfill outstanding:** only `dungeons-of-hinterberg-review.md` carries `games` so far,
    and only with facts verifiable from the repo (developer Microbird Games, publisher Curve
-   Games, its Steam URL, full release). Publishers and release dates for every other post
+   Games, its Steam URL). Publishers and release dates for every other post
    are a data-entry pass via `/admin` — don't guess them. Same rule for `pitch` (owner-written
    copy, capped at 300 chars so an over-long one fails the build) and `itad` URLs, which must
-   be pasted from the real ITAD page — the slug isn't derivable from a title, and a guess
-   produces a confident 404 in the "Where to get it" block.
+   be pasted from the real ITAD page — the slug isn't derivable from a title.
 
-   Note that `games[]` now feeds `VideoGame` structured data as well as the two panels, so
-   backfilling it has more leverage than it did.
+   `games[]` now feeds only `VideoGame` structured data (nothing visual), so the backfill
+   is purely a search-engine benefit, and only for posts about a single game.
 
 ## SEO
 
@@ -175,8 +180,8 @@ Still open:
      smooth `transition … duration-300` hovers instead of the `jgg-press` step model
      (CLAUDE.md §2.4). They also have no `prefers-reduced-motion` guard, which `jgg-press`
      provides for free.
-   - `MarkdownPostLayout.astro` uses `bg-secondary-200` for the byline chip, which competes
-     with `secondary`'s one assigned job (the GameFacts status chip).
+   - `MarkdownPostLayout.astro` uses `bg-secondary-200` for the byline chip. `secondary`
+     has no assigned job now that the GameFacts status chip is gone; pick one deliberately.
 
 6. **`Prose.astro` never applies the `prose` class.** It sets a long list of `prose-h2:`,
    `prose-p:` etc. modifiers, but without `prose` on the element the typography plugin's

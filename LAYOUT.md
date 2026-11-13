@@ -39,7 +39,7 @@ and live. The `october-2024-you-should-play-arco` post is the test bed.
 | Item title | a `##` heading, typed by hand | freeform |
 | Rank | typed into the heading (`## 10. Crow Country`) | freeform |
 | Header image | an ordinary markdown image under the heading | freeform |
-| Item details | written as text (the Arco post uses a `####` line) | freeform |
+| **Item details** | **a blockquote holding a bullet list, styled as a fact card (§3)** | **built 2026-11-13** |
 | Item write-up | markdown | freeform |
 | **Purchase details** | **a bullet list of store links, styled as chips (§3)** | **built 2026-11-12** |
 | Closing body | markdown | exists |
@@ -48,10 +48,10 @@ and live. The `october-2024-you-should-play-arco` post is the test bed.
 Ordering (ascending, countdown, unnumbered) is just how the post is written. There is no
 `listOrder` field and no per-item schema.
 
-`games[]` frontmatter still exists and still works, and is **optional**: it drives the
-"The gist" facts panel, the "Where to get it" block at the foot of the post, and the
-`VideoGame` structured data for single-game posts. Use it when a post wants those. Store
-links typed in the body are not read by any of them.
+`games[]` frontmatter still exists and is **optional**, but since 2026-11-13 it is metadata
+for search engines only: a post with exactly one entry gets `VideoGame` structured data.
+Nothing on the page renders from it. The "The gist" panel and "Where to get it" block were
+removed; credits and store links are written in the body.
 
 ---
 
@@ -66,7 +66,7 @@ Write the links as a plain bullet list, wherever they belong in the post:
 ```
 
 That list renders as a row of pressable chips (pink block, black border, hard shadow, store
-icon), matching `StoreLinks.astro`. It is CSS only: the rule lives at the end of
+icon). It is CSS only: the rule lives at the end of
 `src/styles/global.css` and is scoped to the `jgg-prose` class on `Prose.astro`.
 
 **A list becomes chips when both are true:**
@@ -89,7 +89,7 @@ stays an ordinary link.
 - **ITAD URLs are pasted from the real page**, never guessed (`CLAUDE.md` §4).
 - To add a store, add its domain in two places in the `global.css` rule: the `:is(...)`
   list, and an icon line if it has one. itch.io and Epic use the generic icon because MDI
-  has no icon for them, the same as `StoreLinks.astro`.
+  has no icon for them.
 
 **Known limits:**
 
@@ -103,6 +103,30 @@ stays an ordinary link.
 - The RSS feed shows these as a normal list of links. That's fine.
 - No structured data comes from body links. Search engines only get game data from
   `games[]`.
+
+### Fact cards (the second convention, built 2026-11-13)
+
+Put a bullet list inside a blockquote:
+
+```markdown
+> - Developed by LOREM STUDIO
+> - Published by LOREM PUBLISHER
+> - Released on 01/01/2026
+```
+
+It renders as a small card (yellow block, black border, hard shadow) with one row per
+bullet and no bullet points. The card is only as wide as its longest row.
+
+- **A blockquote becomes a card when the list is the only thing in it.** A blockquote of
+  ordinary text stays a quote. A blockquote with a list *and* a paragraph stays a quote.
+- **Rows are free text.** Nothing is specific to games, so use it for any short fact sheet.
+- **No heading.** If a card needs a title, put a normal heading or bold line above it.
+- **Every line starts with `> - `**, with no blank lines between them.
+- **Store links inside a card** (`> - [Steam](…)`) render as chips inside the card.
+- Chosen over a nested bullet list (also spiked, also worked) because it is simpler to type
+  and can't be triggered by accident.
+- Uses `:has()` like the chips: an old browser shows a quote containing a bullet list.
+- The RSS feed shows a quoted bullet list.
 
 ---
 

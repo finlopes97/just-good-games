@@ -1,8 +1,18 @@
 # ISSUES.md — Open items
 
-**Status (2026-08-01):** build green (Astro 7, 39 pages), `npm audit` clean, `npx astro
-check` **clean (0 errors, 0 warnings)**, all published URLs preserved. History lives in git;
-this file tracks only what's **still open**.
+**Status (2026-11-13):** build green (Astro 7; 39 pages, 43 with the owner's test post),
+`npm audit` clean, `npx astro check` **clean (0 errors, 0 warnings)**, all published post
+and tag URLs preserved. History lives in git; this file tracks only what's **still open**.
+
+**Open at the end of the 2026-11-13 session, in rough order:**
+
+1. Owner deletes the live test post, `test-post-delete-later`, and
+   `src/assets/posts/4560.jpg` (§1b).
+2. Owner converts store links in the Clickolding, Cruel and Achra posts to chip lists, and
+   decides whether the Hinterberg post gets a fact card and chip list ("List posts" below).
+3. Owner researches adding clips through `/admin` (§1a).
+4. Recent-posts strip: not built ("List posts" below).
+5. The numbered backlog further down (schema fields, design-system drift, housekeeping).
 
 **Page weight is fixed (§1).** Static images go through `astro:assets` (2026-11-12) and the
 three animated GIFs are now tap-to-play video clips (2026-11-13).
@@ -116,8 +126,8 @@ scoped to `jgg-prose` on `Prose.astro`). Piloted on `october-2024-you-should-pla
 
 Still open:
 
-- **Owner to check the Arco post on a phone.** The chips were checked locally at about
-  500px and desktop width, not at a true phone width.
+- The chips, images and clips are live. The owner checked the site on a phone on
+  2026-11-13 and reported the images right and "the other functionality" working.
 - **Convert store links in the other posts to bullet lists** (about 11 lines across the
   Clickolding, Cruel and Achra posts). It drops the "or"/"and" between links, so it needs
   the owner's sign-off on wording.

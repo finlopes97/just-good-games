@@ -2,18 +2,24 @@
 
 Project instructions for Claude Code. Read this before touching anything.
 
-> **Status (2026-08-01):** the codebase is current and healthy — Astro 7, Tailwind 4,
-> `npm audit` clean, builds green, `npx astro check` clean. The big migration, the
-> first-audit cleanup and the SEO/sharing pass are done; see `ISSUES.md` for the short list
-> of *remaining* open items. This document describes the **actual current state**, not an
-> aspirational target.
+> **Status (2026-11-13):** the codebase is current and healthy — Astro 7, Tailwind 4,
+> `npm audit` clean, builds green, `npx astro check` clean. This document describes the
+> **actual current state**, not an aspirational target. `ISSUES.md` holds the open items.
 >
 > **Editorial direction (2026-11-06):** the blog is pivoting to **multi-game list posts**
 > (ascending, descending countdown, or unnumbered) as the main format. Full-length articles
-> stay supported but are secondary. **List posts are freeform (decided 2026-11-12):** one
-> markdown body, no per-item schema. The one convention is that a bullet list of store
-> links renders as chips. **`LAYOUT.md` is the reference** for post structure, that
-> convention and the stack limits. Read it before touching post layout or the content schema.
+> stay supported but are secondary. **Posts are freeform (decided 2026-11-12):** one
+> markdown body, no per-item schema, no components rendered from frontmatter. Structure
+> comes from three CSS/HTML conventions on plain markdown, all in §4:
+> **store-link chips** (a bullet list of store links), **fact cards** (a blockquote holding
+> a bullet list) and **clips** (a tap-to-play `<video>` line). **`LAYOUT.md` is the
+> reference** for post structure and the stack limits. Read it before touching post layout
+> or the content schema.
+>
+> **What changed on 2026-11-12/13**, so nothing here gets "fixed" back: post images moved to
+> `src/assets/posts/` and go through `astro:assets`; the three animated GIFs became video
+> clips; `games[]` became search-engine metadata only and the `GameFacts` / `StoreLinks`
+> components were deleted. All of it is live on `main`.
 >
 > **Before starting work, `git fetch` and check `main` against `origin/main`.** Work has
 > happened on more than one machine, and a stale local `main` once caused a whole session
@@ -419,17 +425,30 @@ default is `page`, which is right for standalone pages and wrong for listings.
 
 The original first-session audit, the Astro 4→7 migration and the SEO/sharing pass are
 **complete**. What's verified now: Astro 7.1.3, Tailwind 4, Content Layer, Sätteri;
-`npm run build` green (39 pages); `npm audit` 0 vulnerabilities; `npx astro check` **clean
+`npm run build` green (39 pages, or 43 while the owner's `test-post-delete-later` exists); `npm audit` 0 vulnerabilities; `npx astro check` **clean
 (0 errors, 0 warnings)**; all published URLs preserved via `netlify.toml` redirects; and
 **zero third-party requests** in the built output — the only external URLs left are
 outbound `<a href>` links in the footer.
 
 **Remaining open items live in `ISSUES.md`**, and post structure is documented in
-`LAYOUT.md`. The short version: whether clips can be added through `/admin`,
-converting the other posts' store links to chip lists, a recent-posts strip,
-schema additions (`updatedDate`, `draft`) plus the `games[]` backfill, some pre-design-system
-components still using raw Tailwind colours and smooth hovers, `Prose.astro` missing its
-`prose` class, and the `body` token rename. None are urgent.
+`LAYOUT.md`. The short version:
+
+- **Owner's to do, don't do unasked:** delete the live test post
+  (`test-post-delete-later` and `src/assets/posts/4560.jpg`); convert the store links in the
+  Clickolding, Cruel and Achra posts to chip lists; add a fact card and chip list to the
+  Hinterberg post if wanted (it lost its facts panel and store block on 2026-11-13);
+  research whether clips can be added through `/admin`.
+- **Not built:** the recent-posts strip at the foot of each post.
+- **Backlog:** schema additions (`updatedDate`, `draft`), the `games[]` backfill (search
+  metadata only now), pre-design-system components still using raw Tailwind colours and
+  smooth hovers, `Prose.astro` missing its `prose` class, and the `body` token rename.
+
+None are urgent.
+
+**How the owner works:** often away from the development PC, checking the live site on a
+phone after a push, and writing posts through `/admin` or by hand (sometimes in raw HTML).
+Present a plan before schema, routing or pipeline changes; small follow-ups have been
+pushed straight to `main`.
 
 Pages that exist: `index`, `about`, `archive`, `posts/[...slug]`, `tags/` (index),
 `tags/[tag]`, `og/[...slug].png`, `og/site.png`, `admin`, `rss.xml.js`. Nav links
@@ -450,7 +469,8 @@ Prefix with the PATH fix if `npm` isn't found (see §3 environment quirk):
 ```bash
 npm install       # deps; audit is clean
 npm run dev       # dev server at http://localhost:4321/
-npm run build     # static build -> ./dist/ (39 pages, incl. sitemap and OG cards)
+npm run build     # static build -> ./dist/ (39 pages + any test post, incl. sitemap and OG cards)
+npm run clip -- <file> --dir 2025_01   # GIF/recording -> tap-to-play clip (needs ffmpeg)
 npm run preview   # preview the built ./dist/ locally
 npx astro check   # type check — currently clean; keep it that way
 ```

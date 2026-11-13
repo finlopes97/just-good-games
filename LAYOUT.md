@@ -3,10 +3,11 @@
 How a post is put together, and what the stack does and doesn't do for it. This is the
 reference for writing posts and for any future layout work.
 
-**Status (2026-11-12): decided — posts are freeform.** The owner chose a freeform writing
-environment over structured per-game fields. A post is one markdown body written top to
-bottom; the only "structure" is a styling convention for store links (§3), which is built
-and live. The `october-2024-you-should-play-arco` post is the test bed.
+**Status (2026-11-13): decided and built — posts are freeform.** The owner chose a freeform
+writing environment over structured per-game fields. A post is one markdown body written
+top to bottom. The only "structure" is three conventions, all live: store-link chips and
+fact cards (§3), and video clips (§5). Nothing on the page renders from frontmatter
+`games[]` any more.
 
 ---
 
@@ -175,9 +176,12 @@ constraints on how a post is written.
 
 | # | Work | Notes |
 |---|---|---|
-| 1 | Owner checks the Arco post on a phone | Live after the 2026-11-12 push |
+| 1 | ~~Owner checks the live site on a phone~~ | Done 2026-11-13: images, chips and clips reported working. |
 | 2 | Convert store links in the other posts to bullet lists | About 11 lines across the Clickolding, Cruel and Achra posts. Changes the owner's wording slightly ("or"/"and" between links goes), so do it with sign-off. |
 | 3 | ~~`astro:assets` migration~~ | Done 2026-11-12 (`ISSUES.md` §1b). `/admin` uploads verified 2026-11-13. |
 | 4 | Recent posts strip | Scroll-snap row or grid of three: owner to choose. Sits outside the `<article>`, excludes the current post. |
 | 5 | ~~Replace the three GIFs~~ | Done 2026-11-13: converted to tap-to-play video clips (`ISSUES.md` §1a, `CLAUDE.md` §4 "Clips"). |
-| 6 | Optional: `ItemList` structured data | Would need `games[]` filled in on list posts. Only worth it if the facts are being entered anyway. |
+| 6 | ~~Fact cards~~ | Done 2026-11-13 (§3). No live post uses one yet. |
+| 7 | Hinterberg post | Lost its facts panel and store block when `games[]` went metadata-only. Owner to add a fact card and chip list if wanted. |
+| 8 | Owner deletes `test-post-delete-later` | And `src/assets/posts/4560.jpg`. |
+| 9 | Optional: `ItemList` structured data | Would need `games[]` filled in on list posts. Only worth it if the facts are being entered anyway. |

@@ -22,7 +22,6 @@ games:
     publishers:
       - Curve Games
     releaseDate: 19 July, 2024
-    status: full-release
     links:
       - store: steam
         url: https://store.steampowered.com/app/1983260/Dungeons_of_Hinterberg/

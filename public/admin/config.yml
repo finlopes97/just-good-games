@@ -23,28 +23,22 @@ collections:
       - { label: "Author", name: "author", widget: "string" }
       - { label: "Tags", name: "tags", widget: "list" }
       - { label: "Game Title", name: "gameTitle", widget: "string", required: false }
-      - label: "Games"
+      # Search-engine metadata only: nothing on the page renders from this. A post with
+      # exactly one game gets VideoGame structured data. Leave it empty for list posts.
+      - label: "Game data for search engines (optional)"
         name: "games"
         widget: "list"
         required: false
+        collapsed: true
+        hint: "Not shown on the page. Fill in for a post about one game; skip it for lists."
         label_singular: "Game"
         summary: "{{fields.name}}"
         fields:
           - { label: "Name", name: "name", widget: "string" }
-          - { label: "Pitch", name: "pitch", widget: "text", required: false, pattern: ['^[\s\S]{0,300}$', 'Keep the pitch to 300 characters or fewer'], hint: "1-2 sentences — the 'What is it' row. Max 300 characters (longer fails the build)." }
+          - { label: "Pitch", name: "pitch", widget: "text", required: false, pattern: ['^[\s\S]{0,300}$', 'Keep the pitch to 300 characters or fewer'], hint: "1-2 sentences describing the game. Max 300 characters (longer fails the build)." }
           - { label: "Developer(s)", name: "developers", widget: "list", required: false }
           - { label: "Publisher(s)", name: "publishers", widget: "list", required: false }
           - { label: "Release Date", name: "releaseDate", widget: "string", required: false, hint: "Free text — e.g. '18 July 2024', '2024', or 'TBA'" }
-          - label: "Release Status"
-            name: "status"
-            widget: "select"
-            required: false
-            options:
-              - { label: "Full release", value: "full-release" }
-              - { label: "Early access", value: "early-access" }
-              - { label: "Demo", value: "demo" }
-              - { label: "Free", value: "free" }
-              - { label: "Mod", value: "mod" }
           - label: "Store Links"
             name: "links"
             widget: "list"
@@ -66,7 +60,6 @@ collections:
                   - { label: "Other / official site", value: "other" }
                   - { label: "IsThereAnyDeal (price history)", value: "itad" }
               - { label: "URL", name: "url", widget: "string", hint: "For ITAD, paste the URL from the real ITAD page — slugs can't be guessed." }
-              - { label: "Button Label", name: "label", widget: "string", required: false, hint: "Optional — overrides the default store name" }
       - name: "image"
         widget: "object"
         required: false
